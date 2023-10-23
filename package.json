@@ -1,11 +1,12 @@
 {
   "scripts": {
     "bundle": "webpack --mode production --entry ./_build/default/src/output/src/ReactApp.js",
-    "serve": "webpack serve --open --mode development --entry ./_build/default/src/output/src/ReactApp.js"
+    "serve": "webpack serve --open --mode development --entry ./_build/default/src/node/src/Hello.js"
   },
   "dependencies": {
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "tone": "^14.7.77"
   },
   "devDependencies": {
     "webpack": "^5.73.0",
