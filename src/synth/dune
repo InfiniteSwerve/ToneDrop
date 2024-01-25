@@ -1,0 +1,6 @@
+(library
+ (name synth)
+ (libraries music)
+ (modes melange)
+ (preprocess
+  (pps melange.ppx)))

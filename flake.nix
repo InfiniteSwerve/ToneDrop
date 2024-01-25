@@ -3,7 +3,8 @@
 
   inputs = {
     flake-utils.url = "github:numtide/flake-utils";
-    nixpkgs.url = "github:nixos/nixpkgs";
+
+    nixpkgs.url = "github:nix-ocaml/nix-overlays";
 
     # Depend on the Melange flake, which provides the overlay
     melange.url = "github:melange-re/melange";
@@ -13,7 +14,7 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system}.appendOverlays [
-          # Set the OCaml set of packages to the 4.14 release line
+          # Set the OCaml set of packages to the 5.1 release line
           (self: super: { ocamlPackages = super.ocaml-ng.ocamlPackages_5_1; })
           # Apply the Melange overlay
           melange.overlays.default
@@ -29,6 +30,9 @@
             findlib
             ocaml-lsp
             ocamlPackages.melange
+            reason
+            reason-react
+            alcotest
           ];
           buildInputs = [ ocamlPackages.melange ];
         };

@@ -2,7 +2,7 @@
 
 (using melange 0.1)
 
-(name melange-opam-template)
+(name tone-drop)
 
 (license "MIT")
 
@@ -16,6 +16,6 @@
 
 (package
  (allow_empty)
- (name melange-opam-template)
+ (name tone-drop)
  (synopsis "Melange project")
  (description "Minimal melange project"))

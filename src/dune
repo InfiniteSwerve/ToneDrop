@@ -1,15 +1,17 @@
 (melange.emit
  (target output)
  (alias react)
- (libraries reason-react )
+ (libraries reason-react synth music melange.belt)
  (modules :standard \ hello)
  (preprocess
-  (pps reactjs-jsx-ppx))
+  (pps melange.ppx reason-react-ppx))
  (module_systems es6))
 
 (melange.emit
  (target node)
  (alias node)
- (libraries )
+ (libraries synth music)
  (modules hello)
+ (preprocess
+  (pps melange.ppx))
  (module_systems commonjs))

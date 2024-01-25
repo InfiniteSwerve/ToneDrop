@@ -27,7 +27,7 @@ install: ## Install development dependencies
 
 .PHONY: build
 build: ## Build the project
-	$(DUNE) build @react @node
+	$(DUNE) build @react @node 
 
 .PHONY: build_verbose
 build_verbose: ## Build the project
@@ -55,4 +55,7 @@ format-check: ## Checks if format is correct
 
 .PHONY: watch
 watch: ## Watch for the filesystem and rebuild on every change
-	$(DUNE) build --watch @react @node
+	 $(DUNE) build --watch @react @node
+
+
+# & cp src/world/ToneInterop.js _build/default/src/output/src/world/
