@@ -33,6 +33,7 @@
             reason
             reason-react
             alcotest
+            ocamlformat
           ];
           buildInputs = [ ocamlPackages.melange ];
         };

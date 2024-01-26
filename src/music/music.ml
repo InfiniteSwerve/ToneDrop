@@ -1,44 +1,48 @@
 module Note = struct
-  type name = C | CS |  D | DS | E | F | FS | G | GS | A | AS | B 
-  type note = {name: name;pitch: int; octave: int}
+  type name = C | CS | D | DS | E | F | FS | G | GS | A | AS | B
+  type note = { pitch : int; octave : int; scale_position : int option }
   type t = note
 
-  let all_names = [| C; CS; D; DS; E; F; FS; G; GS; A; AS; B |] 
-  let note_strs = [| "C"; "C#"; "D"; "D#"; "E"; "F";"F#"; "G"; "G#"; "A"; "A#"; "B" |] 
+  let notes =
+    [| "C"; "C#"; "D"; "D#"; "E"; "F"; "F#"; "G"; "G#"; "A"; "A#"; "B" |]
 
-  let to_number note = 
-    note.pitch
+  let eq l r = l.pitch = r.pitch && l.octave = r.octave
+  let to_number note = note.pitch
 
   let of_number pitch octave =
     if pitch > 11 then invalid_arg "Number out of range"
-    else
-      {name=all_names.(pitch); pitch; octave}
+    else { pitch; octave; scale_position = None }
 
-  let of_name note octave = 
-    let pitch_o = Array.find_index (fun name -> note == name) all_names in 
-    match pitch_o with 
+  let of_name (note : string) (octave : int) =
+    let pitch_o = Array.find_index (fun name -> note = name) notes in
+    match pitch_o with
     | Some pitch -> of_number pitch octave
-    | None -> raise (failwith "Note.of_name should always be able to find a note")
+    | None ->
+        raise
+          (failwith
+             (Printf.sprintf
+                "Note.of_name should always be able to find a note, but \
+                 couldn't find %s"
+                note))
 
-  let to_string note = 
-    Printf.sprintf "%s%d" note_strs.(note.pitch) note.octave
-    
+  let to_string note = Printf.sprintf "%s%d" notes.(note.pitch) note.octave
 
-  let construct name octave = 
-    of_number name octave
-      
-  let transpose {pitch=old_pitch;octave=octave; _} operator : note =
+  let transpose ?(scale_position : int option = None)
+      { pitch = old_pitch; octave; _ } (operator : int) : note =
     let pitch = (old_pitch + operator) mod 12 in
     let octaveChange = (old_pitch + operator) / 12 in
-    let name = all_names.(pitch) in
     let octave = octave + octaveChange in
-    {name; pitch; octave }
+    { pitch; octave; scale_position }
 
-  let transpose_notes root notes = 
+  let transpose_notes root notes =
     List.map (fun operator -> transpose root operator) notes
 
-  let compare n1 n2 = 
-    Int.compare (n1.octave * 12 + n1.pitch) (n2.octave * 12 + n2.pitch)
+  let compare n1 n2 =
+    Int.compare ((n1.octave * 12) + n1.pitch) ((n2.octave * 12) + n2.pitch)
+
+  (* Non symmetric distance. We care about going up vs down *)
+  let dist (from : t) (target : t) =
+    (12 * (target.octave - from.octave)) - (from.pitch - target.pitch)
 
   let c4 = of_number 0 4
   let cs4 = of_number 1 4
@@ -53,133 +57,145 @@ module Note = struct
   let as4 = of_number 10 4
   let b4 = of_number 11 4
 
-(* How do we want to create chords? A constructor function?
-   Like, play <note>?
-   I guess we can just represent all the chords as sets of note in one octave. We can probably also represent voicings, but not now.
-   Now we just need a function that takes a note and chord type and pushes out the chord *)
+  (* How do we want to create chords? A constructor function?
+     Like, play <note>?
+     I guess we can just represent all the chords as sets of note in one octave. We can probably also represent voicings, but not now.
+     Now we just need a function that takes a note and chord type and pushes out the chord *)
 end
 
 module Chord = struct
   type chord = Major | Minor | Dominant7 | Major7 | Minor7
-    type t = chord
+  type t = chord
 
-  let major_notes = [0;4;7]
-  let minor_notes = [0;3;7]
-  let dominant7_notes = [0;4;7;10]
-  let major7_notes = [0;4;7;11]
-  let minor7_notes = [0;3;7;10]
+  let major_notes = [ 0; 4; 7 ]
+  let minor_notes = [ 0; 3; 7 ]
+  let dominant7_notes = [ 0; 4; 7; 10 ]
+  let major7_notes = [ 0; 4; 7; 11 ]
+  let minor7_notes = [ 0; 3; 7; 10 ]
 
-  let spell (root: Note.t) (chord: t) = 
-      match chord with
-      | Major -> Note.transpose_notes root major_notes
-      | Minor -> Note.transpose_notes root minor_notes
-      | Dominant7 -> Note.transpose_notes root  dominant7_notes
-      | Major7 -> Note.transpose_notes root major7_notes
-      | Minor7 -> Note.transpose_notes root minor7_notes
-
+  let spell (root : Note.t) (chord : t) =
+    match chord with
+    | Major -> Note.transpose_notes root major_notes
+    | Minor -> Note.transpose_notes root minor_notes
+    | Dominant7 -> Note.transpose_notes root dominant7_notes
+    | Major7 -> Note.transpose_notes root major7_notes
+    | Minor7 -> Note.transpose_notes root minor7_notes
 end
 
 module Scale = struct
+  type direction = Up | Down
   type kind = Major | Minor | Chromatic
+
   (* For now just let notes be actual notes and not names, maybe redundant but easier to rely on *)
-  type t = {
-    key: Note.t;
-    kind: kind;
-    notes: Note.t list;
+  type scale = {
+    key : string;
+    root : Note.t;
+    notes : Note.t list;
+    intervals : int list;
   }
 
-  let major_scale = [0;2;4;5;7;9;11;]
-  let minor_scale = [0;2;3;5;7;8;10;]
-  let chromatic_scale = [0;1;2;3;4;5;6;7;8;9;10;11]
+  type t = scale
 
-  let get_intervals kind = 
+  let major_intervals = [ 0; 2; 4; 5; 7; 9; 11 ]
+  let minor_intervals = [ 0; 2; 3; 5; 7; 8; 10 ]
+  let chromatic_intervals = [ 0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11 ]
+
+  let get_intervals kind =
     match kind with
-    | Major -> major_scale
-    | Minor -> minor_scale
-    | Chromatic -> chromatic_scale
+    | Major -> major_intervals
+    | Minor -> minor_intervals
+    | Chromatic -> chromatic_intervals
 
-  let make key kind = 
-    let key = Note.of_name key 4 in 
-    let notes = Note.transpose_notes key (get_intervals kind) in 
-    {
-      key;
-      kind;
-      notes
-    }
+  let make_of_string (key : string) (intervals : int list) =
+    let root = Note.of_name key 4 in
+    let notes =
+      List.map
+        (fun interval ->
+          Note.transpose ~scale_position:(Some interval) root interval)
+        intervals
+    in
+    { key; root; intervals; notes }
+
+  let make_of_int ?(octave = 4) (key : int) (intervals : int list) =
+    let root = Note.of_number key octave in
+    let notes =
+      List.map
+        (fun interval ->
+          Note.transpose ~scale_position:(Some interval) root interval)
+        intervals
+    in
+    { key = Note.notes.(key); root; intervals; notes }
+
+  let make_big_scale scale lo ho =
+    let rec go_up octave finish notes =
+      let curr_octave_scale =
+        make_of_int ~octave scale.root.pitch major_intervals
+      in
+      let new_notes =
+        List.map
+          (fun (note : Note.t) -> note.pitch + (note.octave * 12))
+          curr_octave_scale.notes
+      in
+      match octave = finish with
+      | true -> List.concat (new_notes :: notes)
+      | false -> go_up (octave - 1) finish (new_notes :: notes)
+    in
+    go_up ho lo []
+
+  let get_path scale (start_note : Note.t) (end_note : Note.t) : int list =
+    let start_pos = start_note.pitch + (start_note.octave * 12) in
+    let end_pos = end_note.pitch + (end_note.octave * 12) in
+    if start_pos = end_pos then [ start_pos ]
+    else
+      let lower, lower_pos, upper, upper_pos =
+        if start_pos < end_pos then (start_note, start_pos, end_note, end_pos)
+        else (end_note, end_pos, start_note, start_pos)
+      in
+      let big_scale = make_big_scale scale lower.octave upper.octave in
+      let result = [ lower_pos ] in
+      let rec find_bigger curr notes result =
+        match notes with
+        | hd :: tl -> (
+            match hd >= upper_pos with
+            | true -> List.rev (upper_pos :: result)
+            | false -> (
+                match curr < hd with
+                | true -> find_bigger hd tl (hd :: result)
+                | false -> find_bigger curr tl result))
+        | [] -> List.rev (upper_pos :: result)
+      in
+      find_bigger lower_pos big_scale result
 
   (* Gives the note after the current note thats diatonic *)
-  let succ (note: Note.t) scale = 
-    let next_root = {(List.hd scale.notes) with octave = note.octave + 1} in 
-    if note.pitch = 11 then next_root else
-    let rec find (note: Note.t) (notes: Note.t list) = 
-      match notes with 
+  let succ (note : Note.t) scale =
+    let next_root = { (List.hd scale.notes) with octave = note.octave + 1 } in
+    if note.pitch = 11 then next_root
+    else
+      let rec find (note : Note.t) (notes : Note.t list) =
+        match notes with
         | [] -> raise (invalid_arg "scale has invalid notes")
-        | [hd] -> if note.pitch < hd.pitch then hd else next_root
-        | hd::(next_hd::_ as tl) ->
-          if note.pitch < hd.pitch then find note tl 
-          else if note.pitch == hd.pitch then next_hd
-          else List.hd tl
-        in
-    find note scale.notes
+        | [ hd ] -> if note.pitch < hd.pitch then hd else next_root
+        | hd :: (next_hd :: _ as tl) ->
+            if note.pitch < hd.pitch then find note tl
+            else if note.pitch == hd.pitch then next_hd
+            else List.hd tl
+      in
+      find note scale.notes
 
   (* Gives the previous note in the current scale *)
-  let pred (note: Note.t) scale = 
-    let prev_root = {(List.hd scale.notes) with octave = note.octave - 1} in 
-    let notes = List.rev scale.notes in 
-    if note.pitch = 0 then prev_root else
-    let rec find (note: Note.t) (notes: Note.t list) = 
-      match notes with 
+  let pred (note : Note.t) scale =
+    let prev_root = { (List.hd scale.notes) with octave = note.octave - 1 } in
+    let notes = List.rev scale.notes in
+    if note.pitch = 0 then prev_root
+    else
+      let rec find (note : Note.t) (notes : Note.t list) =
+        match notes with
         | [] -> raise (invalid_arg "scale has invalid notes")
-        | [hd] -> if note.pitch > hd.pitch then hd else prev_root
-        | hd::(next_hd::_ as tl) ->
-          if note.pitch > hd.pitch then find note tl 
-          else if note.pitch == hd.pitch then next_hd
-          else List.hd tl
-        in
-    find note notes
-  
-
-
-    
+        | [ hd ] -> if note.pitch > hd.pitch then hd else prev_root
+        | hd :: (next_hd :: _ as tl) ->
+            if note.pitch > hd.pitch then find note tl
+            else if note.pitch == hd.pitch then next_hd
+            else List.hd tl
+      in
+      find note notes
 end
-    
-module Solfege = struct
-  type scale = Major | Minor | Chromatic
-  type note = Do | Ra | Re | Me | Mi | Fa | Fi | Sol | Le | La | Te | Ti
-  type t = note
-
-  (* let of_note (key: Note.t) (note: Note.t) *)
-  (*   match note with *)
-  (*     |  *)
-
-
-end
-
-module Progression = struct
-  type cadence = Authentic | Plagal | TwoFiveOne
-
-end
-
-(* This assumes the target is diatonic to key *)
-let get_path (from: Note.t) (target: Note.t) (key: Scale.t) : Note.t list = 
-  (* neg from < target *)
-  let rec march ?(path=[]) curr target mover  = 
-    match curr = target with
-    | true -> List.rev (target::path)
-    | false -> march ~path:(curr::path) (mover curr key) target mover 
-  in
-
-  match Note.compare from target with
-  | -1 -> march from target Scale.succ
-  | 0 -> [target]
-  | 1 -> march from target Scale.pred
-  | _ -> raise (failwith "Note.compare should never return anything but -1, 0, or 1")
-
-  
-
-
-
-
-
-
-
