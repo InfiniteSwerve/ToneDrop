@@ -1,0 +1,463 @@
+# dune build --watch
+# OCAMLPARAM: unset
+# Shared cache: disabled
+# Workspace root: /home/thetis/Code/melange-blog
+# Auto-detected concurrency: 24
+# Attempted to add watch to non-existent directory /home/thetis/.nix-profile.
+# Attempted to add watch to non-existent directory /home/thetis/.nix-profile.
+$ /nix/store/f7c1l1s6bss3ssn3v1bbsj81cgfz490g-ocaml+flambda-5.1.0/bin/ocamlc.opt -config > /tmp/nix-shell.7GRvNO/dune_932fc0_output
+# Dune context:
+#  { name = "default"
+#  ; kind = "default"
+#  ; profile = Dev
+#  ; merlin = true
+#  ; for_host = None
+#  ; fdo_target_exe = None
+#  ; build_dir = In_build_dir "default"
+#  ; ocaml_bin =
+#      External
+#        "/nix/store/f7c1l1s6bss3ssn3v1bbsj81cgfz490g-ocaml+flambda-5.1.0/bin"
+#  ; ocaml =
+#      Ok
+#        External
+#          "/nix/store/f7c1l1s6bss3ssn3v1bbsj81cgfz490g-ocaml+flambda-5.1.0/bin/ocaml"
+#  ; ocamlc =
+#      External
+#        "/nix/store/f7c1l1s6bss3ssn3v1bbsj81cgfz490g-ocaml+flambda-5.1.0/bin/ocamlc.opt"
+#  ; ocamlopt =
+#      Ok
+#        External
+#          "/nix/store/f7c1l1s6bss3ssn3v1bbsj81cgfz490g-ocaml+flambda-5.1.0/bin/ocamlopt.opt"
+#  ; ocamldep =
+#      Ok
+#        External
+#          "/nix/store/f7c1l1s6bss3ssn3v1bbsj81cgfz490g-ocaml+flambda-5.1.0/bin/ocamldep.opt"
+#  ; ocamlmklib =
+#      Ok
+#        External
+#          "/nix/store/f7c1l1s6bss3ssn3v1bbsj81cgfz490g-ocaml+flambda-5.1.0/bin/ocamlmklib"
+#  ; installed_env =
+#      map
+#        { "INSIDE_DUNE" : "/home/thetis/Code/melange-blog/_build/default"
+#        ; "OCAML_COLOR" : "always"
+#        ; "OPAMCOLOR" : "always"
+#        }
+#  ; findlib_paths =
+#      [ External
+#          "/nix/store/41729x7i6mfbqzh3m3qifsvp2y6l4s3s-dune-3.11.1/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/asdmzx98ld8fb7i2wzmjvnw4zp1wyryq-ocaml5.1.0-findlib-1.9.6/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/x2l36cf8xw2gvb5dnql3nyin5x13zhnv-ocaml5.1.0-ocaml-lsp-server-1.16.2/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/21ir58i0b44rxifhf2hw7z76ncarnfi5-ocaml5.1.0-dune-build-info-3.11.1/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/y081pj3zppwfhycnmix6mljn4qiy9llq-ocaml5.1.0-pp-1.2.0/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/z2f9kx4shffz4mfds66p2ya0z05k9vi7-cmdliner-1.2.0/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/6134zhfip02d1hl527p0gpzbnjk0677q-ocaml5.1.0-ppxlib-0.30.0/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/hd50jlri7gxs65gav2mrb58dd486zk61-ocaml5.1.0-ocaml-compiler-libs-0.12.4/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/2c69d298121nqn00pbwz12qpzbl4n190-ocaml5.1.0-ppx_derivers-1.2.1/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/ydnr2ys2n2i2771g3i7rffjvhiq1w5ni-ocaml5.1.0-sexplib0-0.16.0/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/j1wzl5i758177ahw2iy6kdsr9msid8la-ocaml5.1.0-stdlib-shims-0.3.0/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/xgdknikij0hkmpxfk3mg6jv619zbpfc7-ocaml5.1.0-menhirLib-20230608/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/v305cy1778alxw1ic6136bb8y8iffkqc-ocaml5.1.0-reason-3.10.0/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/bljj21vzfcdf55x33zz4qjm142hgwbpq-ocaml5.1.0-menhirSdk-20230608/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/lm1c4d9dr8rwiqhl56ixy097n0bsf4sd-ocaml5.1.0-fix-20220121/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/6d3x7av4arvdhirzhsxqix1d7b82rrg8-ocaml5.1.0-merlin-extend-0.6/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/xyvsy305lzsxgll9d8ghfnq3grihkd40-ocaml5.1.0-reason-react-n-a/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/kila1lp9nhc0h2kiyx8yvcbzdvsz9wcm-ocaml5.1.0-reason-react-ppx-n-a/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/xllp7q7yi85cj3j6lrk7kbgpclr5ghw5-ocaml5.1.0-alcotest-1.7.0/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/dfab1m61wb7l0hyrlr0fpnhlvf7a8lrp-ocaml5.1.0-astring-0.8.5/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/40ygaxfn0qma5pp42hfm4xk5lhcjkpir-ocaml5.1.0-fmt-0.9.0/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/vrbv69j444jvg03sy5nxac1ai9y3qxyi-ocaml5.1.0-re-1.11.0/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/aqnwdza9flpvavsjazhwz54synmj53j0-ocaml5.1.0-seq-0.1/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/f7v118pvqvxd3mkc6bcviahkxqvcp3wy-ocaml5.1.0-uutf-1.0.3/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/b7cgyhc09yqzs33lk201415iv3mrbcd6-ocaml5.1.0-uchar-0.0.2/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/vhji3zxyl83sd7k7dkqmppayn77rfidy-ocaml5.1.0-ocamlformat-0.26.1/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/41729x7i6mfbqzh3m3qifsvp2y6l4s3s-dune-3.11.1/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/asdmzx98ld8fb7i2wzmjvnw4zp1wyryq-ocaml5.1.0-findlib-1.9.6/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/x2l36cf8xw2gvb5dnql3nyin5x13zhnv-ocaml5.1.0-ocaml-lsp-server-1.16.2/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/21ir58i0b44rxifhf2hw7z76ncarnfi5-ocaml5.1.0-dune-build-info-3.11.1/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/y081pj3zppwfhycnmix6mljn4qiy9llq-ocaml5.1.0-pp-1.2.0/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/z2f9kx4shffz4mfds66p2ya0z05k9vi7-cmdliner-1.2.0/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/6134zhfip02d1hl527p0gpzbnjk0677q-ocaml5.1.0-ppxlib-0.30.0/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/hd50jlri7gxs65gav2mrb58dd486zk61-ocaml5.1.0-ocaml-compiler-libs-0.12.4/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/2c69d298121nqn00pbwz12qpzbl4n190-ocaml5.1.0-ppx_derivers-1.2.1/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/ydnr2ys2n2i2771g3i7rffjvhiq1w5ni-ocaml5.1.0-sexplib0-0.16.0/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/j1wzl5i758177ahw2iy6kdsr9msid8la-ocaml5.1.0-stdlib-shims-0.3.0/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/xgdknikij0hkmpxfk3mg6jv619zbpfc7-ocaml5.1.0-menhirLib-20230608/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/v305cy1778alxw1ic6136bb8y8iffkqc-ocaml5.1.0-reason-3.10.0/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/bljj21vzfcdf55x33zz4qjm142hgwbpq-ocaml5.1.0-menhirSdk-20230608/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/lm1c4d9dr8rwiqhl56ixy097n0bsf4sd-ocaml5.1.0-fix-20220121/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/6d3x7av4arvdhirzhsxqix1d7b82rrg8-ocaml5.1.0-merlin-extend-0.6/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/xyvsy305lzsxgll9d8ghfnq3grihkd40-ocaml5.1.0-reason-react-n-a/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/kila1lp9nhc0h2kiyx8yvcbzdvsz9wcm-ocaml5.1.0-reason-react-ppx-n-a/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/xllp7q7yi85cj3j6lrk7kbgpclr5ghw5-ocaml5.1.0-alcotest-1.7.0/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/dfab1m61wb7l0hyrlr0fpnhlvf7a8lrp-ocaml5.1.0-astring-0.8.5/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/40ygaxfn0qma5pp42hfm4xk5lhcjkpir-ocaml5.1.0-fmt-0.9.0/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/vrbv69j444jvg03sy5nxac1ai9y3qxyi-ocaml5.1.0-re-1.11.0/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/aqnwdza9flpvavsjazhwz54synmj53j0-ocaml5.1.0-seq-0.1/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/f7v118pvqvxd3mkc6bcviahkxqvcp3wy-ocaml5.1.0-uutf-1.0.3/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/b7cgyhc09yqzs33lk201415iv3mrbcd6-ocaml5.1.0-uchar-0.0.2/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/vhji3zxyl83sd7k7dkqmppayn77rfidy-ocaml5.1.0-ocamlformat-0.26.1/lib/ocaml/5.1.0/site-lib/"
+#      ; External
+#          "/nix/store/f7c1l1s6bss3ssn3v1bbsj81cgfz490g-ocaml+flambda-5.1.0/lib/ocaml"
+#      ; External "/home/thetis/.opam/default/lib"
+#      ]
+#  ; ocaml_config =
+#      { version = "5.1.1+dev0-2023-09-14"
+#      ; standard_library_default =
+#          "/nix/store/f7c1l1s6bss3ssn3v1bbsj81cgfz490g-ocaml+flambda-5.1.0/lib/ocaml"
+#      ; standard_library =
+#          "/nix/store/f7c1l1s6bss3ssn3v1bbsj81cgfz490g-ocaml+flambda-5.1.0/lib/ocaml"
+#      ; standard_runtime = "the_standard_runtime_variable_was_deleted"
+#      ; ccomp_type = "cc"
+#      ; c_compiler = "gcc"
+#      ; ocamlc_cflags =
+#          [ "-O2"; "-fno-strict-aliasing"; "-fwrapv"; "-pthread"; "-fPIC" ]
+#      ; ocamlc_cppflags = [ "-D_FILE_OFFSET_BITS=64" ]
+#      ; ocamlopt_cflags =
+#          [ "-O2"; "-fno-strict-aliasing"; "-fwrapv"; "-pthread"; "-fPIC" ]
+#      ; ocamlopt_cppflags = [ "-D_FILE_OFFSET_BITS=64" ]
+#      ; bytecomp_c_compiler =
+#          [ "gcc"
+#          ; "-O2"
+#          ; "-fno-strict-aliasing"
+#          ; "-fwrapv"
+#          ; "-pthread"
+#          ; "-fPIC"
+#          ; "-D_FILE_OFFSET_BITS=64"
+#          ]
+#      ; bytecomp_c_libraries = [ "-lm"; "-lpthread" ]
+#      ; native_c_compiler =
+#          [ "gcc"
+#          ; "-O2"
+#          ; "-fno-strict-aliasing"
+#          ; "-fwrapv"
+#          ; "-pthread"
+#          ; "-fPIC"
+#          ; "-D_FILE_OFFSET_BITS=64"
+#          ]
+#      ; native_c_libraries = [ "-lm"; "-lpthread" ]
+#      ; native_pack_linker = [ "ld"; "-r"; "-o" ]
+#      ; cc_profile = []
+#      ; architecture = "amd64"
+#      ; model = "default"
+#      ; int_size = 63
+#      ; word_size = 64
+#      ; system = "linux"
+#      ; asm = [ "as" ]
+#      ; asm_cfi_supported = true
+#      ; with_frame_pointers = false
+#      ; ext_exe = ""
+#      ; ext_obj = ".o"
+#      ; ext_asm = ".s"
+#      ; ext_lib = ".a"
+#      ; ext_dll = ".so"
+#      ; os_type = "Unix"
+#      ; default_executable_name = "a.out"
+#      ; systhread_supported = true
+#      ; host = "x86_64-unknown-linux-gnu"
+#      ; target = "x86_64-unknown-linux-gnu"
+#      ; profiling = false
+#      ; flambda = true
+#      ; spacetime = false
+#      ; safe_string = true
+#      ; exec_magic_number = "Caml1999X033"
+#      ; cmi_magic_number = "Caml1999I033"
+#      ; cmo_magic_number = "Caml1999O033"
+#      ; cma_magic_number = "Caml1999A033"
+#      ; cmx_magic_number = "Caml1999y033"
+#      ; cmxa_magic_number = "Caml1999z033"
+#      ; ast_impl_magic_number = "Caml1999M033"
+#      ; ast_intf_magic_number = "Caml1999N033"
+#      ; cmxs_magic_number = "Caml1999D033"
+#      ; cmt_magic_number = "Caml1999T033"
+#      ; natdynlink_supported = true
+#      ; supports_shared_libraries = true
+#      ; windows_unicode = false
+#      }
+#  ; instrument_with = []
+#  }
+# Attempted to add watch to non-existent directory /home/thetis/.nix-profile.
+# Attempted to add watch to non-existent directory /home/thetis/.nix-profile.
+# Attempted to add watch to non-existent directory /home/thetis/.nix-profile.
+$ (cd _build/default && /nix/store/f7c1l1s6bss3ssn3v1bbsj81cgfz490g-ocaml+flambda-5.1.0/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -a -o src/music/music.cma src/music/.music.objs/byte/music.cmo)
+$ /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc --where > /tmp/nix-shell.7GRvNO/dune_b328fe_output
+# Attempted to add watch to non-existent directory /home/thetis/.nix-profile.
+$ (cd _build/default && /nix/store/f7c1l1s6bss3ssn3v1bbsj81cgfz490g-ocaml+flambda-5.1.0/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -shared -linkall -I src/music -o src/music/music.cmxs src/music/music.cmxa)
+$ (cd _build/.sandbox/73d83da562f581a74a1db0b96ff3cf2e/default && /nix/store/v305cy1778alxw1ic6136bb8y8iffkqc-ocaml5.1.0-reason-3.10.0/bin/refmt --print binary src/ReactApp.re) > _build/.sandbox/73d83da562f581a74a1db0b96ff3cf2e/default/src/ReactApp.re.ml
+$ (cd _build/.sandbox/3713325550a099bd3e7eac5f89b22e76/default && .ppx/9aa86304e1964cfc127b38093f18cb83/ppx.exe -o src/ReactApp.re.pp.ml --impl src/ReactApp.re.ml -corrected-suffix .ppx-corrected -diff-cmd - -dump-ast)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/music/.music.objs/melange --bs-stop-after-cmj --bs-package-output src/music --bs-module-name music -no-alias-deps -opaque -o src/music/.music.objs/melange/music.cmj -c -impl src/music/music.ml)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -I src/music/.music.objs/melange --bs-module-type commonjs -o src/node/src/music/music.js src/music/.music.objs/melange/music.cmj)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -I src/music/.music.objs/melange --bs-module-type es6 -o src/output/src/music/music.js src/music/.music.objs/melange/music.cmj)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/synth/.synth.objs/melange -I src/music/.music.objs/melange --bs-stop-after-cmj --bs-package-output src/synth --bs-module-name synth -no-alias-deps -opaque -o src/synth/.synth.objs/melange/synth.cmj -c -impl src/synth/synth.pp.ml)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -I src/synth/.synth.objs/melange -I src/music/.music.objs/melange --bs-module-type commonjs -o src/node/src/synth/synth.js src/synth/.synth.objs/melange/synth.cmj)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -I src/synth/.synth.objs/melange -I src/music/.music.objs/melange --bs-module-type es6 -o src/output/src/synth/synth.js src/synth/.synth.objs/melange/synth.cmj)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.node.mobjs/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/belt/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/js/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/melange -I src/music/.music.objs/melange -I src/synth/.synth.objs/melange --bs-stop-after-cmj --bs-package-output src --bs-module-name hello -no-alias-deps -opaque -o src/.node.mobjs/melange/melange__Hello.cmj -c -impl src/hello.pp.ml)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -I src/.node.mobjs/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/belt/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/js/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/melange -I src/music/.music.objs/melange -I src/synth/.synth.objs/melange --bs-module-type commonjs -o src/node/src/hello.js src/.node.mobjs/melange/melange__Hello.cmj)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.output.mobjs/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/belt/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/dom/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/js/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/melange -I /nix/store/xyvsy305lzsxgll9d8ghfnq3grihkd40-ocaml5.1.0-reason-react-n-a/lib/ocaml/5.1.0/site-lib/reason-react/melange -I src/music/.music.objs/melange -I src/synth/.synth.objs/melange --bs-stop-after-cmj --bs-package-output src --bs-module-name ReactApp -no-alias-deps -opaque -o src/.output.mobjs/melange/melange__ReactApp.cmj -c -impl src/ReactApp.re.pp.ml)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -I src/.output.mobjs/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/belt/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/dom/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/js/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/melange -I /nix/store/xyvsy305lzsxgll9d8ghfnq3grihkd40-ocaml5.1.0-reason-react-n-a/lib/ocaml/5.1.0/site-lib/reason-react/melange -I src/music/.music.objs/melange -I src/synth/.synth.objs/melange --bs-module-type es6 -o src/output/src/ReactApp.js src/.output.mobjs/melange/melange__ReactApp.cmj)
+$ (cd _build/.sandbox/79b0fe589ce452ce7145bb7df75accee/default && /nix/store/v305cy1778alxw1ic6136bb8y8iffkqc-ocaml5.1.0-reason-3.10.0/bin/refmt --print binary src/ReactApp.re) > _build/.sandbox/79b0fe589ce452ce7145bb7df75accee/default/src/ReactApp.re.ml
+$ (cd _build/.sandbox/00c4bb79f7e6a10b563924a396dcb635/default && .ppx/9aa86304e1964cfc127b38093f18cb83/ppx.exe -o src/ReactApp.re.pp.ml --impl src/ReactApp.re.ml -corrected-suffix .ppx-corrected -diff-cmd - -dump-ast)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.output.mobjs/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/belt/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/dom/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/js/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/melange -I /nix/store/xyvsy305lzsxgll9d8ghfnq3grihkd40-ocaml5.1.0-reason-react-n-a/lib/ocaml/5.1.0/site-lib/reason-react/melange -I src/music/.music.objs/melange -I src/synth/.synth.objs/melange --bs-stop-after-cmj --bs-package-output src --bs-module-name ReactApp -no-alias-deps -opaque -o src/.output.mobjs/melange/melange__ReactApp.cmj -c -impl src/ReactApp.re.pp.ml)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/music/.music.objs/melange --bs-stop-after-cmj --bs-package-output src/music --bs-module-name music -no-alias-deps -opaque -o src/music/.music.objs/melange/music.cmj -c -impl src/music/music.ml)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/synth/.synth.objs/melange -I src/music/.music.objs/melange --bs-stop-after-cmj --bs-package-output src/synth --bs-module-name synth -no-alias-deps -opaque -o src/synth/.synth.objs/melange/synth.cmj -c -impl src/synth/synth.pp.ml)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -I src/synth/.synth.objs/melange -I src/music/.music.objs/melange --bs-module-type es6 -o src/output/src/synth/synth.js src/synth/.synth.objs/melange/synth.cmj)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -I src/music/.music.objs/melange --bs-module-type es6 -o src/output/src/music/music.js src/music/.music.objs/melange/music.cmj)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.node.mobjs/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/belt/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/js/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/melange -I src/music/.music.objs/melange -I src/synth/.synth.objs/melange --bs-stop-after-cmj --bs-package-output src --bs-module-name hello -no-alias-deps -opaque -o src/.node.mobjs/melange/melange__Hello.cmj -c -impl src/hello.pp.ml)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -I src/synth/.synth.objs/melange -I src/music/.music.objs/melange --bs-module-type commonjs -o src/node/src/synth/synth.js src/synth/.synth.objs/melange/synth.cmj)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -I src/music/.music.objs/melange --bs-module-type commonjs -o src/node/src/music/music.js src/music/.music.objs/melange/music.cmj)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -I src/.node.mobjs/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/belt/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/js/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/melange -I src/music/.music.objs/melange -I src/synth/.synth.objs/melange --bs-module-type commonjs -o src/node/src/hello.js src/.node.mobjs/melange/melange__Hello.cmj)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.output.mobjs/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/belt/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/dom/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/js/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/melange -I /nix/store/xyvsy305lzsxgll9d8ghfnq3grihkd40-ocaml5.1.0-reason-react-n-a/lib/ocaml/5.1.0/site-lib/reason-react/melange -I src/music/.music.objs/melange -I src/synth/.synth.objs/melange --bs-stop-after-cmj --bs-package-output src --bs-module-name ReactApp -no-alias-deps -opaque -o src/.output.mobjs/melange/melange__ReactApp.cmj -c -impl src/ReactApp.re.pp.ml)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -I src/.output.mobjs/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/belt/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/dom/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/js/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/melange -I /nix/store/xyvsy305lzsxgll9d8ghfnq3grihkd40-ocaml5.1.0-reason-react-n-a/lib/ocaml/5.1.0/site-lib/reason-react/melange -I src/music/.music.objs/melange -I src/synth/.synth.objs/melange --bs-module-type es6 -o src/output/src/ReactApp.js src/.output.mobjs/melange/melange__ReactApp.cmj)
+$ (cd _build/default && /nix/store/f7c1l1s6bss3ssn3v1bbsj81cgfz490g-ocaml+flambda-5.1.0/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/music/.music.objs/byte -no-alias-deps -opaque -o src/music/.music.objs/byte/music.cmo -c -impl src/music/music.ml)
+$ (cd _build/default && /nix/store/f7c1l1s6bss3ssn3v1bbsj81cgfz490g-ocaml+flambda-5.1.0/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -a -o src/music/music.cma src/music/.music.objs/byte/music.cmo)
+$ (cd _build/default && /nix/store/f7c1l1s6bss3ssn3v1bbsj81cgfz490g-ocaml+flambda-5.1.0/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/tests/.test_music.eobjs/byte -I /nix/store/40ygaxfn0qma5pp42hfm4xk5lhcjkpir-ocaml5.1.0-fmt-0.9.0/lib/ocaml/5.1.0/site-lib/fmt -I /nix/store/aqnwdza9flpvavsjazhwz54synmj53j0-ocaml5.1.0-seq-0.1/lib/ocaml/5.1.0/site-lib/seq -I /nix/store/dfab1m61wb7l0hyrlr0fpnhlvf7a8lrp-ocaml5.1.0-astring-0.8.5/lib/ocaml/5.1.0/site-lib/astring -I /nix/store/f7c1l1s6bss3ssn3v1bbsj81cgfz490g-ocaml+flambda-5.1.0/lib/ocaml/unix -I /nix/store/f7v118pvqvxd3mkc6bcviahkxqvcp3wy-ocaml5.1.0-uutf-1.0.3/lib/ocaml/5.1.0/site-lib/uutf -I /nix/store/j1wzl5i758177ahw2iy6kdsr9msid8la-ocaml5.1.0-stdlib-shims-0.3.0/lib/ocaml/5.1.0/site-lib/stdlib-shims -I /nix/store/vrbv69j444jvg03sy5nxac1ai9y3qxyi-ocaml5.1.0-re-1.11.0/lib/ocaml/5.1.0/site-lib/re -I /nix/store/xllp7q7yi85cj3j6lrk7kbgpclr5ghw5-ocaml5.1.0-alcotest-1.7.0/lib/ocaml/5.1.0/site-lib/alcotest -I /nix/store/xllp7q7yi85cj3j6lrk7kbgpclr5ghw5-ocaml5.1.0-alcotest-1.7.0/lib/ocaml/5.1.0/site-lib/alcotest/engine -I /nix/store/xllp7q7yi85cj3j6lrk7kbgpclr5ghw5-ocaml5.1.0-alcotest-1.7.0/lib/ocaml/5.1.0/site-lib/alcotest/stdlib_ext -I /nix/store/z2f9kx4shffz4mfds66p2ya0z05k9vi7-cmdliner-1.2.0/lib/ocaml/5.1.0/site-lib/cmdliner -I src/music/.music.objs/byte -no-alias-deps -opaque -o src/tests/.test_music.eobjs/byte/dune__exe__Test_music.cmi -c -intf src/tests/test_music.mli)
+$ (cd _build/default && /nix/store/f7c1l1s6bss3ssn3v1bbsj81cgfz490g-ocaml+flambda-5.1.0/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I src/music/.music.objs/byte -I src/music/.music.objs/native -intf-suffix .ml -no-alias-deps -opaque -o src/music/.music.objs/native/music.cmx -c -impl src/music/music.ml)
+$ (cd _build/default && /nix/store/f7c1l1s6bss3ssn3v1bbsj81cgfz490g-ocaml+flambda-5.1.0/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I src/tests/.test_music.eobjs/byte -I src/tests/.test_music.eobjs/native -I /nix/store/40ygaxfn0qma5pp42hfm4xk5lhcjkpir-ocaml5.1.0-fmt-0.9.0/lib/ocaml/5.1.0/site-lib/fmt -I /nix/store/aqnwdza9flpvavsjazhwz54synmj53j0-ocaml5.1.0-seq-0.1/lib/ocaml/5.1.0/site-lib/seq -I /nix/store/dfab1m61wb7l0hyrlr0fpnhlvf7a8lrp-ocaml5.1.0-astring-0.8.5/lib/ocaml/5.1.0/site-lib/astring -I /nix/store/f7c1l1s6bss3ssn3v1bbsj81cgfz490g-ocaml+flambda-5.1.0/lib/ocaml/unix -I /nix/store/f7v118pvqvxd3mkc6bcviahkxqvcp3wy-ocaml5.1.0-uutf-1.0.3/lib/ocaml/5.1.0/site-lib/uutf -I /nix/store/j1wzl5i758177ahw2iy6kdsr9msid8la-ocaml5.1.0-stdlib-shims-0.3.0/lib/ocaml/5.1.0/site-lib/stdlib-shims -I /nix/store/vrbv69j444jvg03sy5nxac1ai9y3qxyi-ocaml5.1.0-re-1.11.0/lib/ocaml/5.1.0/site-lib/re -I /nix/store/xllp7q7yi85cj3j6lrk7kbgpclr5ghw5-ocaml5.1.0-alcotest-1.7.0/lib/ocaml/5.1.0/site-lib/alcotest -I /nix/store/xllp7q7yi85cj3j6lrk7kbgpclr5ghw5-ocaml5.1.0-alcotest-1.7.0/lib/ocaml/5.1.0/site-lib/alcotest/engine -I /nix/store/xllp7q7yi85cj3j6lrk7kbgpclr5ghw5-ocaml5.1.0-alcotest-1.7.0/lib/ocaml/5.1.0/site-lib/alcotest/stdlib_ext -I /nix/store/z2f9kx4shffz4mfds66p2ya0z05k9vi7-cmdliner-1.2.0/lib/ocaml/5.1.0/site-lib/cmdliner -I src/music/.music.objs/byte -I src/music/.music.objs/native -intf-suffix .ml -no-alias-deps -opaque -o src/tests/.test_music.eobjs/native/dune__exe__Test_music.cmx -c -impl src/tests/test_music.ml)
+$ (cd _build/default && /nix/store/f7c1l1s6bss3ssn3v1bbsj81cgfz490g-ocaml+flambda-5.1.0/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -a -o src/music/music.cmxa src/music/.music.objs/native/music.cmx)
+$ (cd _build/default && /nix/store/f7c1l1s6bss3ssn3v1bbsj81cgfz490g-ocaml+flambda-5.1.0/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -shared -linkall -I src/music -o src/music/music.cmxs src/music/music.cmxa)
+$ (cd _build/default && /nix/store/f7c1l1s6bss3ssn3v1bbsj81cgfz490g-ocaml+flambda-5.1.0/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -o src/tests/test_music.exe src/music/music.cmxa /nix/store/dfab1m61wb7l0hyrlr0fpnhlvf7a8lrp-ocaml5.1.0-astring-0.8.5/lib/ocaml/5.1.0/site-lib/astring/astring.cmxa /nix/store/z2f9kx4shffz4mfds66p2ya0z05k9vi7-cmdliner-1.2.0/lib/ocaml/5.1.0/site-lib/cmdliner/cmdliner.cmxa /nix/store/f7v118pvqvxd3mkc6bcviahkxqvcp3wy-ocaml5.1.0-uutf-1.0.3/lib/ocaml/5.1.0/site-lib/uutf/uutf.cmxa /nix/store/xllp7q7yi85cj3j6lrk7kbgpclr5ghw5-ocaml5.1.0-alcotest-1.7.0/lib/ocaml/5.1.0/site-lib/alcotest/stdlib_ext/alcotest_stdlib_ext.cmxa /nix/store/40ygaxfn0qma5pp42hfm4xk5lhcjkpir-ocaml5.1.0-fmt-0.9.0/lib/ocaml/5.1.0/site-lib/fmt/fmt.cmxa /nix/store/40ygaxfn0qma5pp42hfm4xk5lhcjkpir-ocaml5.1.0-fmt-0.9.0/lib/ocaml/5.1.0/site-lib/fmt/fmt_cli.cmxa /nix/store/vrbv69j444jvg03sy5nxac1ai9y3qxyi-ocaml5.1.0-re-1.11.0/lib/ocaml/5.1.0/site-lib/re/re.cmxa /nix/store/j1wzl5i758177ahw2iy6kdsr9msid8la-ocaml5.1.0-stdlib-shims-0.3.0/lib/ocaml/5.1.0/site-lib/stdlib-shims/stdlib_shims.cmxa /nix/store/xllp7q7yi85cj3j6lrk7kbgpclr5ghw5-ocaml5.1.0-alcotest-1.7.0/lib/ocaml/5.1.0/site-lib/alcotest/engine/alcotest_engine.cmxa /nix/store/f7c1l1s6bss3ssn3v1bbsj81cgfz490g-ocaml+flambda-5.1.0/lib/ocaml/unix/unix.cmxa /nix/store/40ygaxfn0qma5pp42hfm4xk5lhcjkpir-ocaml5.1.0-fmt-0.9.0/lib/ocaml/5.1.0/site-lib/fmt/fmt_tty.cmxa /nix/store/xllp7q7yi85cj3j6lrk7kbgpclr5ghw5-ocaml5.1.0-alcotest-1.7.0/lib/ocaml/5.1.0/site-lib/alcotest/alcotest.cmxa -I /nix/store/xllp7q7yi85cj3j6lrk7kbgpclr5ghw5-ocaml5.1.0-alcotest-1.7.0/lib/ocaml/5.1.0/site-lib/alcotest src/tests/.test_music.eobjs/native/dune__exe__Test_music.cmx)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/music/.music.objs/melange --bs-stop-after-cmj --bs-package-output src/music --bs-module-name music -no-alias-deps -opaque -o src/music/.music.objs/melange/music.cmj -c -impl src/music/music.ml)
+> File "src/music/music.ml", line 170, characters 7-16:
+> 170 | module playStuff
+>              ^^^^^^^^^
+> Error: Syntax error
+[2]
+$ (cd _build/default && /nix/store/f7c1l1s6bss3ssn3v1bbsj81cgfz490g-ocaml+flambda-5.1.0/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/music/.music.objs/byte -no-alias-deps -opaque -o src/music/.music.objs/byte/music.cmo -c -impl src/music/music.ml)
+> File "src/music/music.ml", line 170, characters 7-16:
+> 170 | module playStuff
+>              ^^^^^^^^^
+> Error: Syntax error
+[2]
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/music/.music.objs/melange --bs-stop-after-cmj --bs-package-output src/music --bs-module-name music -no-alias-deps -opaque -o src/music/.music.objs/melange/music.cmj -c -impl src/music/music.ml)
+$ (cd _build/default && /nix/store/f7c1l1s6bss3ssn3v1bbsj81cgfz490g-ocaml+flambda-5.1.0/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/music/.music.objs/byte -no-alias-deps -opaque -o src/music/.music.objs/byte/music.cmo -c -impl src/music/music.ml)
+$ (cd _build/.sandbox/dd8ce0ca8f2dd634460757acc4fb30fc/default && .ppx/9b08511fbad9c15355a1e1f8e80934bc/ppx.exe --cookie 'library-name="synth"' -o src/synth/synth.pp.ml --impl src/synth/synth.ml -corrected-suffix .ppx-corrected -diff-cmd - -dump-ast)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/synth/.synth.objs/melange -I src/music/.music.objs/melange --bs-stop-after-cmj --bs-package-output src/synth --bs-module-name synth -no-alias-deps -opaque -o src/synth/.synth.objs/melange/synth.cmj -c -impl src/synth/synth.pp.ml)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -I src/synth/.synth.objs/melange -I src/music/.music.objs/melange --bs-module-type commonjs -o src/node/src/synth/synth.js src/synth/.synth.objs/melange/synth.cmj)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -I src/synth/.synth.objs/melange -I src/music/.music.objs/melange --bs-module-type es6 -o src/output/src/synth/synth.js src/synth/.synth.objs/melange/synth.cmj)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.node.mobjs/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/belt/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/js/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/melange -I src/music/.music.objs/melange -I src/synth/.synth.objs/melange --bs-stop-after-cmj --bs-package-output src --bs-module-name hello -no-alias-deps -opaque -o src/.node.mobjs/melange/melange__Hello.cmj -c -impl src/hello.pp.ml)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -I src/.node.mobjs/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/belt/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/js/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/melange -I src/music/.music.objs/melange -I src/synth/.synth.objs/melange --bs-module-type commonjs -o src/node/src/hello.js src/.node.mobjs/melange/melange__Hello.cmj)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.output.mobjs/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/belt/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/dom/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/js/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/melange -I /nix/store/xyvsy305lzsxgll9d8ghfnq3grihkd40-ocaml5.1.0-reason-react-n-a/lib/ocaml/5.1.0/site-lib/reason-react/melange -I src/music/.music.objs/melange -I src/synth/.synth.objs/melange --bs-stop-after-cmj --bs-package-output src --bs-module-name ReactApp -no-alias-deps -opaque -o src/.output.mobjs/melange/melange__ReactApp.cmj -c -impl src/ReactApp.re.pp.ml)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -I src/.output.mobjs/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/belt/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/dom/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/js/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/melange -I /nix/store/xyvsy305lzsxgll9d8ghfnq3grihkd40-ocaml5.1.0-reason-react-n-a/lib/ocaml/5.1.0/site-lib/reason-react/melange -I src/music/.music.objs/melange -I src/synth/.synth.objs/melange --bs-module-type es6 -o src/output/src/ReactApp.js src/.output.mobjs/melange/melange__ReactApp.cmj)
+$ (cd _build/.sandbox/2a3305c15a7dc5896c93ca174be10e63/default && .ppx/9b08511fbad9c15355a1e1f8e80934bc/ppx.exe --cookie 'library-name="synth"' -o src/synth/synth.pp.ml --impl src/synth/synth.ml -corrected-suffix .ppx-corrected -diff-cmd - -dump-ast)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/synth/.synth.objs/melange -I src/music/.music.objs/melange --bs-stop-after-cmj --bs-package-output src/synth --bs-module-name synth -no-alias-deps -opaque -o src/synth/.synth.objs/melange/synth.cmj -c -impl src/synth/synth.pp.ml)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.node.mobjs/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/belt/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/js/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/melange -I src/music/.music.objs/melange -I src/synth/.synth.objs/melange --bs-stop-after-cmj --bs-package-output src --bs-module-name hello -no-alias-deps -opaque -o src/.node.mobjs/melange/melange__Hello.cmj -c -impl src/hello.pp.ml)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.output.mobjs/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/belt/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/dom/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/js/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/melange -I /nix/store/xyvsy305lzsxgll9d8ghfnq3grihkd40-ocaml5.1.0-reason-react-n-a/lib/ocaml/5.1.0/site-lib/reason-react/melange -I src/music/.music.objs/melange -I src/synth/.synth.objs/melange --bs-stop-after-cmj --bs-package-output src --bs-module-name ReactApp -no-alias-deps -opaque -o src/.output.mobjs/melange/melange__ReactApp.cmj -c -impl src/ReactApp.re.pp.ml)
+$ (cd _build/.sandbox/c175dd4b36f62dd0655bf49da3f2537c/default && .ppx/9b08511fbad9c15355a1e1f8e80934bc/ppx.exe --cookie 'library-name="synth"' -o src/synth/synth.pp.ml --impl src/synth/synth.ml -corrected-suffix .ppx-corrected -diff-cmd - -dump-ast)
+> File "src/synth/synth.ml", line 33, characters 0-3:
+> 33 | end
+>      ^^^
+> Error: Syntax error
+[1]
+$ (cd _build/.sandbox/734c52774c8033f51f5d78cf33219b15/default && .ppx/9b08511fbad9c15355a1e1f8e80934bc/ppx.exe --cookie 'library-name="synth"' -o src/synth/synth.pp.ml --impl src/synth/synth.ml -corrected-suffix .ppx-corrected -diff-cmd - -dump-ast)
+> File "src/synth/synth.ml", line 33, characters 0-3:
+> 33 | end
+>      ^^^
+> Error: Syntax error
+[1]
+$ (cd _build/.sandbox/231c1995afd1477d6283cd157e817992/default && .ppx/9b08511fbad9c15355a1e1f8e80934bc/ppx.exe --cookie 'library-name="synth"' -o src/synth/synth.pp.ml --impl src/synth/synth.ml -corrected-suffix .ppx-corrected -diff-cmd - -dump-ast)
+> File "src/synth/synth.ml", line 33, characters 0-3:
+> 33 | end
+>      ^^^
+> Error: Syntax error
+[1]
+$ (cd _build/.sandbox/53422df1a73888e82a20a857c9baab1e/default && .ppx/9b08511fbad9c15355a1e1f8e80934bc/ppx.exe --cookie 'library-name="synth"' -o src/synth/synth.pp.ml --impl src/synth/synth.ml -corrected-suffix .ppx-corrected -diff-cmd - -dump-ast)
+> File "src/synth/synth.ml", line 35, characters 0-3:
+> 35 | end
+>      ^^^
+> Error: Syntax error
+[1]
+$ (cd _build/.sandbox/b66386c8d60e5e8da2572a7ff3d9dfb4/default && .ppx/9b08511fbad9c15355a1e1f8e80934bc/ppx.exe --cookie 'library-name="synth"' -o src/synth/synth.pp.ml --impl src/synth/synth.ml -corrected-suffix .ppx-corrected -diff-cmd - -dump-ast)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/synth/.synth.objs/melange -I src/music/.music.objs/melange --bs-stop-after-cmj --bs-package-output src/synth --bs-module-name synth -no-alias-deps -opaque -o src/synth/.synth.objs/melange/synth.cmj -c -impl src/synth/synth.pp.ml)
+> File "src/synth/synth.ml", line 31, characters 12-17:
+> 31 |   let chord synth root kind =
+>                  ^^^^^
+> Error (warning 27 [unused-var-strict]): unused variable synth.
+>
+> File "src/synth/synth.ml", line 32, characters 8-13:
+> 32 |     let chord = Chord.spell root kind in
+>              ^^^^^
+> Error (warning 26 [unused-var]): unused variable chord.
+[2]
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/music/.music.objs/melange --bs-stop-after-cmj --bs-package-output src/music --bs-module-name music -no-alias-deps -opaque -o src/music/.music.objs/melange/music.cmj -c -impl src/music/music.ml)
+> File "src/music/music.ml", line 78, characters 15-52:
+> 78 |     | Major -> Note.transpose_notes root major_notes
+>                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> Error: This expression has type Note.t list
+>        but an expression was expected of type int list
+>        Type Note.t is not compatible with type int
+[2]
+$ (cd _build/default && /nix/store/f7c1l1s6bss3ssn3v1bbsj81cgfz490g-ocaml+flambda-5.1.0/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/music/.music.objs/byte -no-alias-deps -opaque -o src/music/.music.objs/byte/music.cmo -c -impl src/music/music.ml)
+> File "src/music/music.ml", line 78, characters 15-52:
+> 78 |     | Major -> Note.transpose_notes root major_notes
+>                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> Error: This expression has type Note.t list
+>        but an expression was expected of type int list
+>        Type Note.t is not compatible with type int
+[2]
+$ (cd _build/.sandbox/c67c180ec9a32885711efe216ef23a38/default && .ppx/9b08511fbad9c15355a1e1f8e80934bc/ppx.exe --cookie 'library-name="synth"' -o src/synth/synth.pp.ml --impl src/synth/synth.ml -corrected-suffix .ppx-corrected -diff-cmd - -dump-ast)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/music/.music.objs/melange --bs-stop-after-cmj --bs-package-output src/music --bs-module-name music -no-alias-deps -opaque -o src/music/.music.objs/melange/music.cmj -c -impl src/music/music.ml)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/synth/.synth.objs/melange -I src/music/.music.objs/melange --bs-stop-after-cmj --bs-package-output src/synth --bs-module-name synth -no-alias-deps -opaque -o src/synth/.synth.objs/melange/synth.cmj -c -impl src/synth/synth.pp.ml)
+> File "src/synth/synth.ml", line 32, characters 8-13:
+> 32 |     let chord = Chord.spell root kind in
+>              ^^^^^
+> Error (warning 26 [unused-var]): unused variable chord.
+[2]
+$ (cd _build/default && /nix/store/f7c1l1s6bss3ssn3v1bbsj81cgfz490g-ocaml+flambda-5.1.0/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/music/.music.objs/byte -no-alias-deps -opaque -o src/music/.music.objs/byte/music.cmo -c -impl src/music/music.ml)
+$ (cd _build/default && /nix/store/f7c1l1s6bss3ssn3v1bbsj81cgfz490g-ocaml+flambda-5.1.0/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -a -o src/music/music.cma src/music/.music.objs/byte/music.cmo)
+$ (cd _build/default && /nix/store/f7c1l1s6bss3ssn3v1bbsj81cgfz490g-ocaml+flambda-5.1.0/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/tests/.test_music.eobjs/byte -I /nix/store/40ygaxfn0qma5pp42hfm4xk5lhcjkpir-ocaml5.1.0-fmt-0.9.0/lib/ocaml/5.1.0/site-lib/fmt -I /nix/store/aqnwdza9flpvavsjazhwz54synmj53j0-ocaml5.1.0-seq-0.1/lib/ocaml/5.1.0/site-lib/seq -I /nix/store/dfab1m61wb7l0hyrlr0fpnhlvf7a8lrp-ocaml5.1.0-astring-0.8.5/lib/ocaml/5.1.0/site-lib/astring -I /nix/store/f7c1l1s6bss3ssn3v1bbsj81cgfz490g-ocaml+flambda-5.1.0/lib/ocaml/unix -I /nix/store/f7v118pvqvxd3mkc6bcviahkxqvcp3wy-ocaml5.1.0-uutf-1.0.3/lib/ocaml/5.1.0/site-lib/uutf -I /nix/store/j1wzl5i758177ahw2iy6kdsr9msid8la-ocaml5.1.0-stdlib-shims-0.3.0/lib/ocaml/5.1.0/site-lib/stdlib-shims -I /nix/store/vrbv69j444jvg03sy5nxac1ai9y3qxyi-ocaml5.1.0-re-1.11.0/lib/ocaml/5.1.0/site-lib/re -I /nix/store/xllp7q7yi85cj3j6lrk7kbgpclr5ghw5-ocaml5.1.0-alcotest-1.7.0/lib/ocaml/5.1.0/site-lib/alcotest -I /nix/store/xllp7q7yi85cj3j6lrk7kbgpclr5ghw5-ocaml5.1.0-alcotest-1.7.0/lib/ocaml/5.1.0/site-lib/alcotest/engine -I /nix/store/xllp7q7yi85cj3j6lrk7kbgpclr5ghw5-ocaml5.1.0-alcotest-1.7.0/lib/ocaml/5.1.0/site-lib/alcotest/stdlib_ext -I /nix/store/z2f9kx4shffz4mfds66p2ya0z05k9vi7-cmdliner-1.2.0/lib/ocaml/5.1.0/site-lib/cmdliner -I src/music/.music.objs/byte -no-alias-deps -opaque -o src/tests/.test_music.eobjs/byte/dune__exe__Test_music.cmi -c -intf src/tests/test_music.mli)
+$ (cd _build/default && /nix/store/f7c1l1s6bss3ssn3v1bbsj81cgfz490g-ocaml+flambda-5.1.0/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I src/music/.music.objs/byte -I src/music/.music.objs/native -intf-suffix .ml -no-alias-deps -opaque -o src/music/.music.objs/native/music.cmx -c -impl src/music/music.ml)
+$ (cd _build/default && /nix/store/f7c1l1s6bss3ssn3v1bbsj81cgfz490g-ocaml+flambda-5.1.0/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I src/tests/.test_music.eobjs/byte -I src/tests/.test_music.eobjs/native -I /nix/store/40ygaxfn0qma5pp42hfm4xk5lhcjkpir-ocaml5.1.0-fmt-0.9.0/lib/ocaml/5.1.0/site-lib/fmt -I /nix/store/aqnwdza9flpvavsjazhwz54synmj53j0-ocaml5.1.0-seq-0.1/lib/ocaml/5.1.0/site-lib/seq -I /nix/store/dfab1m61wb7l0hyrlr0fpnhlvf7a8lrp-ocaml5.1.0-astring-0.8.5/lib/ocaml/5.1.0/site-lib/astring -I /nix/store/f7c1l1s6bss3ssn3v1bbsj81cgfz490g-ocaml+flambda-5.1.0/lib/ocaml/unix -I /nix/store/f7v118pvqvxd3mkc6bcviahkxqvcp3wy-ocaml5.1.0-uutf-1.0.3/lib/ocaml/5.1.0/site-lib/uutf -I /nix/store/j1wzl5i758177ahw2iy6kdsr9msid8la-ocaml5.1.0-stdlib-shims-0.3.0/lib/ocaml/5.1.0/site-lib/stdlib-shims -I /nix/store/vrbv69j444jvg03sy5nxac1ai9y3qxyi-ocaml5.1.0-re-1.11.0/lib/ocaml/5.1.0/site-lib/re -I /nix/store/xllp7q7yi85cj3j6lrk7kbgpclr5ghw5-ocaml5.1.0-alcotest-1.7.0/lib/ocaml/5.1.0/site-lib/alcotest -I /nix/store/xllp7q7yi85cj3j6lrk7kbgpclr5ghw5-ocaml5.1.0-alcotest-1.7.0/lib/ocaml/5.1.0/site-lib/alcotest/engine -I /nix/store/xllp7q7yi85cj3j6lrk7kbgpclr5ghw5-ocaml5.1.0-alcotest-1.7.0/lib/ocaml/5.1.0/site-lib/alcotest/stdlib_ext -I /nix/store/z2f9kx4shffz4mfds66p2ya0z05k9vi7-cmdliner-1.2.0/lib/ocaml/5.1.0/site-lib/cmdliner -I src/music/.music.objs/byte -I src/music/.music.objs/native -intf-suffix .ml -no-alias-deps -opaque -o src/tests/.test_music.eobjs/native/dune__exe__Test_music.cmx -c -impl src/tests/test_music.ml)
+$ (cd _build/default && /nix/store/f7c1l1s6bss3ssn3v1bbsj81cgfz490g-ocaml+flambda-5.1.0/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -a -o src/music/music.cmxa src/music/.music.objs/native/music.cmx)
+$ (cd _build/default && /nix/store/f7c1l1s6bss3ssn3v1bbsj81cgfz490g-ocaml+flambda-5.1.0/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -shared -linkall -I src/music -o src/music/music.cmxs src/music/music.cmxa)
+$ (cd _build/default && /nix/store/f7c1l1s6bss3ssn3v1bbsj81cgfz490g-ocaml+flambda-5.1.0/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -o src/tests/test_music.exe src/music/music.cmxa /nix/store/dfab1m61wb7l0hyrlr0fpnhlvf7a8lrp-ocaml5.1.0-astring-0.8.5/lib/ocaml/5.1.0/site-lib/astring/astring.cmxa /nix/store/z2f9kx4shffz4mfds66p2ya0z05k9vi7-cmdliner-1.2.0/lib/ocaml/5.1.0/site-lib/cmdliner/cmdliner.cmxa /nix/store/f7v118pvqvxd3mkc6bcviahkxqvcp3wy-ocaml5.1.0-uutf-1.0.3/lib/ocaml/5.1.0/site-lib/uutf/uutf.cmxa /nix/store/xllp7q7yi85cj3j6lrk7kbgpclr5ghw5-ocaml5.1.0-alcotest-1.7.0/lib/ocaml/5.1.0/site-lib/alcotest/stdlib_ext/alcotest_stdlib_ext.cmxa /nix/store/40ygaxfn0qma5pp42hfm4xk5lhcjkpir-ocaml5.1.0-fmt-0.9.0/lib/ocaml/5.1.0/site-lib/fmt/fmt.cmxa /nix/store/40ygaxfn0qma5pp42hfm4xk5lhcjkpir-ocaml5.1.0-fmt-0.9.0/lib/ocaml/5.1.0/site-lib/fmt/fmt_cli.cmxa /nix/store/vrbv69j444jvg03sy5nxac1ai9y3qxyi-ocaml5.1.0-re-1.11.0/lib/ocaml/5.1.0/site-lib/re/re.cmxa /nix/store/j1wzl5i758177ahw2iy6kdsr9msid8la-ocaml5.1.0-stdlib-shims-0.3.0/lib/ocaml/5.1.0/site-lib/stdlib-shims/stdlib_shims.cmxa /nix/store/xllp7q7yi85cj3j6lrk7kbgpclr5ghw5-ocaml5.1.0-alcotest-1.7.0/lib/ocaml/5.1.0/site-lib/alcotest/engine/alcotest_engine.cmxa /nix/store/f7c1l1s6bss3ssn3v1bbsj81cgfz490g-ocaml+flambda-5.1.0/lib/ocaml/unix/unix.cmxa /nix/store/40ygaxfn0qma5pp42hfm4xk5lhcjkpir-ocaml5.1.0-fmt-0.9.0/lib/ocaml/5.1.0/site-lib/fmt/fmt_tty.cmxa /nix/store/xllp7q7yi85cj3j6lrk7kbgpclr5ghw5-ocaml5.1.0-alcotest-1.7.0/lib/ocaml/5.1.0/site-lib/alcotest/alcotest.cmxa -I /nix/store/xllp7q7yi85cj3j6lrk7kbgpclr5ghw5-ocaml5.1.0-alcotest-1.7.0/lib/ocaml/5.1.0/site-lib/alcotest src/tests/.test_music.eobjs/native/dune__exe__Test_music.cmx)
+$ (cd _build/.sandbox/ae15f55dea4bcdb24f856a02ae3cea48/default && .ppx/9b08511fbad9c15355a1e1f8e80934bc/ppx.exe --cookie 'library-name="synth"' -o src/synth/synth.pp.ml --impl src/synth/synth.ml -corrected-suffix .ppx-corrected -diff-cmd - -dump-ast)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/synth/.synth.objs/melange -I src/music/.music.objs/melange --bs-stop-after-cmj --bs-package-output src/synth --bs-module-name synth -no-alias-deps -opaque -o src/synth/.synth.objs/melange/synth.cmj -c -impl src/synth/synth.pp.ml)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -I src/synth/.synth.objs/melange -I src/music/.music.objs/melange --bs-module-type commonjs -o src/node/src/synth/synth.js src/synth/.synth.objs/melange/synth.cmj)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.node.mobjs/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/belt/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/js/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/melange -I src/music/.music.objs/melange -I src/synth/.synth.objs/melange --bs-stop-after-cmj --bs-package-output src --bs-module-name hello -no-alias-deps -opaque -o src/.node.mobjs/melange/melange__Hello.cmj -c -impl src/hello.pp.ml)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -I src/synth/.synth.objs/melange -I src/music/.music.objs/melange --bs-module-type es6 -o src/output/src/synth/synth.js src/synth/.synth.objs/melange/synth.cmj)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -I src/.node.mobjs/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/belt/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/js/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/melange -I src/music/.music.objs/melange -I src/synth/.synth.objs/melange --bs-module-type commonjs -o src/node/src/hello.js src/.node.mobjs/melange/melange__Hello.cmj)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.output.mobjs/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/belt/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/dom/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/js/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/melange -I /nix/store/xyvsy305lzsxgll9d8ghfnq3grihkd40-ocaml5.1.0-reason-react-n-a/lib/ocaml/5.1.0/site-lib/reason-react/melange -I src/music/.music.objs/melange -I src/synth/.synth.objs/melange --bs-stop-after-cmj --bs-package-output src --bs-module-name ReactApp -no-alias-deps -opaque -o src/.output.mobjs/melange/melange__ReactApp.cmj -c -impl src/ReactApp.re.pp.ml)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -I src/.output.mobjs/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/belt/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/dom/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/js/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/melange -I /nix/store/xyvsy305lzsxgll9d8ghfnq3grihkd40-ocaml5.1.0-reason-react-n-a/lib/ocaml/5.1.0/site-lib/reason-react/melange -I src/music/.music.objs/melange -I src/synth/.synth.objs/melange --bs-module-type es6 -o src/output/src/ReactApp.js src/.output.mobjs/melange/melange__ReactApp.cmj)
+$ (cd _build/.sandbox/5b80b4d089a266b0642cc0bb2d20e6b3/default && /nix/store/v305cy1778alxw1ic6136bb8y8iffkqc-ocaml5.1.0-reason-3.10.0/bin/refmt --print binary src/ReactApp.re) > _build/.sandbox/5b80b4d089a266b0642cc0bb2d20e6b3/default/src/ReactApp.re.ml
+$ (cd _build/.sandbox/ebb5b34b8929097c8e61b462b83a1696/default && .ppx/9aa86304e1964cfc127b38093f18cb83/ppx.exe -o src/ReactApp.re.pp.ml --impl src/ReactApp.re.ml -corrected-suffix .ppx-corrected -diff-cmd - -dump-ast)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.output.mobjs/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/belt/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/dom/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/js/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/melange -I /nix/store/xyvsy305lzsxgll9d8ghfnq3grihkd40-ocaml5.1.0-reason-react-n-a/lib/ocaml/5.1.0/site-lib/reason-react/melange -I src/music/.music.objs/melange -I src/synth/.synth.objs/melange --bs-stop-after-cmj --bs-package-output src --bs-module-name ReactApp -no-alias-deps -opaque -o src/.output.mobjs/melange/melange__ReactApp.cmj -c -impl src/ReactApp.re.pp.ml)
+> File "src/ReactApp.re", line 32, characters 8-30:
+> 32 |         Synth.Synth.play_notes(actualSynth, notes);
+>              ^^^^^^^^^^^^^^^^^^^^^^
+> Error: Unbound module Synth.Synth
+[2]
+$ (cd _build/.sandbox/241d4c0f8808c99034c886729e746785/default && /nix/store/v305cy1778alxw1ic6136bb8y8iffkqc-ocaml5.1.0-reason-3.10.0/bin/refmt --print binary src/ReactApp.re) > _build/.sandbox/241d4c0f8808c99034c886729e746785/default/src/ReactApp.re.ml
+$ (cd _build/.sandbox/6484ae612327c0347aca76c50e7cacbc/default && .ppx/9aa86304e1964cfc127b38093f18cb83/ppx.exe -o src/ReactApp.re.pp.ml --impl src/ReactApp.re.ml -corrected-suffix .ppx-corrected -diff-cmd - -dump-ast)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.output.mobjs/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/belt/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/dom/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/js/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/melange -I /nix/store/xyvsy305lzsxgll9d8ghfnq3grihkd40-ocaml5.1.0-reason-react-n-a/lib/ocaml/5.1.0/site-lib/reason-react/melange -I src/music/.music.objs/melange -I src/synth/.synth.objs/melange --bs-stop-after-cmj --bs-package-output src --bs-module-name ReactApp -no-alias-deps -opaque -o src/.output.mobjs/melange/melange__ReactApp.cmj -c -impl src/ReactApp.re.pp.ml)
+> File "src/ReactApp.re", line 32, characters 32-37:
+> 32 |         Play.chord(actualSynth, notes);
+>                                      ^^^^^
+> Error: This expression has type Note.t list
+>        but an expression was expected of type Note.t
+[2]
+$ (cd _build/.sandbox/3aab0a72095364f712e5fdc3181096b9/default && .ppx/9b08511fbad9c15355a1e1f8e80934bc/ppx.exe --cookie 'library-name="synth"' -o src/synth/synth.pp.ml --impl src/synth/synth.ml -corrected-suffix .ppx-corrected -diff-cmd - -dump-ast)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/synth/.synth.objs/melange -I src/music/.music.objs/melange --bs-stop-after-cmj --bs-package-output src/synth --bs-module-name synth -no-alias-deps -opaque -o src/synth/.synth.objs/melange/synth.cmj -c -impl src/synth/synth.pp.ml)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.node.mobjs/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/belt/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/js/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/melange -I src/music/.music.objs/melange -I src/synth/.synth.objs/melange --bs-stop-after-cmj --bs-package-output src --bs-module-name hello -no-alias-deps -opaque -o src/.node.mobjs/melange/melange__Hello.cmj -c -impl src/hello.pp.ml)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.output.mobjs/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/belt/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/dom/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/js/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/melange -I /nix/store/xyvsy305lzsxgll9d8ghfnq3grihkd40-ocaml5.1.0-reason-react-n-a/lib/ocaml/5.1.0/site-lib/reason-react/melange -I src/music/.music.objs/melange -I src/synth/.synth.objs/melange --bs-stop-after-cmj --bs-package-output src --bs-module-name ReactApp -no-alias-deps -opaque -o src/.output.mobjs/melange/melange__ReactApp.cmj -c -impl src/ReactApp.re.pp.ml)
+> File "src/ReactApp.re", line 32, characters 32-37:
+> 32 |         Play.chord(actualSynth, notes);
+>                                      ^^^^^
+> Error: This expression has type Note.t list
+>        but an expression was expected of type Note.t
+[2]
+$ (cd _build/.sandbox/93374fe55c1e376c9a4c34a1d061005c/default && .ppx/9b08511fbad9c15355a1e1f8e80934bc/ppx.exe --cookie 'library-name="synth"' -o src/synth/synth.pp.ml --impl src/synth/synth.ml -corrected-suffix .ppx-corrected -diff-cmd - -dump-ast)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/synth/.synth.objs/melange -I src/music/.music.objs/melange --bs-stop-after-cmj --bs-package-output src/synth --bs-module-name synth -no-alias-deps -opaque -o src/synth/.synth.objs/melange/synth.cmj -c -impl src/synth/synth.pp.ml)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.node.mobjs/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/belt/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/js/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/melange -I src/music/.music.objs/melange -I src/synth/.synth.objs/melange --bs-stop-after-cmj --bs-package-output src --bs-module-name hello -no-alias-deps -opaque -o src/.node.mobjs/melange/melange__Hello.cmj -c -impl src/hello.pp.ml)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.output.mobjs/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/belt/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/dom/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/js/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/melange -I /nix/store/xyvsy305lzsxgll9d8ghfnq3grihkd40-ocaml5.1.0-reason-react-n-a/lib/ocaml/5.1.0/site-lib/reason-react/melange -I src/music/.music.objs/melange -I src/synth/.synth.objs/melange --bs-stop-after-cmj --bs-package-output src --bs-module-name ReactApp -no-alias-deps -opaque -o src/.output.mobjs/melange/melange__ReactApp.cmj -c -impl src/ReactApp.re.pp.ml)
+> File "src/ReactApp.re", line 32, characters 32-37:
+> 32 |         Play.chord(actualSynth, notes);
+>                                      ^^^^^
+> Error: This expression has type Note.t list
+>        but an expression was expected of type Note.t
+[2]
+$ (cd _build/.sandbox/7f64e3f7a8f6e698175aeb3a29a8c8ba/default && .ppx/9b08511fbad9c15355a1e1f8e80934bc/ppx.exe --cookie 'library-name="synth"' -o src/synth/synth.pp.ml --impl src/synth/synth.ml -corrected-suffix .ppx-corrected -diff-cmd - -dump-ast)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/synth/.synth.objs/melange -I src/music/.music.objs/melange --bs-stop-after-cmj --bs-package-output src/synth --bs-module-name synth -no-alias-deps -opaque -o src/synth/.synth.objs/melange/synth.cmj -c -impl src/synth/synth.pp.ml)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -I src/synth/.synth.objs/melange -I src/music/.music.objs/melange --bs-module-type commonjs -o src/node/src/synth/synth.js src/synth/.synth.objs/melange/synth.cmj)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.node.mobjs/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/belt/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/js/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/melange -I src/music/.music.objs/melange -I src/synth/.synth.objs/melange --bs-stop-after-cmj --bs-package-output src --bs-module-name hello -no-alias-deps -opaque -o src/.node.mobjs/melange/melange__Hello.cmj -c -impl src/hello.pp.ml)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -I src/synth/.synth.objs/melange -I src/music/.music.objs/melange --bs-module-type es6 -o src/output/src/synth/synth.js src/synth/.synth.objs/melange/synth.cmj)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.output.mobjs/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/belt/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/dom/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/js/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/melange -I /nix/store/xyvsy305lzsxgll9d8ghfnq3grihkd40-ocaml5.1.0-reason-react-n-a/lib/ocaml/5.1.0/site-lib/reason-react/melange -I src/music/.music.objs/melange -I src/synth/.synth.objs/melange --bs-stop-after-cmj --bs-package-output src --bs-module-name ReactApp -no-alias-deps -opaque -o src/.output.mobjs/melange/melange__ReactApp.cmj -c -impl src/ReactApp.re.pp.ml)
+> File "src/ReactApp.re", line 32, characters 32-37:
+> 32 |         Play.chord(actualSynth, notes);
+>                                      ^^^^^
+> Error: This expression has type Note.t list
+>        but an expression was expected of type Note.t
+[2]
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -I src/.node.mobjs/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/belt/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/js/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/melange -I src/music/.music.objs/melange -I src/synth/.synth.objs/melange --bs-module-type commonjs -o src/node/src/hello.js src/.node.mobjs/melange/melange__Hello.cmj)
+$ (cd _build/.sandbox/ad20b389ca7484f462be62c5bc20d18c/default && /nix/store/v305cy1778alxw1ic6136bb8y8iffkqc-ocaml5.1.0-reason-3.10.0/bin/refmt --print binary src/ReactApp.re) > _build/.sandbox/ad20b389ca7484f462be62c5bc20d18c/default/src/ReactApp.re.ml
+$ (cd _build/.sandbox/2e3e0c9f311efbc3d063427183ce6a65/default && .ppx/9aa86304e1964cfc127b38093f18cb83/ppx.exe -o src/ReactApp.re.pp.ml --impl src/ReactApp.re.ml -corrected-suffix .ppx-corrected -diff-cmd - -dump-ast)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.output.mobjs/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/belt/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/dom/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/js/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/melange -I /nix/store/xyvsy305lzsxgll9d8ghfnq3grihkd40-ocaml5.1.0-reason-react-n-a/lib/ocaml/5.1.0/site-lib/reason-react/melange -I src/music/.music.objs/melange -I src/synth/.synth.objs/melange --bs-stop-after-cmj --bs-package-output src --bs-module-name ReactApp -no-alias-deps -opaque -o src/.output.mobjs/melange/melange__ReactApp.cmj -c -impl src/ReactApp.re.pp.ml)
+> File "src/ReactApp.re", line 32, characters 32-37:
+> 32 |         Play.chord(actualSynth, notes, Chord.major);
+>                                      ^^^^^
+> Error: This expression has type Note.t list
+>        but an expression was expected of type Note.t
+[2]
+$ (cd _build/.sandbox/e0cef2963f463495a3cd5eb6bfdada10/default && /nix/store/v305cy1778alxw1ic6136bb8y8iffkqc-ocaml5.1.0-reason-3.10.0/bin/refmt --print binary src/ReactApp.re) > _build/.sandbox/e0cef2963f463495a3cd5eb6bfdada10/default/src/ReactApp.re.ml
+$ (cd _build/.sandbox/c5a52a980a7a6ec6766024cfa07685f8/default && .ppx/9aa86304e1964cfc127b38093f18cb83/ppx.exe -o src/ReactApp.re.pp.ml --impl src/ReactApp.re.ml -corrected-suffix .ppx-corrected -diff-cmd - -dump-ast)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.output.mobjs/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/belt/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/dom/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/js/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/melange -I /nix/store/xyvsy305lzsxgll9d8ghfnq3grihkd40-ocaml5.1.0-reason-react-n-a/lib/ocaml/5.1.0/site-lib/reason-react/melange -I src/music/.music.objs/melange -I src/synth/.synth.objs/melange --bs-stop-after-cmj --bs-package-output src --bs-module-name ReactApp -no-alias-deps -opaque -o src/.output.mobjs/melange/melange__ReactApp.cmj -c -impl src/ReactApp.re.pp.ml)
+> File "src/ReactApp.re", line 32, characters 32-37:
+> 32 |         Play.chord(actualSynth, notes, Chord.Major);
+>                                      ^^^^^
+> Error: This expression has type Note.t list
+>        but an expression was expected of type Note.t
+[2]
+$ (cd _build/.sandbox/e377d0436aaedde71ead1e9fe6424723/default && /nix/store/v305cy1778alxw1ic6136bb8y8iffkqc-ocaml5.1.0-reason-3.10.0/bin/refmt --print binary src/ReactApp.re) > _build/.sandbox/e377d0436aaedde71ead1e9fe6424723/default/src/ReactApp.re.ml
+$ (cd _build/.sandbox/79a01df2acd35132308fb6ab96d64ffb/default && .ppx/9aa86304e1964cfc127b38093f18cb83/ppx.exe -o src/ReactApp.re.pp.ml --impl src/ReactApp.re.ml -corrected-suffix .ppx-corrected -diff-cmd - -dump-ast)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.output.mobjs/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/belt/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/dom/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/js/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/melange -I /nix/store/xyvsy305lzsxgll9d8ghfnq3grihkd40-ocaml5.1.0-reason-react-n-a/lib/ocaml/5.1.0/site-lib/reason-react/melange -I src/music/.music.objs/melange -I src/synth/.synth.objs/melange --bs-stop-after-cmj --bs-package-output src --bs-module-name ReactApp -no-alias-deps -opaque -o src/.output.mobjs/melange/melange__ReactApp.cmj -c -impl src/ReactApp.re.pp.ml)
+> File "src/ReactApp.re", line 33, characters 32-37:
+> 33 |         Play.chord(actualSynth, notes, Chord.Major);
+>                                      ^^^^^
+> Error: This expression has type Note.t list
+>        but an expression was expected of type Note.t
+[2]
+$ (cd _build/.sandbox/429b2323a6c272c15e5df452650a23a9/default && /nix/store/v305cy1778alxw1ic6136bb8y8iffkqc-ocaml5.1.0-reason-3.10.0/bin/refmt --print binary src/ReactApp.re) > _build/.sandbox/429b2323a6c272c15e5df452650a23a9/default/src/ReactApp.re.ml
+$ (cd _build/.sandbox/e64603580433a71940dd3ec4a280ae93/default && .ppx/9aa86304e1964cfc127b38093f18cb83/ppx.exe -o src/ReactApp.re.pp.ml --impl src/ReactApp.re.ml -corrected-suffix .ppx-corrected -diff-cmd - -dump-ast)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.output.mobjs/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/belt/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/dom/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/js/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/melange -I /nix/store/xyvsy305lzsxgll9d8ghfnq3grihkd40-ocaml5.1.0-reason-react-n-a/lib/ocaml/5.1.0/site-lib/reason-react/melange -I src/music/.music.objs/melange -I src/synth/.synth.objs/melange --bs-stop-after-cmj --bs-package-output src --bs-module-name ReactApp -no-alias-deps -opaque -o src/.output.mobjs/melange/melange__ReactApp.cmj -c -impl src/ReactApp.re.pp.ml)
+> File "src/ReactApp.re", line 30, characters 10-15:
+> 30 |       let notes = [note1, note2, note3];
+>                ^^^^^
+> Error (warning 26 [unused-var]): unused variable notes.
+[2]
+$ (cd _build/.sandbox/9204a3d6d4855f03ad77da561f22edf6/default && /nix/store/v305cy1778alxw1ic6136bb8y8iffkqc-ocaml5.1.0-reason-3.10.0/bin/refmt --print binary src/ReactApp.re) > _build/.sandbox/9204a3d6d4855f03ad77da561f22edf6/default/src/ReactApp.re.ml
+$ (cd _build/.sandbox/cce7c2136b28b88349e156106e0616f4/default && .ppx/9aa86304e1964cfc127b38093f18cb83/ppx.exe -o src/ReactApp.re.pp.ml --impl src/ReactApp.re.ml -corrected-suffix .ppx-corrected -diff-cmd - -dump-ast)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I src/.output.mobjs/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/belt/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/dom/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/js/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/melange -I /nix/store/xyvsy305lzsxgll9d8ghfnq3grihkd40-ocaml5.1.0-reason-react-n-a/lib/ocaml/5.1.0/site-lib/reason-react/melange -I src/music/.music.objs/melange -I src/synth/.synth.objs/melange --bs-stop-after-cmj --bs-package-output src --bs-module-name ReactApp -no-alias-deps -opaque -o src/.output.mobjs/melange/melange__ReactApp.cmj -c -impl src/ReactApp.re.pp.ml)
+$ (cd _build/default && /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/bin/melc -I src/.output.mobjs/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/belt/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/dom/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/js/melange -I /nix/store/wxa01xi902ws662rpi45gvwzhnxzwg9p-ocaml5.1.0-melange-dev/lib/ocaml/5.1.0/site-lib/melange/melange -I /nix/store/xyvsy305lzsxgll9d8ghfnq3grihkd40-ocaml5.1.0-reason-react-n-a/lib/ocaml/5.1.0/site-lib/reason-react/melange -I src/music/.music.objs/melange -I src/synth/.synth.objs/melange --bs-module-type es6 -o src/output/src/ReactApp.js src/.output.mobjs/melange/melange__ReactApp.cmj)

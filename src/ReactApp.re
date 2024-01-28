@@ -1,6 +1,13 @@
 module Note = Music.Note;
+module Chord = Music.Chord;
+module Play = Synth.Play;
 module App = {
   [@react.component]
+  // Do as little shit as possible in this file. Do pretty much all the heavy lifting in straight OCaml.
+  // TODO: Play chord
+  // TODO: Send whatever notes to tonic
+  // tODO: Play progression
+  // TODO: Do the functional ear trainer thing
   let make = () => {
     let (synth, setSynth) = React.useState(() => None);
     let (audioContextStarted, setAudioContextStarted) =
@@ -17,13 +24,9 @@ module App = {
     };
 
     let playNotes = () => {
-      let note1 = Note.of_number(0, 4);
-      let note2 = Note.of_number(4, 4);
-      let note3 = Note.of_number(7, 4);
-      let notes = [note1, note2, note3];
       switch (synth) {
       | Some(actualSynth) =>
-        Synth.play_notes(actualSynth, notes);
+        Play.chord(actualSynth, Note.c4, Chord.Major);
         Js.log("Playing notes");
       | None => Js.log("Synth not initialized")
       };

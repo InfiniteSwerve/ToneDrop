@@ -1,0 +1,43 @@
+let eval s =
+  let s = Bytes.unsafe_to_string (Bytes.unsafe_of_string s) in
+  let len = String.length s in
+  if s.[0] = '=' then
+    let colon_pos = String.index_from s 1 ':' in
+    let vlen = int_of_string (String.sub s 1 (colon_pos - 1)) in
+    (* This [min] is because the value might have been truncated
+       if it was too large *)
+    let vlen = min vlen (len - colon_pos - 1) in
+    Some (String.sub s (colon_pos + 1) vlen)
+  else
+    None
+[@@inline never]
+
+let p0 = eval (Sys.opaque_identity "%%DUNE_PLACEHOLDER:64:vcs-describe:1:.%%%%%%%%%%%%%%%%%%%%%%%%%%")
+
+let version = p0
+
+let statically_linked_libraries =
+  [ "unix", Some "5.1.1+dev0-2023-09-14"
+  ; "menhirLib", Some "20230608"
+  ; "compiler-libs", Some "5.1.1+dev0-2023-09-14"
+  ; "compiler-libs.common", Some "5.1.1+dev0-2023-09-14"
+  ; "melange.__private__.melange_wrapper", None
+  ; "melange.__private__.melange_compiler_libs", None
+  ; "melange.__private__.ext", None
+  ; "melange.js_parser", None
+  ; "dune-build-info", Some "3.11.1"
+  ; "melange.__private__.common", None
+  ; "ocaml-compiler-libs.common", None
+  ; "ppxlib.astlib", Some "0.31.0"
+  ; "stdlib-shims", Some "0.3.0"
+  ; "ppxlib.ast", Some "0.31.0"
+  ; "ocaml-compiler-libs.shadow", None
+  ; "ppxlib.print_diff", Some "0.31.0"
+  ; "ppx_derivers", None
+  ; "ppxlib.traverse_builtins", Some "0.31.0"
+  ; "sexplib0", Some "v0.16.0"
+  ; "ppxlib.stdppx", Some "0.31.0"
+  ; "ppxlib", Some "0.31.0"
+  ; "melange.ppx", None
+  ; "reason-react-ppx", None
+  ]

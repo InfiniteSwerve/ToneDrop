@@ -73,7 +73,7 @@ module Chord = struct
   let major7_notes = [ 0; 4; 7; 11 ]
   let minor7_notes = [ 0; 3; 7; 10 ]
 
-  let spell (root : Note.t) (chord : t) =
+  let spell (root : Note.t) (chord : t) : Note.t list =
     match chord with
     | Major -> Note.transpose_notes root major_notes
     | Minor -> Note.transpose_notes root minor_notes
@@ -165,37 +165,4 @@ module Scale = struct
         | [] -> List.rev (upper_pos :: result)
       in
       find_bigger lower_pos big_scale result
-
-  (* Gives the note after the current note thats diatonic *)
-  let succ (note : Note.t) scale =
-    let next_root = { (List.hd scale.notes) with octave = note.octave + 1 } in
-    if note.pitch = 11 then next_root
-    else
-      let rec find (note : Note.t) (notes : Note.t list) =
-        match notes with
-        | [] -> raise (invalid_arg "scale has invalid notes")
-        | [ hd ] -> if note.pitch < hd.pitch then hd else next_root
-        | hd :: (next_hd :: _ as tl) ->
-            if note.pitch < hd.pitch then find note tl
-            else if note.pitch == hd.pitch then next_hd
-            else List.hd tl
-      in
-      find note scale.notes
-
-  (* Gives the previous note in the current scale *)
-  let pred (note : Note.t) scale =
-    let prev_root = { (List.hd scale.notes) with octave = note.octave - 1 } in
-    let notes = List.rev scale.notes in
-    if note.pitch = 0 then prev_root
-    else
-      let rec find (note : Note.t) (notes : Note.t list) =
-        match notes with
-        | [] -> raise (invalid_arg "scale has invalid notes")
-        | [ hd ] -> if note.pitch > hd.pitch then hd else prev_root
-        | hd :: (next_hd :: _ as tl) ->
-            if note.pitch > hd.pitch then find note tl
-            else if note.pitch == hd.pitch then next_hd
-            else List.hd tl
-      in
-      find note notes
 end

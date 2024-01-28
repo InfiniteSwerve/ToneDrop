@@ -1,0 +1,9 @@
+lib: [
+  "_build/install/default/lib/tone-drop/META"
+  "_build/install/default/lib/tone-drop/dune-package"
+  "_build/install/default/lib/tone-drop/opam"
+]
+doc: [
+  "_build/install/default/doc/tone-drop/LICENSE"
+  "_build/install/default/doc/tone-drop/README.md"
+]
