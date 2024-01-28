@@ -13,6 +13,13 @@ module Note = struct
     if pitch > 11 then invalid_arg "Number out of range"
     else { pitch; octave; scale_position = None }
 
+  let of_pos position =
+    let octave = position / 12 in
+    let pitch = position mod 12 in
+    of_number pitch octave
+
+  let to_pos note = note.pitch + (note.octave * 12)
+
   let of_name (note : string) (octave : int) =
     let pitch_o = Array.find_index (fun name -> note = name) notes in
     match pitch_o with
@@ -142,10 +149,10 @@ module Scale = struct
     in
     go_up ho lo []
 
-  let get_path scale (start_note : Note.t) (end_note : Note.t) : int list =
+  let get_path scale (start_note : Note.t) (end_note : Note.t) : Note.t list =
     let start_pos = start_note.pitch + (start_note.octave * 12) in
     let end_pos = end_note.pitch + (end_note.octave * 12) in
-    if start_pos = end_pos then [ start_pos ]
+    if start_pos = end_pos then [ Note.of_pos start_pos ]
     else
       let lower, lower_pos, upper, upper_pos =
         if start_pos < end_pos then (start_note, start_pos, end_note, end_pos)
@@ -164,5 +171,12 @@ module Scale = struct
                 | false -> find_bigger curr tl result))
         | [] -> List.rev (upper_pos :: result)
       in
-      find_bigger lower_pos big_scale result
+      List.map Note.of_pos (find_bigger lower_pos big_scale result)
+
+  let random_note (scale : scale) =
+    List.nth scale.notes (Random.int (List.length scale.intervals))
+
+  let get_note_and_path (scale : scale) =
+    let note = random_note scale in
+    (note, get_path scale scale.root note)
 end

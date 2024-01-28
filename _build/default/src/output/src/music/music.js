@@ -8,6 +8,7 @@ import * as Stdlib__Array from "melange/array.js";
 import * as Stdlib__Int from "melange/int.js";
 import * as Stdlib__List from "melange/list.js";
 import * as Stdlib__Printf from "melange/printf.js";
+import * as Stdlib__Random from "melange/random.js";
 
 var notes = [
   "C",
@@ -46,6 +47,16 @@ function of_number(pitch, octave) {
             scale_position: undefined
           };
   }
+}
+
+function of_pos(position) {
+  var octave = position / 12 | 0;
+  var pitch = position % 12;
+  return of_number(pitch, octave);
+}
+
+function to_pos(note) {
+  return note.pitch + Math.imul(note.octave, 12) | 0;
 }
 
 function of_name(note, octave) {
@@ -145,6 +156,8 @@ var Note = {
   eq: eq,
   to_number: to_number,
   of_number: of_number,
+  of_pos: of_pos,
+  to_pos: to_pos,
   of_name: of_name,
   to_string: to_string,
   transpose: transpose,
@@ -408,7 +421,7 @@ function get_path(scale, start_note, end_note) {
   var end_pos = end_note.pitch + Math.imul(end_note.octave, 12) | 0;
   if (start_pos === end_pos) {
     return {
-            hd: start_pos,
+            hd: of_pos(start_pos),
             tl: /* [] */0
           };
   }
@@ -430,41 +443,53 @@ function get_path(scale, start_note, end_note) {
     hd: lower_pos,
     tl: /* [] */0
   };
-  var _curr = lower_pos;
-  var _notes = big_scale;
-  var _result = result;
-  while(true) {
-    var result$1 = _result;
-    var notes = _notes;
-    var curr = _curr;
-    if (!notes) {
-      return Stdlib__List.rev({
-                  hd: upper_pos,
-                  tl: result$1
-                });
-    }
-    var tl = notes.tl;
-    var hd = notes.hd;
-    var match$1 = hd >= upper_pos;
-    if (match$1) {
-      return Stdlib__List.rev({
-                  hd: upper_pos,
-                  tl: result$1
-                });
-    }
-    var match$2 = curr < hd;
-    if (match$2) {
-      _result = {
-        hd: hd,
-        tl: result$1
-      };
+  var find_bigger = function (_curr, _notes, _result) {
+    while(true) {
+      var result = _result;
+      var notes = _notes;
+      var curr = _curr;
+      if (!notes) {
+        return Stdlib__List.rev({
+                    hd: upper_pos,
+                    tl: result
+                  });
+      }
+      var tl = notes.tl;
+      var hd = notes.hd;
+      var match = hd >= upper_pos;
+      if (match) {
+        return Stdlib__List.rev({
+                    hd: upper_pos,
+                    tl: result
+                  });
+      }
+      var match$1 = curr < hd;
+      if (match$1) {
+        _result = {
+          hd: hd,
+          tl: result
+        };
+        _notes = tl;
+        _curr = hd;
+        continue ;
+      }
       _notes = tl;
-      _curr = hd;
       continue ;
-    }
-    _notes = tl;
-    continue ;
+    };
   };
+  return Stdlib__List.map(of_pos, find_bigger(lower_pos, big_scale, result));
+}
+
+function random_note(scale) {
+  return Stdlib__List.nth(scale.notes, Stdlib__Random.$$int(Stdlib__List.length(scale.intervals)));
+}
+
+function get_note_and_path(scale) {
+  var note = random_note(scale);
+  return [
+          note,
+          get_path(scale, scale.root, note)
+        ];
 }
 
 var Scale = {
@@ -475,7 +500,9 @@ var Scale = {
   make_of_string: make_of_string,
   make_of_int: make_of_int,
   make_big_scale: make_big_scale,
-  get_path: get_path
+  get_path: get_path,
+  random_note: random_note,
+  get_note_and_path: get_note_and_path
 };
 
 export {

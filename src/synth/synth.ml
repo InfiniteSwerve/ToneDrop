@@ -2,11 +2,12 @@ module Note = Music.Note
 module Chord = Music.Chord
 
 type synth
+type t = synth
 
 (* This is bad *)
+(* https://melange.re/v2.2.0/build-system/#handling-assets *)
 external createPolySynth : unit -> synth = "createPolySynth"
-[@@mel.module "../../../../../../src/world/ToneInterop.js"]
-(* [@@mel.module "ToneInterop.js"]  *)
+[@@mel.module "./ToneInterop.js"]
 
 external triggerAttackRelease : synth -> string -> string -> unit
   = "triggerAttackRelease"
@@ -28,7 +29,23 @@ let play_notes (synth : synth) (notes : Note.t list) : unit =
   triggerListAttackRelease synth note_strings "8n"
 
 module Play = struct
+  let note (synth : synth) (note : Note.t) : unit = play_note synth note
+
   let chord (synth : synth) (root : Note.t) (kind : Chord.t) : unit =
     let chord = Chord.spell root kind in
     play_notes synth chord
+
+  let path (synth : synth) (notes : Note.t list) (delay : int) =
+    let rec walk notes =
+      match notes with
+      | note :: rest ->
+          ignore
+            (Js.Global.setTimeout
+               (fun () ->
+                 play_note synth note;
+                 walk rest)
+               delay)
+      | [] -> ()
+    in
+    walk notes
 end

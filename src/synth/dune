@@ -1,5 +1,6 @@
 (library
  (name synth)
+ (melange.runtime_deps ToneInterop.js)
  (libraries music)
  (modes melange)
  (preprocess

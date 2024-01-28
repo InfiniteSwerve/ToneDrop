@@ -18,44 +18,79 @@ function ReactApp$App(Props) {
         return false;
       });
   var setAudioContextStarted = match$1[1];
+  var match$2 = React.useState(function () {
+        
+      });
+  var setPath = match$2[1];
+  var path = match$2[0];
+  var withSynth = function (synth, callback) {
+    if (synth !== undefined) {
+      return Curry._1(callback, Caml_option.valFromOption(synth));
+    }
+    var newSynth = Synth.createPolySynth(undefined);
+    Curry._1(setSynth, (function (param) {
+            return Caml_option.some(newSynth);
+          }));
+    Curry._1(setAudioContextStarted, (function (param) {
+            return true;
+          }));
+    console.log("Audio Started");
+    Curry._1(callback, newSynth);
+  };
+  var playNote = function (synth) {
+    var note = Music.Note.of_number(0, 4);
+    Synth.play_note(synth, note);
+    console.log("Playing note");
+  };
+  var playChord = function (synth) {
+    Synth.Play.chord(synth, Music.Note.c4, /* Major */0);
+    console.log("Playing notes");
+  };
+  var playNoteGetPath = function (synth) {
+    var scale = Music.Scale.make_of_string("C", Music.Scale.major_intervals);
+    var match = Music.Scale.get_note_and_path(scale);
+    var path = match[1];
+    var note = match[0];
+    Curry._1(setPath, (function (param) {
+            return path;
+          }));
+    Synth.Play.chord(synth, scale.root, /* Major */0);
+    setTimeout((function (param) {
+            Synth.Play.note(synth, note);
+          }), 800);
+  };
+  var playResolutionPath = function (synth) {
+    if (path !== undefined) {
+      return Synth.Play.path(synth, path, 300);
+    } else {
+      console.log("Ain't no path to resolve");
+      return ;
+    }
+  };
   return JsxRuntime.jsxs("div", {
               children: [
-                match$1[0] ? JsxRuntime.jsx("div", {
-                        children: "Audio Ready"
-                      }) : JsxRuntime.jsx("button", {
-                        children: "Start Audio",
-                        onClick: (function (_event) {
-                            var synth = Caml_option.some(Synth.createPolySynth(undefined));
-                            Curry._1(setSynth, (function (param) {
-                                    return synth;
-                                  }));
-                            Curry._1(setAudioContextStarted, (function (param) {
-                                    return true;
-                                  }));
-                            console.log("Audio Started");
-                          })
-                      }),
                 JsxRuntime.jsx("button", {
-                      children: "Play Note",
+                      children: "Play Note and initialize synth",
                       onClick: (function (_event) {
-                          var note = Music.Note.of_number(0, 4);
-                          if (synth !== undefined) {
-                            Synth.play_note(Caml_option.valFromOption(synth), note);
-                            console.log("Playing note");
-                          } else {
-                            console.log("Synth not initialized");
-                          }
+                          withSynth(synth, playNote);
                         })
                     }),
                 JsxRuntime.jsx("button", {
                       children: "Play Notes",
                       onClick: (function (_event) {
-                          if (synth !== undefined) {
-                            Synth.Play.chord(Caml_option.valFromOption(synth), Music.Note.c4, /* Major */0);
-                            console.log("Playing notes");
-                          } else {
-                            console.log("Synth not initialized");
-                          }
+                          withSynth(synth, playChord);
+                        })
+                    }),
+                JsxRuntime.jsx("button", {
+                      children: "Play Base Chord",
+                      onClick: (function (_event) {
+                          withSynth(synth, playNoteGetPath);
+                        })
+                    }),
+                JsxRuntime.jsx("button", {
+                      children: "Play Resolution Path",
+                      onClick: (function (_event) {
+                          withSynth(synth, playResolutionPath);
                         })
                     })
               ]

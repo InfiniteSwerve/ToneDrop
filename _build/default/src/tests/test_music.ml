@@ -29,10 +29,16 @@ let test_make_big_scale () =
   Alcotest.(check (list int)) "C major 0 -> 0" target big_scale
 
 let test_path () =
-  let c_d = Scale.get_path c_maj (Note.of_number 0 0) (Note.of_number 2 0) in
+  let c_d =
+    Scale.get_path c_maj (Note.of_number 0 0) (Note.of_number 2 0)
+    |> List.map Note.to_pos
+  in
 
   Alcotest.(check (list int)) "C -> D = 0 -> 2" [ 0; 2 ] c_d;
-  let c_c = Scale.get_path c_maj (Note.of_number 0 0) Note.(of_number 1 1) in
+  let c_c =
+    Scale.get_path c_maj (Note.of_number 0 0) Note.(of_number 1 1)
+    |> List.map Note.to_pos
+  in
   Alcotest.(check (list int)) "C0 -> C#1" [ 0; 2; 4; 5; 7; 9; 11; 12; 13 ] c_c
 
 let test_suite =

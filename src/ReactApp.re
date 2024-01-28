@@ -1,6 +1,15 @@
 module Note = Music.Note;
 module Chord = Music.Chord;
+module Scale = Music.Scale;
 module Play = Synth.Play;
+
+type synthState = {
+  synth: option(Synth.t),
+  audioContextStarted: bool,
+};
+
+type synthCallback = Synth.t => unit;
+
 module App = {
   [@react.component]
   // Do as little shit as possible in this file. Do pretty much all the heavy lifting in straight OCaml.
@@ -10,46 +19,59 @@ module App = {
   // TODO: Do the functional ear trainer thing
   let make = () => {
     let (synth, setSynth) = React.useState(() => None);
-    let (audioContextStarted, setAudioContextStarted) =
-      React.useState(() => false);
+    let (_, setAudioContextStarted) = React.useState(() => false);
+    let (path, setPath) = React.useState(() => None);
 
-    let playNote = () => {
+    let withSynth = (synth, callback: synthCallback) => {
+      switch (synth) {
+      | Some(actualSynth) => callback(actualSynth)
+      | None =>
+        let newSynth = Synth.createPolySynth();
+        setSynth(_ => Some(newSynth));
+        setAudioContextStarted(_ => true);
+        Js.log("Audio Started");
+        callback(newSynth);
+      };
+    };
+    let playNote = synth => {
       let note = Note.of_number(0, 4);
-      switch (synth) {
-      | Some(actualSynth) =>
-        Synth.play_note(actualSynth, note);
-        Js.log("Playing note");
-      | None => Js.log("Synth not initialized")
-      };
+      Synth.play_note(synth, note);
+      Js.log("Playing note");
     };
 
-    let playNotes = () => {
-      switch (synth) {
-      | Some(actualSynth) =>
-        Play.chord(actualSynth, Note.c4, Chord.Major);
-        Js.log("Playing notes");
-      | None => Js.log("Synth not initialized")
-      };
+    let playChord = synth => {
+      Play.chord(synth, Note.c4, Chord.Major);
+      Js.log("Playing notes");
     };
-    let startAudio = () => {
-      // This function is called in response to a user action
-      let synth = Some(Synth.createPolySynth());
-      setSynth(_ => synth);
-      setAudioContextStarted(_ => true); // Update state to indicate that audio context has started
-      Js.log("Audio Started");
+
+    let playNoteGetPath = synth => {
+      let scale = Scale.make_of_string("C", Scale.major_intervals);
+      let (note, path) = Scale.get_note_and_path(scale);
+      setPath(_ => Some(path));
+
+      Play.chord(synth, scale.root, Chord.Major);
+      ignore(Js.Global.setTimeout(() => {Play.note(synth, note)}, 800));
+    };
+
+    let playResolutionPath = synth => {
+      switch (path) {
+      | Some(actualPath) => Play.path(synth, actualPath, 300)
+      | None => Js.log("Ain't no path to resolve")
+      };
     };
 
     <div>
-      {audioContextStarted
-         ? <div> {React.string("Audio Ready")} </div>
-         : <button onClick={_event => startAudio()}>
-             "Start Audio"->React.string
-           </button>}
-      <button onClick={_event => playNote()}>
-        "Play Note"->React.string
+      <button onClick={_event => withSynth(synth, playNote)}>
+        "Play Note and initialize synth"->React.string
       </button>
-      <button onClick={_event => playNotes()}>
+      <button onClick={_event => withSynth(synth, playChord)}>
         "Play Notes"->React.string
+      </button>
+      <button onClick={_event => withSynth(synth, playNoteGetPath)}>
+        "Play Base Chord"->React.string
+      </button>
+      <button onClick={_event => withSynth(synth, playResolutionPath)}>
+        "Play Resolution Path"->React.string
       </button>
     </div>;
   };
