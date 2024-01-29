@@ -124,7 +124,7 @@ function compare(n1, n2) {
 }
 
 function dist(from, target) {
-  return Math.imul(12, target.octave - from.octave | 0) - (from.pitch - target.pitch | 0) | 0;
+  return Math.imul(12, target.octave - from.octave | 0) + (target.pitch - from.pitch | 0) | 0;
 }
 
 var c4 = of_number(0, 4);
@@ -417,73 +417,90 @@ function make_big_scale(scale, lo, ho) {
 }
 
 function get_path(scale, start_note, end_note) {
-  var start_pos = start_note.pitch + Math.imul(start_note.octave, 12) | 0;
-  var end_pos = end_note.pitch + Math.imul(end_note.octave, 12) | 0;
-  if (start_pos === end_pos) {
+  var d = dist(start_note, end_note);
+  if (to_pos(start_note) === to_pos(end_note)) {
     return {
-            hd: of_pos(start_pos),
+            hd: start_note,
             tl: /* [] */0
           };
   }
-  var match = start_pos < end_pos ? [
-      start_note,
-      start_pos,
-      end_note,
-      end_pos,
-      /* Up */0
-    ] : [
-      end_note,
-      end_pos,
-      start_note,
-      start_pos,
-      /* Down */1
-    ];
-  var upper_pos = match[3];
-  var lower_pos = match[1];
-  var big_scale = make_big_scale(scale, match[0].octave, match[2].octave);
-  var result = {
-    hd: lower_pos,
-    tl: /* [] */0
-  };
-  var find_bigger = function (_curr, _notes, _result) {
-    while(true) {
-      var result = _result;
-      var notes = _notes;
-      var curr = _curr;
-      if (!notes) {
-        return {
-                hd: upper_pos,
-                tl: result
-              };
-      }
-      var tl = notes.tl;
-      var hd = notes.hd;
-      var match = hd >= upper_pos;
-      if (match) {
-        return Stdlib__List.rev({
-                    hd: upper_pos,
-                    tl: result
-                  });
-      }
-      var match$1 = curr < hd;
-      if (match$1) {
-        _result = {
-          hd: hd,
-          tl: result
-        };
-        _notes = tl;
-        _curr = hd;
-        continue ;
-      }
-      _notes = tl;
-      continue ;
-    };
-  };
-  var out = Stdlib__List.map(of_pos, find_bigger(lower_pos, big_scale, result));
-  if (match[4]) {
-    return out;
+  var match = d >= 7 ? (Curry._1(Stdlib__Printf.printf(/* Format */{
+                _0: {
+                  TAG: /* String_literal */11,
+                  _0: "d >= 7, end note octave is: ",
+                  _1: {
+                    TAG: /* Int */4,
+                    _0: /* Int_d */0,
+                    _1: /* No_padding */0,
+                    _2: /* No_precision */0,
+                    _3: /* End_of_format */0
+                  }
+                },
+                _1: "d >= 7, end note octave is: %d"
+              }), end_note.octave - 1 | 0), [
+        {
+          pitch: end_note.pitch,
+          octave: end_note.octave - 1 | 0,
+          scale_position: end_note.scale_position
+        },
+        start_note,
+        /* Down */1
+      ]) : (
+      d <= -7 ? (Curry._1(Stdlib__Printf.printf(/* Format */{
+                    _0: {
+                      TAG: /* String_literal */11,
+                      _0: "d <= -7, end note octave is: ",
+                      _1: {
+                        TAG: /* Int */4,
+                        _0: /* Int_d */0,
+                        _1: /* No_padding */0,
+                        _2: /* No_precision */0,
+                        _3: /* End_of_format */0
+                      }
+                    },
+                    _1: "d <= -7, end note octave is: %d"
+                  }), end_note.octave + 1 | 0), [
+            start_note,
+            {
+              pitch: end_note.pitch,
+              octave: end_note.octave + 1 | 0,
+              scale_position: end_note.scale_position
+            },
+            /* Up */0
+          ]) : (
+          d > 0 ? [
+              start_note,
+              end_note,
+              /* Up */0
+            ] : [
+              end_note,
+              start_note,
+              /* Down */1
+            ]
+        )
+    );
+  var upper = match[1];
+  var lower = match[0];
+  var lower_pos = to_pos(lower);
+  var upper_pos = to_pos(upper);
+  var big_scale = make_big_scale(scale, lower.octave, upper.octave);
+  var result = Stdlib.$at({
+        hd: lower,
+        tl: Stdlib__List.map(of_pos, Stdlib__List.filter((function (pos) {
+                    if (lower_pos < pos) {
+                      return pos < upper_pos;
+                    } else {
+                      return false;
+                    }
+                  }), big_scale))
+      }, {
+        hd: upper,
+        tl: /* [] */0
+      });
+  if (match[2]) {
+    return Stdlib__List.rev(result);
   } else {
-    return Stdlib__List.rev(out);
+    return result;
   }
 }
 
@@ -495,7 +512,7 @@ function get_note_and_path(scale) {
   var note = random_note(scale);
   return [
           note,
-          get_path(scale, scale.root, note)
+          get_path(scale, note, scale.root)
         ];
 }
 

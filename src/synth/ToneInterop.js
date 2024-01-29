@@ -5,7 +5,7 @@ import * as Tone from 'tone';
 export function createPolySynth() {
   const synth = new Tone.PolySynth(Tone.Synth, {
     oscillator: {
-      volume: -12,
+      volume: -20,
     }
   }).toDestination();
   return synth;

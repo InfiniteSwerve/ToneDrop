@@ -34,6 +34,8 @@ module Play = struct
     let chord = Chord.spell root kind in
     play_notes synth chord
 
+  (* For some reason the passed notes are backwards here?? *)
+
   let path (synth : synth) (notes : Note.t list) (delay : int) =
     let rec walk notes =
       match notes with

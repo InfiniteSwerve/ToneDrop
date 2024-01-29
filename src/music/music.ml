@@ -48,8 +48,9 @@ module Note = struct
     Int.compare ((n1.octave * 12) + n1.pitch) ((n2.octave * 12) + n2.pitch)
 
   (* Non symmetric distance. We care about going up vs down *)
+  (* Going from a smaller pos to larget yields a positive number, negative otherwise *)
   let dist (from : t) (target : t) =
-    (12 * (target.octave - from.octave)) - (from.pitch - target.pitch)
+    (12 * (target.octave - from.octave)) + (target.pitch - from.pitch)
 
   let c4 = of_number 0 4
   let cs4 = of_number 1 4
@@ -133,6 +134,7 @@ module Scale = struct
     in
     { key = Note.notes.(key); root; intervals; notes }
 
+  (* lower index = lower pos *)
   let make_big_scale scale lo ho =
     let rec go_up octave finish notes =
       let curr_octave_scale =
@@ -149,36 +151,42 @@ module Scale = struct
     in
     go_up ho lo []
 
+  (* TODO:  Normalize the target octave to be within the start octave *)
   let get_path scale (start_note : Note.t) (end_note : Note.t) : Note.t list =
-    let start_pos = start_note.pitch + (start_note.octave * 12) in
-    let end_pos = end_note.pitch + (end_note.octave * 12) in
-    if start_pos = end_pos then [ Note.of_pos start_pos ]
+    let d = Note.dist start_note end_note in
+    if Note.to_pos start_note = Note.to_pos end_note then [ start_note ]
     else
-      let lower, lower_pos, upper, upper_pos, direction =
-        if start_pos < end_pos then
-          (start_note, start_pos, end_note, end_pos, Up)
-        else (end_note, end_pos, start_note, start_pos, Down)
+      let lower, upper, direction =
+        if d >= 7 then
+          let _ =
+            Printf.printf "d >= 7, end note octave is: %d" (end_note.octave - 1)
+          in
+          ({ end_note with octave = end_note.octave - 1 }, start_note, Down)
+        else if d <= -7 then
+          let _ =
+            Printf.printf "d <= -7, end note octave is: %d" (end_note.octave + 1)
+          in
+          (start_note, { end_note with octave = end_note.octave + 1 }, Up)
+        else if d > 0 then (start_note, end_note, Up)
+        else (end_note, start_note, Down)
       in
+      let lower_pos = Note.to_pos lower in
+      let upper_pos = Note.to_pos upper in
       let big_scale = make_big_scale scale lower.octave upper.octave in
-      let result = [ lower_pos ] in
-      let rec find_bigger curr notes result =
-        match notes with
-        | hd :: tl -> (
-            match hd >= upper_pos with
-            | true -> List.rev (upper_pos :: result)
-            | false -> (
-                match curr < hd with
-                | true -> find_bigger hd tl (hd :: result)
-                | false -> find_bigger curr tl result))
-        | [] -> upper_pos :: result
+      let result =
+        lower
+        :: (List.filter
+              (fun pos -> lower_pos < pos && pos < upper_pos)
+              big_scale
+           |> List.map Note.of_pos)
+        @ [ upper ]
       in
-      let out = List.map Note.of_pos (find_bigger lower_pos big_scale result) in
-      match direction with Down -> out | Up -> List.rev out
+      match direction with Down -> List.rev result | Up -> result
 
   let random_note (scale : scale) =
     List.nth scale.notes (Random.int (List.length scale.intervals))
 
   let get_note_and_path (scale : scale) =
     let note = random_note scale in
-    (note, get_path scale scale.root note)
+    (note, get_path scale note scale.root)
 end
