@@ -429,12 +429,14 @@ function get_path(scale, start_note, end_note) {
       start_note,
       start_pos,
       end_note,
-      end_pos
+      end_pos,
+      /* Up */0
     ] : [
       end_note,
       end_pos,
       start_note,
-      start_pos
+      start_pos,
+      /* Down */1
     ];
   var upper_pos = match[3];
   var lower_pos = match[1];
@@ -449,10 +451,10 @@ function get_path(scale, start_note, end_note) {
       var notes = _notes;
       var curr = _curr;
       if (!notes) {
-        return Stdlib__List.rev({
-                    hd: upper_pos,
-                    tl: result
-                  });
+        return {
+                hd: upper_pos,
+                tl: result
+              };
       }
       var tl = notes.tl;
       var hd = notes.hd;
@@ -477,7 +479,12 @@ function get_path(scale, start_note, end_note) {
       continue ;
     };
   };
-  return Stdlib__List.map(of_pos, find_bigger(lower_pos, big_scale, result));
+  var out = Stdlib__List.map(of_pos, find_bigger(lower_pos, big_scale, result));
+  if (match[4]) {
+    return out;
+  } else {
+    return Stdlib__List.rev(out);
+  }
 }
 
 function random_note(scale) {

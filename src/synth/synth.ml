@@ -4,7 +4,6 @@ module Chord = Music.Chord
 type synth
 type t = synth
 
-(* This is bad *)
 (* https://melange.re/v2.2.0/build-system/#handling-assets *)
 external createPolySynth : unit -> synth = "createPolySynth"
 [@@mel.module "./ToneInterop.js"]

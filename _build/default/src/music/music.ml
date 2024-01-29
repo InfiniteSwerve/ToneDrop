@@ -154,9 +154,10 @@ module Scale = struct
     let end_pos = end_note.pitch + (end_note.octave * 12) in
     if start_pos = end_pos then [ Note.of_pos start_pos ]
     else
-      let lower, lower_pos, upper, upper_pos =
-        if start_pos < end_pos then (start_note, start_pos, end_note, end_pos)
-        else (end_note, end_pos, start_note, start_pos)
+      let lower, lower_pos, upper, upper_pos, direction =
+        if start_pos < end_pos then
+          (start_note, start_pos, end_note, end_pos, Up)
+        else (end_note, end_pos, start_note, start_pos, Down)
       in
       let big_scale = make_big_scale scale lower.octave upper.octave in
       let result = [ lower_pos ] in
@@ -169,9 +170,10 @@ module Scale = struct
                 match curr < hd with
                 | true -> find_bigger hd tl (hd :: result)
                 | false -> find_bigger curr tl result))
-        | [] -> List.rev (upper_pos :: result)
+        | [] -> upper_pos :: result
       in
-      List.map Note.of_pos (find_bigger lower_pos big_scale result)
+      let out = List.map Note.of_pos (find_bigger lower_pos big_scale result) in
+      match direction with Down -> out | Up -> List.rev out
 
   let random_note (scale : scale) =
     List.nth scale.notes (Random.int (List.length scale.intervals))
