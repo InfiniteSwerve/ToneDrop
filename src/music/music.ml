@@ -173,6 +173,7 @@ module Scale = struct
       match direction with Down -> List.rev result | Up -> result
 
   let random_note (scale : scale) =
+    Random.self_init ();
     List.nth scale.notes (Random.int (List.length scale.intervals))
 
   let get_note_and_path (scale : scale) =

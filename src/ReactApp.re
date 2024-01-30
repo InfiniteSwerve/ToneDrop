@@ -15,7 +15,6 @@ module App = {
   // Do as little shit as possible in this file. Do pretty much all the heavy lifting in straight OCaml.
   // TODO: Play progression
   // TODO: Visualization of chord relative to key via p5.js
-  // TODO: Resolve to root when correct note is pressed
   // TODO: Do the functional ear trainer thing
   // TODO: ToneDrop logo in the top left
   //
@@ -69,12 +68,6 @@ module App = {
     let handleButtonPress = button_value => {
       let local_note = Note.transpose(key, button_value);
       withSynth(synth, _synth => Play.note(_synth, local_note));
-      // If the button_value has the same pitch as the guessNote, then play path
-      // Js.log((
-      // "local note is %d global note is %d\n",
-      // Note.to_pos(local_note),
-      // Note.to_pos(Option.get(guessNote)),
-      // ));
       let local_note = Some(local_note);
       let _ =
         Js.Global.setTimeout(
@@ -89,9 +82,7 @@ module App = {
     <div>
       <div className="button-container">
         <div className="note-grid">
-          // TODO: Need the buttons to also resolve towards tonic
           // TODO: Need sidebar
-          // TODO: Need function to make buttons (getting complicated to make changes to them all at once)
           // TODO: Global time value for speeding up/slowing down
 
             {makeButton(
