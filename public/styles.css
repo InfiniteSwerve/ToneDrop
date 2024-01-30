@@ -56,9 +56,61 @@ body {
   grid-template-rows: auto auto auto;
 }
 
-.spacer {
-  flex: 0.5; /* Adjust this value to get the sharp/flat notes correctly aligned */
-  visibility: hidden; /* Makes the spacer take up space but remain invisible */
+.app-container {
+  display: flex;
+}
+
+.sidebar {
+  width: 200px; 
+  height: 100vh;
+  background-color: #eee; 
+  padding:10px;
+}
+
+
+.sidebar-button{
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 5px;
+  cursor: pointer;
+}
+
+.main-content {
+  flex-grow: 1;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: block;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  padding: 12px 16px;
+  z-index: 1;
+}
+
+.dropdown-button:hover .dropdown-content {
+  display: block;
+}
+
+dropdown-content div {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.dropdown-content div:hover {
+  background-color: #f1f1f1;
 }
 
 
@@ -69,3 +121,4 @@ body {
     font-size: 14px;
   }
 }
+

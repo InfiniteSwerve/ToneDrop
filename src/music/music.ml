@@ -33,6 +33,7 @@ module Note = struct
                 note))
 
   let to_string note = Printf.sprintf "%s%d" notes.(note.pitch) note.octave
+  let to_name note = notes.(note.pitch)
 
   let transpose ?(scale_position : int option = None)
       { pitch = old_pitch; octave; _ } (operator : int) : note =
@@ -109,7 +110,7 @@ module Scale = struct
     | Minor -> minor_intervals
     | Chromatic -> chromatic_intervals
 
-  let make_of_string (key : string) (intervals : int list) =
+  let of_string (key : string) (intervals : int list) =
     let root = Note.of_name key 4 in
     let notes =
       List.map
@@ -119,7 +120,17 @@ module Scale = struct
     in
     { key; root; intervals; notes }
 
-  let make_of_int ?(octave = 4) (key : int) (intervals : int list) =
+  let of_note root intervals =
+    let key = Note.to_name root in
+    let notes =
+      List.map
+        (fun interval ->
+          Note.transpose ~scale_position:(Some interval) root interval)
+        intervals
+    in
+    { key; root; intervals; notes }
+
+  let of_int ?(octave = 4) (key : int) (intervals : int list) =
     let root = Note.of_number key octave in
     let notes =
       List.map
@@ -132,9 +143,7 @@ module Scale = struct
   (* lower index = lower pos *)
   let make_big_scale scale lo ho =
     let rec go_up octave finish notes =
-      let curr_octave_scale =
-        make_of_int ~octave scale.root.pitch major_intervals
-      in
+      let curr_octave_scale = of_int ~octave scale.root.pitch major_intervals in
       let new_notes =
         List.map
           (fun (note : Note.t) -> note.pitch + (note.octave * 12))

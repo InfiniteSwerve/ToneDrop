@@ -1,6 +1,6 @@
 open Music
 
-let c_maj = Scale.make_of_string "C" Scale.major_intervals
+let c_maj = Scale.of_string "C" Scale.major_intervals
 
 let test_dist () =
   let n = Note.transpose Note.c4 2 in
