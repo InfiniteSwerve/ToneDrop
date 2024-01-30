@@ -3,6 +3,8 @@
 import * as Caml_option from "melange.js/caml_option.js";
 import * as Curry from "melange.js/curry.js";
 import * as Music from "./music/music.js";
+import * as Stdlib__Option from "melange/option.js";
+import * as Stdlib__Printf from "melange/printf.js";
 import * as Synth from "./synth/synth.js";
 import * as React from "react";
 import * as Client from "react-dom/client";
@@ -23,6 +25,15 @@ function ReactApp$App(Props) {
       });
   var setPath = match$2[1];
   var path = match$2[0];
+  var match$3 = React.useState(function () {
+        return Music.Note.c4;
+      });
+  var key = match$3[0];
+  var match$4 = React.useState(function () {
+        
+      });
+  var setGuessNote = match$4[1];
+  var guessNote = match$4[0];
   var withSynth = function (synth, callback) {
     if (synth !== undefined) {
       return Curry._1(callback, Caml_option.valFromOption(synth));
@@ -37,20 +48,14 @@ function ReactApp$App(Props) {
     console.log("Audio Started");
     Curry._1(callback, newSynth);
   };
-  var playNote = function (synth) {
-    var note = Music.Note.of_number(0, 4);
-    Synth.play_note(synth, note);
-    console.log("Playing note");
-  };
-  var playChord = function (synth) {
-    Synth.Play.chord(synth, Music.Note.c4, /* Major */0);
-    console.log("Playing notes");
-  };
   var playNoteGetPath = function (synth) {
     var scale = Music.Scale.make_of_string("C", Music.Scale.major_intervals);
     var match = Music.Scale.get_note_and_path(scale);
     var path = match[1];
     var note = match[0];
+    Curry._1(setGuessNote, (function (param) {
+            return note;
+          }));
     Curry._1(setPath, (function (param) {
             return path;
           }));
@@ -67,33 +72,96 @@ function ReactApp$App(Props) {
       return ;
     }
   };
-  return JsxRuntime.jsxs("div", {
-              children: [
-                JsxRuntime.jsx("button", {
-                      children: "Play Note and initialize synth",
-                      onClick: (function (_event) {
-                          withSynth(synth, playNote);
-                        })
-                    }),
-                JsxRuntime.jsx("button", {
-                      children: "Play Notes",
-                      onClick: (function (_event) {
-                          withSynth(synth, playChord);
-                        })
-                    }),
-                JsxRuntime.jsx("button", {
-                      children: "Play Base Chord",
-                      onClick: (function (_event) {
-                          withSynth(synth, playNoteGetPath);
-                        })
-                    }),
-                JsxRuntime.jsx("button", {
-                      children: "Play Resolution Path",
-                      onClick: (function (_event) {
-                          withSynth(synth, playResolutionPath);
-                        })
-                    })
-              ]
+  var makeButton = function (noteValue, label, handleClick, accidental, gridColumn) {
+    var className = accidental ? "note-button sharp-flat" : "note-button";
+    var gridColumn$1 = Curry._1(Stdlib__Printf.sprintf(/* Format */{
+              _0: {
+                TAG: /* Int */4,
+                _0: /* Int_d */0,
+                _1: /* No_padding */0,
+                _2: /* No_precision */0,
+                _3: {
+                  TAG: /* String_literal */11,
+                  _0: " / span 2",
+                  _1: /* End_of_format */0
+                }
+              },
+              _1: "%d / span 2"
+            }), gridColumn);
+    return JsxRuntime.jsx("button", {
+                children: label,
+                className: className,
+                style: {
+                  gridColumn: gridColumn$1
+                },
+                onClick: (function (_event) {
+                    Curry._1(handleClick, noteValue);
+                  })
+              });
+  };
+  var handleButtonPress = function (button_value) {
+    var local_note = Music.Note.transpose(undefined, key)(button_value);
+    withSynth(synth, (function (_synth) {
+            Synth.Play.note(_synth, local_note);
+          }));
+    var local_note$1 = local_note;
+    setTimeout((function (param) {
+            if (Stdlib__Option.equal(Music.Note.eq, local_note$1, guessNote)) {
+              return withSynth(synth, playResolutionPath);
+            }
+            
+          }), 300);
+  };
+  return JsxRuntime.jsx("div", {
+              children: JsxRuntime.jsxs("div", {
+                    children: [
+                      JsxRuntime.jsxs("div", {
+                            children: [
+                              makeButton(1, "Ra", handleButtonPress, true, 1),
+                              makeButton(3, "Me", handleButtonPress, true, 3),
+                              makeButton(6, "Fi", handleButtonPress, true, 7),
+                              makeButton(8, "Le", handleButtonPress, true, 9),
+                              makeButton(10, "Te", handleButtonPress, true, 11)
+                            ],
+                            className: "note-grid"
+                          }),
+                      JsxRuntime.jsxs("div", {
+                            children: [
+                              makeButton(0, "Do", handleButtonPress, false, 1),
+                              makeButton(2, "Re", handleButtonPress, false, 3),
+                              makeButton(4, "Mi", handleButtonPress, false, 5),
+                              makeButton(5, "Fa", handleButtonPress, false, 7),
+                              makeButton(7, "So", handleButtonPress, false, 9),
+                              makeButton(9, "La", handleButtonPress, false, 11),
+                              makeButton(11, "Ti", handleButtonPress, false, 13),
+                              makeButton(12, "Do", handleButtonPress, false, 15)
+                            ],
+                            className: "note-grid"
+                          }),
+                      JsxRuntime.jsxs("div", {
+                            children: [
+                              JsxRuntime.jsx("button", {
+                                    children: "Repeat the Question",
+                                    className: "function-button",
+                                    id: "repeat-question",
+                                    onClick: (function (_event) {
+                                        withSynth(synth, playNoteGetPath);
+                                      })
+                                  }),
+                              JsxRuntime.jsx("button", {
+                                    children: "Play the Correct Answer",
+                                    className: "function-button",
+                                    id: "play-answer",
+                                    onClick: (function (_event) {
+                                        withSynth(synth, playResolutionPath);
+                                      })
+                                  })
+                            ],
+                            className: "buttons-below-grid"
+                          })
+                    ],
+                    className: "button-container"
+                  })
             });
 }
 

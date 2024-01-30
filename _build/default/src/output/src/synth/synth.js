@@ -40,7 +40,7 @@ function path(synth, notes, delay) {
             walk(rest);
           }), delay);
   };
-  walk(notes);
+  walk(Stdlib__List.tl(notes));
 }
 
 var Play = {

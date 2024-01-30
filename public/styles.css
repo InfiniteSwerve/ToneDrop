@@ -1,0 +1,71 @@
+body {
+  font-family: Arial, sans-serif;
+}
+
+.button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.function-button {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 5px;
+  cursor: pointer;
+}
+
+#repeat-question {
+  background-color: #008CBA; /* Blue */
+}
+
+.button-row {
+  display: flex;
+  justify-content: space-between;
+  width:100%;
+}
+
+.note-button {
+  background-color: #f2f2f2; /* Light Grey */
+  border: 1px solid #d9d9d9;
+  border-radius: 6q;
+  color: black;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 1px;
+  padding: 14px 12px;
+  cursor: pointer;
+  flex: 1;
+}
+
+.note-button:active {
+  background-color: #d9d9d9; /* Slightly darker grey */
+}
+
+.note-grid {
+  display: grid;
+  grid-template-columns: repeat(14, 1fr); /* 12 for the number of semitones in an octave */
+  grid-template-rows: auto auto auto;
+}
+
+.spacer {
+  flex: 0.5; /* Adjust this value to get the sharp/flat notes correctly aligned */
+  visibility: hidden; /* Makes the spacer take up space but remain invisible */
+}
+
+
+/* Optional: Add responsiveness to the layout */
+@media (max-width: 600px) {
+  .function-button, .note-button {
+    padding: 12px 24px;
+    font-size: 14px;
+  }
+}

@@ -64,11 +64,6 @@ module Note = struct
   let a4 = of_number 9 4
   let as4 = of_number 10 4
   let b4 = of_number 11 4
-
-  (* How do we want to create chords? A constructor function?
-     Like, play <note>?
-     I guess we can just represent all the chords as sets of note in one octave. We can probably also represent voicings, but not now.
-     Now we just need a function that takes a note and chord type and pushes out the chord *)
 end
 
 module Chord = struct
@@ -158,14 +153,8 @@ module Scale = struct
     else
       let lower, upper, direction =
         if d >= 7 then
-          let _ =
-            Printf.printf "d >= 7, end note octave is: %d" (end_note.octave - 1)
-          in
           ({ end_note with octave = end_note.octave - 1 }, start_note, Down)
         else if d <= -7 then
-          let _ =
-            Printf.printf "d <= -7, end note octave is: %d" (end_note.octave + 1)
-          in
           (start_note, { end_note with octave = end_note.octave + 1 }, Up)
         else if d > 0 then (start_note, end_note, Up)
         else (end_note, start_note, Down)

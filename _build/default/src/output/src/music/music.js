@@ -424,50 +424,24 @@ function get_path(scale, start_note, end_note) {
             tl: /* [] */0
           };
   }
-  var match = d >= 7 ? (Curry._1(Stdlib__Printf.printf(/* Format */{
-                _0: {
-                  TAG: /* String_literal */11,
-                  _0: "d >= 7, end note octave is: ",
-                  _1: {
-                    TAG: /* Int */4,
-                    _0: /* Int_d */0,
-                    _1: /* No_padding */0,
-                    _2: /* No_precision */0,
-                    _3: /* End_of_format */0
-                  }
-                },
-                _1: "d >= 7, end note octave is: %d"
-              }), end_note.octave - 1 | 0), [
-        {
-          pitch: end_note.pitch,
-          octave: end_note.octave - 1 | 0,
-          scale_position: end_note.scale_position
-        },
-        start_note,
-        /* Down */1
-      ]) : (
-      d <= -7 ? (Curry._1(Stdlib__Printf.printf(/* Format */{
-                    _0: {
-                      TAG: /* String_literal */11,
-                      _0: "d <= -7, end note octave is: ",
-                      _1: {
-                        TAG: /* Int */4,
-                        _0: /* Int_d */0,
-                        _1: /* No_padding */0,
-                        _2: /* No_precision */0,
-                        _3: /* End_of_format */0
-                      }
-                    },
-                    _1: "d <= -7, end note octave is: %d"
-                  }), end_note.octave + 1 | 0), [
-            start_note,
-            {
-              pitch: end_note.pitch,
-              octave: end_note.octave + 1 | 0,
-              scale_position: end_note.scale_position
-            },
-            /* Up */0
-          ]) : (
+  var match = d >= 7 ? [
+      {
+        pitch: end_note.pitch,
+        octave: end_note.octave - 1 | 0,
+        scale_position: end_note.scale_position
+      },
+      start_note,
+      /* Down */1
+    ] : (
+      d <= -7 ? [
+          start_note,
+          {
+            pitch: end_note.pitch,
+            octave: end_note.octave + 1 | 0,
+            scale_position: end_note.scale_position
+          },
+          /* Up */0
+        ] : (
           d > 0 ? [
               start_note,
               end_note,
