@@ -15,6 +15,7 @@ module App = {
   // TODO: Make the scale note changes occur instantly
   // TODO: Make scale draw from active notes
   // TODO: Modify scales and modify intervals to be guessed separately
+  // TODO: Make scale notes light up on path resolution
   let make = () => {
     let (synth, setSynth) = React.useState(() => None);
     let (_, setAudioContextStarted) = React.useState(() => false);
@@ -337,7 +338,6 @@ module App = {
         </div>
       </div>
     </div>;
-    // TODO: Button for selecting scale notes
     // TODO: Something that learns how good you're getting at guessing and targets stuff you're bad at
   };
 };
