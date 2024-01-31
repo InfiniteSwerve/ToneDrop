@@ -46,8 +46,27 @@ body {
   flex: 1;
 }
 
+.note-button:hover {
+  background-color: #e6e6e6; /* Slightly lighter/darker on hover */
+}
+
+
 .note-button:active {
   background-color: #d9d9d9; /* Slightly darker grey */
+}
+
+.note-button.disabled {
+  background-color: #d3d3d3; /* Grayed out */
+  color: #a9a9a9;
+  cursor: not-allowed;
+}
+
+.grid-container{
+  background-color: #f2f2f2;
+  padding:10px;
+  margin:10px;
+  border-radius:5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .note-grid {
@@ -79,6 +98,14 @@ body {
   font-size: 16px;
   margin: 5px;
   cursor: pointer;
+}
+
+.sidebar-button:hover {
+  background-color: #45a049; /* Slightly darker green on hover */
+}
+.sidebar-button-toggled {
+  background-color: #367c39; /* Different color for toggled state */
+  color: #fff;
 }
 
 .main-content {

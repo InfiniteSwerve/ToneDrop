@@ -12,7 +12,7 @@ module App = {
   // TODO: Visualization of chord relative to key via p5.js
   // TODO: Do the functional ear trainer thing
   // TODO: ToneDrop logo in the top left
-  // TODO: Make the note changes occur instantly
+  //
   let make = () => {
     let (synth, setSynth) = React.useState(() => None);
     let (_, setAudioContextStarted) = React.useState(() => false);
@@ -39,17 +39,6 @@ module App = {
           true,
         |]
       );
-    let (toggledButton, setToggledButton) = React.useState(() => None);
-
-    let toggleButton = buttonId => {
-      setToggledButton(prevButtonId =>
-        prevButtonId == Some(buttonId) ? None : Some(buttonId)
-      );
-    };
-
-    let buttonClass = buttonId =>
-      toggledButton == Some(buttonId)
-        ? "sidebar-button sidebar-button-toggled" : "sidebar-button";
 
     let withSynth = (synth, callback: synthCallback) => {
       switch (synth) {
@@ -98,43 +87,36 @@ module App = {
       </button>;
     };
 
-    let handleButtonPress = button_value =>
-      if (scaleChange) {
-        setActiveNotes(activeNotes => {
-          activeNotes[button_value] = !activeNotes[button_value];
-          activeNotes;
-        });
-      } else if (activeNotes[button_value]) {
-        let local_note = Note.transpose(key, button_value);
-        withSynth(synth, _synth => Play.note(_synth, local_note));
-        let local_note = Some(local_note);
-        let _ =
-          Js.Global.setTimeout(
-            () =>
-              if (Option.equal(Note.eq, local_note, guessNote)) {
-                withSynth(synth, playResolutionPath);
-              },
-            300,
-          );
-        ();
+    let handleButtonPress = button_value => {
+      if scaleChange {
+        setActiveNotes(activeNotes => activeNotes[button_value] = !activeNotes[button_value];
+                       activeNotes;)
+      } else {
+      let local_note = Note.transpose(key, button_value);
+      withSynth(synth, _synth => Play.note(_synth, local_note));
+      let local_note = Some(local_note);
+      let _ =
+        Js.Global.setTimeout(
+          () =>
+            if (Option.equal(Note.eq, local_note, guessNote)) {
+              withSynth(synth, playResolutionPath);
+            },
+          300,
+        );
+      ();
       };
+    };
 
     <div className="app-container">
       <div className="sidebar">
         <button
-          className={buttonClass("change scale notes")}
-          onClick={_event => {
-            toggleButton("change scale notes");
-            setScaleChange(prev => !prev);
-          }}>
+          className="sidebar-button"
+          onClick={_event => setScaleChange(prev => !prev)}>
           "Set Scale Change"->React.string
         </button>
         <button
-          className={buttonClass("change key")}
-          onClick={_event => {
-            toggleButton("change key");
-            setKeyChangeOpen(prev => !prev);
-          }}>
+          className="sidebar-button"
+          onClick={_event => setKeyChangeOpen(prev => !prev)}>
           {Printf.sprintf("Key: %s", Note.to_name(key))->React.string}
         </button>
         {keyChangeOpen
