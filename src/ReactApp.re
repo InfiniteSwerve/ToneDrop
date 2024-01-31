@@ -5,6 +5,14 @@ module Play = Synth.Play;
 
 type synthCallback = Synth.t => unit;
 
+type buttonAction =
+  | ToggleNote(int)
+  | PlayNote(int);
+
+type buttonState =
+  | Active
+  | Inactive;
+
 module App = {
   [@react.component]
   // Do as little shit as possible in this file. Do pretty much all the heavy lifting in straight OCaml.
@@ -68,7 +76,6 @@ module App = {
     };
 
     let playNoteGetPath = synth => {
-      // TODO: replace this interval with the active notes
       let (note, path) = Scale.get_note_and_path(scale);
       setGuessNote(_ => Some(note));
       setPath(_ => Some(path));

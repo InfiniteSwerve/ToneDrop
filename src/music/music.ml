@@ -210,3 +210,15 @@ module Scale = struct
     in
     of_note root (walk len [])
 end
+
+module State = struct
+  type mode = Play | Change_notes | Change_key
+
+  type state = {
+    mode : mode;
+    scale : Scale.t;
+    path : int list option;
+    guessNote : Note.t option;
+    guessableNotes : bool Array.t;
+  }
+end
