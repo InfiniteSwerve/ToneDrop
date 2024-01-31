@@ -120,6 +120,16 @@ module Scale = struct
     in
     { key; root; intervals; notes }
 
+  let list_to_string (f : 'a -> string) (l : 'a list) : string =
+    "[" ^ String.concat "; " (List.map f l) ^ "]"
+
+  let to_string (s : scale) : string =
+    "{ root = " ^ Note.to_string s.root ^ "\n" ^ "; notes = "
+    ^ list_to_string Note.to_string s.notes
+    ^ "\n" ^ "; intervals = "
+    ^ list_to_string string_of_int s.intervals
+    ^ " }"
+
   let of_note root intervals =
     let key = Note.to_name root in
     let notes =
@@ -142,18 +152,14 @@ module Scale = struct
 
   (* lower index = lower pos *)
   let make_big_scale scale lo ho =
-    let rec go_up octave finish notes =
-      let curr_octave_scale = of_int ~octave scale.root.pitch major_intervals in
-      let new_notes =
-        List.map
-          (fun (note : Note.t) -> note.pitch + (note.octave * 12))
-          curr_octave_scale.notes
-      in
+    let rec go_up finish octave notes =
+      let curr_octave_scale = of_int ~octave scale.root.pitch scale.intervals in
+      let new_notes = List.map Note.to_pos curr_octave_scale.notes in
       match octave = finish with
       | true -> List.concat (new_notes :: notes)
-      | false -> go_up (octave - 1) finish (new_notes :: notes)
+      | false -> go_up finish (octave - 1) (new_notes :: notes)
     in
-    go_up ho lo []
+    go_up (lo - 1) ho []
 
   (* TODO:  Normalize the target octave to be within the start octave *)
   let get_path scale (start_note : Note.t) (end_note : Note.t) : Note.t list =
@@ -171,6 +177,9 @@ module Scale = struct
       let lower_pos = Note.to_pos lower in
       let upper_pos = Note.to_pos upper in
       let big_scale = make_big_scale scale lower.octave upper.octave in
+      Printf.printf "lower/upper oct is: %d %d\n" lower.octave upper.octave;
+      Printf.printf "lower/upper pos is: %d %d\n" lower_pos upper_pos;
+      Printf.printf "%s\n" (list_to_string Int.to_string big_scale);
       let result =
         lower
         :: (List.filter
@@ -188,4 +197,16 @@ module Scale = struct
   let get_note_and_path (scale : scale) =
     let note = random_note scale in
     (note, get_path scale note scale.root)
+
+  let of_active_notes (root : Note.t) (active_notes : bool Array.t) : scale =
+    let len = Array.length active_notes - 2 in
+    let rec walk curr acc =
+      match curr >= 0 with
+      | true -> (
+          match active_notes.(curr) with
+          | true -> walk (curr - 1) (curr :: acc)
+          | false -> walk (curr - 1) acc)
+      | false -> acc
+    in
+    of_note root (walk len [])
 end

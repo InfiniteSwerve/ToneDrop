@@ -12,12 +12,15 @@ module App = {
   // TODO: Visualization of chord relative to key via p5.js
   // TODO: Do the functional ear trainer thing
   // TODO: ToneDrop logo in the top left
-  // TODO: Make the note changes occur instantly
+  // TODO: Make the scale note changes occur instantly
+  // TODO: Make scale draw from active notes
+  // TODO: Modify scales and modify intervals to be guessed separately
   let make = () => {
     let (synth, setSynth) = React.useState(() => None);
     let (_, setAudioContextStarted) = React.useState(() => false);
     let (path, setPath) = React.useState(() => None);
-    let (key, _setKey) = React.useState(() => Note.c4);
+    let (scale, setScale) =
+      React.useState(() => Scale.of_note(Note.c4, Scale.major_intervals));
     let (keyChangeOpen, setKeyChangeOpen) = React.useState(() => false);
     let (guessNote, setGuessNote) = React.useState(() => None);
     let (scaleChange, setScaleChange) = React.useState(() => false);
@@ -64,7 +67,7 @@ module App = {
     };
 
     let playNoteGetPath = synth => {
-      let scale = Scale.of_note(key, Scale.major_intervals);
+      // TODO: replace this interval with the active notes
       let (note, path) = Scale.get_note_and_path(scale);
       setGuessNote(_ => Some(note));
       setPath(_ => Some(path));
@@ -105,7 +108,7 @@ module App = {
           activeNotes;
         });
       } else if (activeNotes[button_value]) {
-        let local_note = Note.transpose(key, button_value);
+        let local_note = Note.transpose(scale.root, button_value);
         withSynth(synth, _synth => Play.note(_synth, local_note));
         let local_note = Some(local_note);
         let _ =
@@ -126,6 +129,8 @@ module App = {
           onClick={_event => {
             toggleButton("change scale notes");
             setScaleChange(prev => !prev);
+            setScale(_prev => Scale.of_active_notes(scale.root, activeNotes));
+            Js.log(Scale.to_string(scale));
           }}>
           "Set Scale Change"->React.string
         </button>
@@ -135,44 +140,80 @@ module App = {
             toggleButton("change key");
             setKeyChangeOpen(prev => !prev);
           }}>
-          {Printf.sprintf("Key: %s", Note.to_name(key))->React.string}
+          {Printf.sprintf("Key: %s", scale.key)->React.string}
         </button>
         {keyChangeOpen
            ? <div className="dropdown-content">
-               <div onClick={_event => _setKey(_ => Note.of_name("C", 4))}>
+               <div
+                 onClick={_event =>
+                   setScale(_ => Scale.of_string("C", scale.intervals))
+                 }>
                  "C"->React.string
                </div>
-               <div onClick={_event => _setKey(_ => Note.of_name("C#", 4))}>
+               <div
+                 onClick={_event =>
+                   setScale(_ => Scale.of_string("C#", scale.intervals))
+                 }>
                  "C#/Db"->React.string
                </div>
-               <div onClick={_event => _setKey(_ => Note.of_name("D", 4))}>
+               <div
+                 onClick={_event =>
+                   setScale(_ => Scale.of_string("D", scale.intervals))
+                 }>
                  "D"->React.string
                </div>
-               <div onClick={_event => _setKey(_ => Note.of_name("D#", 4))}>
+               <div
+                 onClick={_event =>
+                   setScale(_ => Scale.of_string("D#", scale.intervals))
+                 }>
                  "D#/Eb"->React.string
                </div>
-               <div onClick={_event => _setKey(_ => Note.of_name("E", 4))}>
+               <div
+                 onClick={_event =>
+                   setScale(_ => Scale.of_string("E", scale.intervals))
+                 }>
                  "E"->React.string
                </div>
-               <div onClick={_event => _setKey(_ => Note.of_name("F", 4))}>
+               <div
+                 onClick={_event =>
+                   setScale(_ => Scale.of_string("F", scale.intervals))
+                 }>
                  "F"->React.string
                </div>
-               <div onClick={_event => _setKey(_ => Note.of_name("F#", 4))}>
+               <div
+                 onClick={_event =>
+                   setScale(_ => Scale.of_string("F#", scale.intervals))
+                 }>
                  "F#/Gb"->React.string
                </div>
-               <div onClick={_event => _setKey(_ => Note.of_name("G", 4))}>
+               <div
+                 onClick={_event =>
+                   setScale(_ => Scale.of_string("G", scale.intervals))
+                 }>
                  "G"->React.string
                </div>
-               <div onClick={_event => _setKey(_ => Note.of_name("G#", 4))}>
+               <div
+                 onClick={_event =>
+                   setScale(_ => Scale.of_string("G#", scale.intervals))
+                 }>
                  "G#/Ab"->React.string
                </div>
-               <div onClick={_event => _setKey(_ => Note.of_name("A", 4))}>
+               <div
+                 onClick={_event =>
+                   setScale(_ => Scale.of_string("A", scale.intervals))
+                 }>
                  "A"->React.string
                </div>
-               <div onClick={_event => _setKey(_ => Note.of_name("A#", 4))}>
+               <div
+                 onClick={_event =>
+                   setScale(_ => Scale.of_string("A#", scale.intervals))
+                 }>
                  "A#/Bb"->React.string
                </div>
-               <div onClick={_event => _setKey(_ => Note.of_name("B", 4))}>
+               <div
+                 onClick={_event =>
+                   setScale(_ => Scale.of_string("B", scale.intervals))
+                 }>
                  "B"->React.string
                </div>
              </div>
