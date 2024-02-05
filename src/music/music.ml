@@ -6,6 +6,9 @@ module Note = struct
   let notes =
     [| "C"; "C#"; "D"; "D#"; "E"; "F"; "F#"; "G"; "G#"; "A"; "A#"; "B" |]
 
+  let solfege =
+    [| "Do"; "Ra"; "Re"; "Me"; "Mi"; "Fa"; "Fi"; "So"; "Le"; "La"; "Te"; "Ti" |]
+
   let eq l r = l.pitch = r.pitch && l.octave = r.octave
   let to_number note = note.pitch
 
@@ -177,9 +180,6 @@ module Scale = struct
       let lower_pos = Note.to_pos lower in
       let upper_pos = Note.to_pos upper in
       let big_scale = make_big_scale scale lower.octave upper.octave in
-      Printf.printf "lower/upper oct is: %d %d\n" lower.octave upper.octave;
-      Printf.printf "lower/upper pos is: %d %d\n" lower_pos upper_pos;
-      Printf.printf "%s\n" (list_to_string Int.to_string big_scale);
       let result =
         lower
         :: (List.filter
@@ -211,7 +211,33 @@ module Scale = struct
     of_note root (walk len [])
 end
 
-module State = struct
+module GuessableNotes = struct
+  type guessableNotes = bool Array.t
+  type t = guessableNotes
+
+  let of_scale (scale : Scale.t) : guessableNotes =
+    let notes = Array.make 13 false in
+    let intervals = scale.intervals in
+    (match List.hd intervals == 0 with
+    | true ->
+        notes.(0) <- true;
+        notes.(12) <- true
+    | false -> ());
+    let rec make intervals =
+      match intervals with
+      | hd :: tl ->
+          notes.(hd) <- true;
+          make tl
+      | [] -> ()
+    in
+    make (List.tl intervals);
+    notes
+
+  let swap (notes : guessableNotes) (note : int) =
+    notes.(note) <- not notes.(note)
+end
+
+module MusicState = struct
   type mode = Play | Change_notes | Change_key
 
   type state = {
@@ -219,6 +245,11 @@ module State = struct
     scale : Scale.t;
     path : int list option;
     guessNote : Note.t option;
-    guessableNotes : bool Array.t;
+    guessableNotes : GuessableNotes.t;
   }
+
+  let init ?(mode = Play) ?(scale = Scale.of_note Note.c4 Scale.major_intervals)
+      ?(path = None) ?(guessNote = None)
+      ?(guessableNotes = GuessableNotes.of_scale scale) () =
+    { mode; scale; path; guessNote; guessableNotes }
 end

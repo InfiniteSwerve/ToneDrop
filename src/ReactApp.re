@@ -2,10 +2,12 @@ module Note = Music.Note;
 module Chord = Music.Chord;
 module Scale = Music.Scale;
 module Play = Synth.Play;
+module MusicState = Music.MusicState;
+module GuessableNotes = Music.GuessableNotes;
 
 type synthCallback = Synth.t => unit;
 
-type buttonAction =
+type noteButtonAction =
   | ToggleNote(int)
   | PlayNote(int);
 
@@ -13,9 +15,15 @@ type buttonState =
   | Active
   | Inactive;
 
+type state =
+  | Play
+  | ChangeKey
+  | ChangeScale
+  | ChangeGuessableNotes;
+
 module App = {
   [@react.component]
-  // Do as little shit as possible in this file. Do pretty much all the heavy lifting in straight OCaml.
+  // Do as little shit as possible in this file. Do pretty much all the heavy lifting in music.ml.
   // TODO: Play progression
   // TODO: Visualization of chord relative to key via p5.js
   // TODO: Do the functional ear trainer thing
@@ -24,16 +32,22 @@ module App = {
   // TODO: Make scale draw from active notes
   // TODO: Modify scales and modify intervals to be guessed separately
   // TODO: Make scale notes light up on path resolution
+  // TODO: Global time value for speeding up/slowing down
+  // TODO: highlight button pressed
+  // TODO: Some way to save things
+  // TODO: Something that learns how good you're getting at guessing and targets stuff you're bad at
+  // TODO: Make note button light up if it's the correct note
+  // TODO: Flash button during path playing
+  // TODO: Make set Guessable Notes change which notes are guessed
   let make = () => {
+    let (state, setState) = React.useState(() => Play);
     let (synth, setSynth) = React.useState(() => None);
     let (_, setAudioContextStarted) = React.useState(() => false);
     let (path, setPath) = React.useState(() => None);
     let (scale, setScale) =
       React.useState(() => Scale.of_note(Note.c4, Scale.major_intervals));
-    let (keyChangeOpen, setKeyChangeOpen) = React.useState(() => false);
     let (guessNote, setGuessNote) = React.useState(() => None);
-    let (scaleChange, setScaleChange) = React.useState(() => false);
-    let (activeNotes, setActiveNotes) =
+    let (guessableNotes, setGuessableNotes) =
       React.useState(() =>
         [|
           true,
@@ -53,14 +67,18 @@ module App = {
       );
     let (toggledButton, setToggledButton) = React.useState(() => None);
 
-    let toggleButton = buttonId => {
-      setToggledButton(prevButtonId =>
-        prevButtonId == Some(buttonId) ? None : Some(buttonId)
-      );
+    let handleSideBarButtonClick = (newState: state) => {
+      state == newState ? setState(_ => Play) : setState(_ => newState);
     };
 
-    let buttonClass = buttonId =>
-      toggledButton == Some(buttonId)
+    let controlToggleButton = buttonId => {
+      Some(buttonId) == toggledButton
+        ? setToggledButton(_prevButtonId => None)
+        : setToggledButton(_prevButtonId => Some(buttonId));
+    };
+
+    let sidebarButtonClass = (buttonState: state) =>
+      state == buttonState
         ? "sidebar-button sidebar-button-toggled" : "sidebar-button";
 
     let withSynth = (synth, callback: synthCallback) => {
@@ -91,242 +109,197 @@ module App = {
       };
     };
 
-    let isButtonDisabled = noteValue => !activeNotes[noteValue];
+    let noteButtonLabel = (noteValue: int) => {
+      switch (state) {
+      | ChangeKey =>
+        Printf.sprintf(
+          "%s",
+          Note.notes[(noteValue + scale.root.pitch) mod 12],
+        )
+      | _ => Printf.sprintf("%s", Note.solfege[noteValue mod 12])
+      };
+    };
 
-    let makeButton =
-        (~noteValue, ~label, ~handleClick, ~accidental, ~gridColumn) => {
+    let handleNoteButtonClick = button_value =>
+      switch (state) {
+      | Play =>
+        if (guessableNotes[button_value]) {
+          let local_note = Note.transpose(scale.root, button_value);
+          withSynth(synth, _synth => Play.note(_synth, local_note));
+          let local_note = Some(local_note);
+          let _ =
+            Js.Global.setTimeout(
+              () =>
+                if (Option.equal(Note.eq, local_note, guessNote)) {
+                  withSynth(synth, playResolutionPath);
+                },
+              300,
+            );
+          ();
+        } else {
+          ();
+        }
+      | ChangeGuessableNotes =>
+        setGuessableNotes(notes => {
+          GuessableNotes.swap(notes, button_value);
+          notes;
+        });
+        Js.log(guessableNotes);
+        controlToggleButton(Int.to_string(button_value));
+      | _ => ()
+      };
+
+    let isButtonDisabled = noteValue => !guessableNotes[noteValue];
+
+    let makeNoteButton = (~noteValue) => {
+      let accidental = List.mem(noteValue, [1, 3, 6, 8, 10]);
+      let (gridRow, gridColumn) =
+        switch (noteValue) {
+        | 0 => (2, 1) /* C - Do */
+        | 1 => (1, 1) /* C# - Ra */
+        | 2 => (2, 2) /* D - Re */
+        | 3 => (1, 2) /* D# - Me */
+        | 4 => (2, 3) /* E - Mi */
+        | 5 => (2, 4) /* F - Fa */
+        | 6 => (1, 4) /* F# - Fi */
+        | 7 => (2, 5) /* G - So */
+        | 8 => (1, 5) /* G# - Le */
+        | 9 => (2, 6) /* A - La */
+        | 10 => (1, 6) /* A# - Te */
+        | 11 => (2, 7) /* B - Ti */
+        | _ => (2, 8) /* C - Do (octave) */
+        };
       let disabled = isButtonDisabled(noteValue);
       let className =
         "note-button "
         ++ (accidental ? "sharp-flat " : "")
         ++ (disabled ? "disabled " : "");
-      let gridColumn = Printf.sprintf("%d / span 2", gridColumn);
+
+      /* Combine the state-dependent class */
+      let stateClassName =
+        switch (state) {
+        | Play => "play-mode"
+        | ChangeKey => "change-key-mode"
+        | ChangeScale => "change-scale-mode"
+        | ChangeGuessableNotes => "change-guessable-notes-mode"
+        };
+
+      let label = noteButtonLabel(noteValue);
+      let gridStyle =
+        ReactDOM.Style.make(
+          ~gridColumn=Printf.sprintf("%d / span 1", gridColumn),
+          ~gridRow=Printf.sprintf("%d", gridRow),
+          (),
+        );
+
       <button
-        className
-        onClick={_event => handleClick(noteValue)}
-        style={ReactDOM.Style.make(~gridColumn, ())}>
+        key={Int.to_string(noteValue)}
+        className={className ++ " " ++ stateClassName}
+        onClick={_event => handleNoteButtonClick(noteValue)}
+        style=gridStyle>
         label->React.string
       </button>;
     };
 
-    let handleButtonPress = button_value =>
-      if (scaleChange) {
-        setActiveNotes(activeNotes => {
-          activeNotes[button_value] = !activeNotes[button_value];
-          activeNotes;
-        });
-      } else if (activeNotes[button_value]) {
-        let local_note = Note.transpose(scale.root, button_value);
-        withSynth(synth, _synth => Play.note(_synth, local_note));
-        let local_note = Some(local_note);
-        let _ =
-          Js.Global.setTimeout(
-            () =>
-              if (Option.equal(Note.eq, local_note, guessNote)) {
-                withSynth(synth, playResolutionPath);
-              },
-            300,
-          );
-        ();
-      };
-
     <div className="app-container">
       <div className="sidebar">
         <button
-          className={buttonClass("change scale notes")}
-          onClick={_event => {
-            toggleButton("change scale notes");
-            setScaleChange(prev => !prev);
-            setScale(_prev => Scale.of_active_notes(scale.root, activeNotes));
-            Js.log(Scale.to_string(scale));
-          }}>
-          "Set Scale Change"->React.string
+          className={sidebarButtonClass(ChangeGuessableNotes)}
+          onClick={_event => {handleSideBarButtonClick(ChangeGuessableNotes)}}>
+          "Set Guessable Notes"->React.string
         </button>
         <button
-          className={buttonClass("change key")}
-          onClick={_event => {
-            toggleButton("change key");
-            setKeyChangeOpen(prev => !prev);
-          }}>
+          className={sidebarButtonClass(ChangeKey)}
+          onClick={_event => {handleSideBarButtonClick(ChangeKey)}}>
           {Printf.sprintf("Key: %s", scale.key)->React.string}
         </button>
-        {keyChangeOpen
-           ? <div className="dropdown-content">
-               <div
-                 onClick={_event =>
-                   setScale(_ => Scale.of_string("C", scale.intervals))
-                 }>
-                 "C"->React.string
-               </div>
-               <div
-                 onClick={_event =>
-                   setScale(_ => Scale.of_string("C#", scale.intervals))
-                 }>
-                 "C#/Db"->React.string
-               </div>
-               <div
-                 onClick={_event =>
-                   setScale(_ => Scale.of_string("D", scale.intervals))
-                 }>
-                 "D"->React.string
-               </div>
-               <div
-                 onClick={_event =>
-                   setScale(_ => Scale.of_string("D#", scale.intervals))
-                 }>
-                 "D#/Eb"->React.string
-               </div>
-               <div
-                 onClick={_event =>
-                   setScale(_ => Scale.of_string("E", scale.intervals))
-                 }>
-                 "E"->React.string
-               </div>
-               <div
-                 onClick={_event =>
-                   setScale(_ => Scale.of_string("F", scale.intervals))
-                 }>
-                 "F"->React.string
-               </div>
-               <div
-                 onClick={_event =>
-                   setScale(_ => Scale.of_string("F#", scale.intervals))
-                 }>
-                 "F#/Gb"->React.string
-               </div>
-               <div
-                 onClick={_event =>
-                   setScale(_ => Scale.of_string("G", scale.intervals))
-                 }>
-                 "G"->React.string
-               </div>
-               <div
-                 onClick={_event =>
-                   setScale(_ => Scale.of_string("G#", scale.intervals))
-                 }>
-                 "G#/Ab"->React.string
-               </div>
-               <div
-                 onClick={_event =>
-                   setScale(_ => Scale.of_string("A", scale.intervals))
-                 }>
-                 "A"->React.string
-               </div>
-               <div
-                 onClick={_event =>
-                   setScale(_ => Scale.of_string("A#", scale.intervals))
-                 }>
-                 "A#/Bb"->React.string
-               </div>
-               <div
-                 onClick={_event =>
-                   setScale(_ => Scale.of_string("B", scale.intervals))
-                 }>
-                 "B"->React.string
-               </div>
+        {switch (state) {
+         | ChangeKey =>
+           <div className="dropdown-content">
+             <div
+               onClick={_event =>
+                 setScale(_ => Scale.of_string("C", scale.intervals))
+               }>
+               "C"->React.string
              </div>
-           : React.null}
+             <div
+               onClick={_event =>
+                 setScale(_ => Scale.of_string("C#", scale.intervals))
+               }>
+               "C#/Db"->React.string
+             </div>
+             <div
+               onClick={_event =>
+                 setScale(_ => Scale.of_string("D", scale.intervals))
+               }>
+               "D"->React.string
+             </div>
+             <div
+               onClick={_event =>
+                 setScale(_ => Scale.of_string("D#", scale.intervals))
+               }>
+               "D#/Eb"->React.string
+             </div>
+             <div
+               onClick={_event =>
+                 setScale(_ => Scale.of_string("E", scale.intervals))
+               }>
+               "E"->React.string
+             </div>
+             <div
+               onClick={_event =>
+                 setScale(_ => Scale.of_string("F", scale.intervals))
+               }>
+               "F"->React.string
+             </div>
+             <div
+               onClick={_event =>
+                 setScale(_ => Scale.of_string("F#", scale.intervals))
+               }>
+               "F#/Gb"->React.string
+             </div>
+             <div
+               onClick={_event =>
+                 setScale(_ => Scale.of_string("G", scale.intervals))
+               }>
+               "G"->React.string
+             </div>
+             <div
+               onClick={_event =>
+                 setScale(_ => Scale.of_string("G#", scale.intervals))
+               }>
+               "G#/Ab"->React.string
+             </div>
+             <div
+               onClick={_event =>
+                 setScale(_ => Scale.of_string("A", scale.intervals))
+               }>
+               "A"->React.string
+             </div>
+             <div
+               onClick={_event =>
+                 setScale(_ => Scale.of_string("A#", scale.intervals))
+               }>
+               "A#/Bb"->React.string
+             </div>
+             <div
+               onClick={_event =>
+                 setScale(_ => Scale.of_string("B", scale.intervals))
+               }>
+               "B"->React.string
+             </div>
+           </div>
+         | _ => React.null
+         }}
       </div>
       <div className="main-content">
         <div className="button-container">
           <div className="note-grid">
-            // TODO: Global time value for speeding up/slowing down
-            // TODO: highlight button pressed
-            // TODO: Flash button during path playing
-
-              {makeButton(
-                 ~noteValue=1,
-                 ~label="Ra",
-                 ~handleClick=handleButtonPress,
-                 ~accidental=true,
-                 ~gridColumn=1,
-               )}
-              {makeButton(
-                 ~noteValue=3,
-                 ~label="Me",
-                 ~handleClick=handleButtonPress,
-                 ~accidental=true,
-                 ~gridColumn=3,
-               )}
-              {makeButton(
-                 ~noteValue=6,
-                 ~label="Fi",
-                 ~handleClick=handleButtonPress,
-                 ~accidental=true,
-                 ~gridColumn=7,
-               )}
-              {makeButton(
-                 ~noteValue=8,
-                 ~label="Le",
-                 ~handleClick=handleButtonPress,
-                 ~accidental=true,
-                 ~gridColumn=9,
-               )}
-              {makeButton(
-                 ~noteValue=10,
-                 ~label="Te",
-                 ~handleClick=handleButtonPress,
-                 ~accidental=true,
-                 ~gridColumn=11,
-               )}
-            </div>
-          <div className="note-grid">
-            {makeButton(
-               ~noteValue=0,
-               ~label="Do",
-               ~handleClick=handleButtonPress,
-               ~accidental=false,
-               ~gridColumn=1,
-             )}
-            {makeButton(
-               ~noteValue=2,
-               ~label="Re",
-               ~handleClick=handleButtonPress,
-               ~accidental=false,
-               ~gridColumn=3,
-             )}
-            {makeButton(
-               ~noteValue=4,
-               ~label="Mi",
-               ~handleClick=handleButtonPress,
-               ~accidental=false,
-               ~gridColumn=5,
-             )}
-            {makeButton(
-               ~noteValue=5,
-               ~label="Fa",
-               ~handleClick=handleButtonPress,
-               ~accidental=false,
-               ~gridColumn=7,
-             )}
-            {makeButton(
-               ~noteValue=7,
-               ~label="So",
-               ~handleClick=handleButtonPress,
-               ~accidental=false,
-               ~gridColumn=9,
-             )}
-            {makeButton(
-               ~noteValue=9,
-               ~label="La",
-               ~handleClick=handleButtonPress,
-               ~accidental=false,
-               ~gridColumn=11,
-             )}
-            {makeButton(
-               ~noteValue=11,
-               ~label="Ti",
-               ~handleClick=handleButtonPress,
-               ~accidental=false,
-               ~gridColumn=13,
-             )}
-            {makeButton(
-               ~noteValue=12,
-               ~label="Do",
-               ~handleClick=handleButtonPress,
-               ~accidental=false,
-               ~gridColumn=15,
-             )}
+            {Array.mapi(
+               (noteValue, _) => makeNoteButton(~noteValue),
+               guessableNotes,
+             )
+             |> React.array}
           </div>
           <div className="buttons-below-grid">
             <button
@@ -345,7 +318,6 @@ module App = {
         </div>
       </div>
     </div>;
-    // TODO: Something that learns how good you're getting at guessing and targets stuff you're bad at
   };
 };
 

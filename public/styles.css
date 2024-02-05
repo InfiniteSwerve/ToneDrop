@@ -46,6 +46,12 @@ body {
   flex: 1;
 }
 
+.note-button.sharp-flat {
+  color: #fff;
+  font-style: italic;
+  transform: translateX(50%);
+}
+
 .note-button:hover {
   background-color: #e6e6e6; /* Slightly lighter/darker on hover */
 }
@@ -61,6 +67,23 @@ body {
   cursor: not-allowed;
 }
 
+.play-mode {
+  border-color: #4CAF50; /* Green border for play mode */
+}
+
+.change-key-mode {
+  border-color: #2196F3; /* Blue border for change key mode */
+}
+
+.change-scale-mode {
+  border-color: #FF5722; /* Orange border for change scale mode */
+}
+
+.change-guessable-notes-mode {
+  border-color: #FFC107; /* Yellow border for change guessable notes mode */
+}
+
+
 .grid-container{
   background-color: #f2f2f2;
   padding:10px;
@@ -72,7 +95,7 @@ body {
 .note-grid {
   display: grid;
   grid-template-columns: repeat(14, 1fr); /* 12 for the number of semitones in an octave */
-  grid-template-rows: auto auto auto;
+  grid-template-rows: auto auto; 
 }
 
 .app-container {
@@ -142,10 +165,10 @@ dropdown-content div {
 
 
 /* Optional: Add responsiveness to the layout */
-@media (max-width: 600px) {
-  .function-button, .note-button {
-    padding: 12px 24px;
-    font-size: 14px;
-  }
-}
+/* @media (max-width: 600px) { */
+/*   .function-button, .note-button { */
+/*     padding: 12px 24px; */
+/*     font-size: 14px; */
+/*   } */
+/* } */
 
