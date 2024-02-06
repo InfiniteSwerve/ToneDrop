@@ -241,6 +241,10 @@ module Scale = struct
     match mem scale interval with
     | true -> remove scale interval
     | false -> add scale interval
+
+  let random_scale scale =
+    Random.self_init ();
+    of_string Note.notes.(Random.int 12) scale.intervals
 end
 
 module GuessableNotes = struct

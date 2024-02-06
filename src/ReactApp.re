@@ -323,6 +323,15 @@ module App = {
               onClick={_event => withSynth(synth, playResolutionPath)}>
               "Play the Correct Answer"->React.string
             </button>
+            <button
+              className="function-button"
+              id="new-question-new-key"
+              onClick={_event => {
+                setScale(_ => Scale.random_scale(scale));
+                withSynth(synth, playNoteGetPath);
+              }}>
+              "New Question Random Key"->React.string
+            </button>
           </div>
         </div>
       </div>
