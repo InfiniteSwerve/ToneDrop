@@ -38,7 +38,6 @@ module App = {
   // TODO: Something that learns how good you're getting at guessing and targets stuff you're bad at
   // TODO: Make note button light up if it's the correct note
   // TODO: Flash button during path playing
-  // TODO: Make set Guessable Notes change which notes are guessed
   let make = () => {
     let (state, setState) = React.useState(() => Play);
     let (synth, setSynth) = React.useState(() => None);
@@ -94,7 +93,8 @@ module App = {
     };
 
     let playNoteGetPath = synth => {
-      let (note, path) = Scale.get_note_and_path(scale);
+      let note = GuessableNotes.get_random_note(scale, guessableNotes);
+      let path = Scale.get_path(scale, note, scale.root);
       setGuessNote(_ => Some(note));
       setPath(_ => Some(path));
 
@@ -146,10 +146,23 @@ module App = {
         });
         Js.log(guessableNotes);
         controlToggleButton(Int.to_string(button_value));
+      | ChangeScale =>
+        setScale(oldScale => {
+          controlToggleButton(Int.to_string(button_value));
+          Scale.of_note(
+            oldScale.root,
+            List.filter(nv => {nv != button_value}, oldScale.intervals),
+          );
+        })
+
       | _ => ()
       };
 
-    let isButtonDisabled = noteValue => !guessableNotes[noteValue];
+    let isButtonDisabled = noteValue =>
+      switch (state) {
+      | ChangeScale => !Scale.mem(scale, noteValue)
+      | _ => !guessableNotes[noteValue]
+      };
 
     let makeNoteButton = (~noteValue) => {
       let accidental = List.mem(noteValue, [1, 3, 6, 8, 10]);
@@ -206,7 +219,12 @@ module App = {
         <button
           className={sidebarButtonClass(ChangeGuessableNotes)}
           onClick={_event => {handleSideBarButtonClick(ChangeGuessableNotes)}}>
-          "Set Guessable Notes"->React.string
+          "Change Guessable Notes"->React.string
+        </button>
+        <button
+          className={sidebarButtonClass(ChangeScale)}
+          onClick={_event => {handleSideBarButtonClick(ChangeScale)}}>
+          "Change Scale Notes"->React.string
         </button>
         <button
           className={sidebarButtonClass(ChangeKey)}

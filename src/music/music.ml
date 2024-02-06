@@ -209,6 +209,9 @@ module Scale = struct
       | false -> acc
     in
     of_note root (walk len [])
+
+  let mem (scale : scale) (interval : int) : bool =
+    List.mem interval scale.intervals
 end
 
 module GuessableNotes = struct
@@ -235,6 +238,17 @@ module GuessableNotes = struct
 
   let swap (notes : guessableNotes) (note : int) =
     notes.(note) <- not notes.(note)
+
+  let get_random_note (scale : Scale.t) (notes : guessableNotes) : Note.t =
+    let note_list_b = Array.to_list notes in
+    let guessable_notes =
+      List.mapi (fun i b -> if b then Some i else None) note_list_b
+      |> List.filter_map Fun.id
+    in
+    let interval =
+      List.nth guessable_notes (Random.int (List.length guessable_notes))
+    in
+    Note.transpose scale.root interval
 end
 
 module MusicState = struct
