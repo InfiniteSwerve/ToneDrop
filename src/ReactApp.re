@@ -7,14 +7,6 @@ module GuessableNotes = Music.GuessableNotes;
 
 type synthCallback = Synth.t => unit;
 
-type noteButtonAction =
-  | ToggleNote(int)
-  | PlayNote(int);
-
-type buttonState =
-  | Active
-  | Inactive;
-
 type state =
   | Play
   | ChangeKey
@@ -28,16 +20,13 @@ module App = {
   // TODO: Visualization of chord relative to key via p5.js
   // TODO: Do the functional ear trainer thing
   // TODO: ToneDrop logo in the top left
-  // TODO: Make the scale note changes occur instantly
-  // TODO: Make scale draw from active notes
-  // TODO: Modify scales and modify intervals to be guessed separately
-  // TODO: Make scale notes light up on path resolution
   // TODO: Global time value for speeding up/slowing down
-  // TODO: highlight button pressed
   // TODO: Some way to save things
   // TODO: Something that learns how good you're getting at guessing and targets stuff you're bad at
   // TODO: Make note button light up if it's the correct note
   // TODO: Flash button during path playing
+  // TODO: Play Cadence
+  // TODO: Prevent audio from playing again if it's already playing
   let make = () => {
     let (state, setState) = React.useState(() => Play);
     let (synth, setSynth) = React.useState(() => None);
@@ -99,8 +88,13 @@ module App = {
       setGuessNote(_ => Some(note));
       setPath(_ => Some(path));
 
-      Play.chord(synth, scale.root, Chord.Major);
-      ignore(Js.Global.setTimeout(() => {Play.note(synth, note)}, 800));
+      let two = Chord.(of_interval_kind(scale.root, 2, Minor));
+      let five = Chord.(of_interval_kind(scale.root, 7, Major));
+      let one = Chord.(of_interval_kind(scale.root, 0, Major));
+      Play.chords_with_callback(synth, scale.root, [two, five, one], 800, () =>
+        Play.note(synth, note)
+      );
+      //ignore(Js.Global.setTimeout(() => {Play.note(synth, note)}, 800));
     };
 
     let playResolutionPath = synth => {

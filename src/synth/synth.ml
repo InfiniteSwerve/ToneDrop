@@ -21,7 +21,8 @@ let play_note (synth : synth) (note : Note.t) : unit =
   triggerAttackRelease synth note_str "8n"
 
 (* I guess js lists are the same as ocaml arrays in memory? *)
-let play_notes (synth : synth) (notes : Note.t list) : unit =
+let play_notes (synth : synth) (chord : Chord.t) : unit =
+  let notes = chord.notes in
   let note_strings =
     List.map (fun note -> Note.to_string note) notes |> Array.of_list
   in
@@ -29,10 +30,7 @@ let play_notes (synth : synth) (notes : Note.t list) : unit =
 
 module Play = struct
   let note (synth : synth) (note : Note.t) : unit = play_note synth note
-
-  let chord (synth : synth) (root : Note.t) (kind : Chord.t) : unit =
-    let chord = Chord.spell root kind in
-    play_notes synth chord
+  let chord (synth : synth) (chord : Chord.t) : unit = play_notes synth chord
 
   let path (synth : synth) (notes : Note.t list) (delay : int) =
     let rec walk notes =
@@ -47,4 +45,26 @@ module Play = struct
       | [] -> ()
     in
     walk (List.tl notes)
+
+  let chords (synth : synth) (_root : Note.t) (chords : Chord.t list)
+      (delay : int) : unit =
+    let rec walk chords =
+      match chords with
+      | chord :: rest ->
+          play_notes synth chord;
+          ignore (Js.Global.setTimeout (fun () -> walk rest) delay)
+      | [] -> ()
+    in
+    walk chords
+
+  let chords_with_callback (synth : synth) (_root : Note.t)
+      (chords : Chord.t list) (delay : int) callback : unit =
+    let rec walk chords =
+      match chords with
+      | chord :: rest ->
+          play_notes synth chord;
+          ignore (Js.Global.setTimeout (fun () -> walk rest) delay)
+      | [] -> callback ()
+    in
+    walk chords
 end

@@ -71,7 +71,8 @@ module Note = struct
 end
 
 module Chord = struct
-  type chord = Major | Minor | Dominant7 | Major7 | Minor7
+  type kind = Major | Minor | Dominant7 | Major7 | Minor7
+  type chord = { root : Note.t; notes : Note.t list }
   type t = chord
 
   let major_notes = [ 0; 4; 7 ]
@@ -80,13 +81,20 @@ module Chord = struct
   let major7_notes = [ 0; 4; 7; 11 ]
   let minor7_notes = [ 0; 3; 7; 10 ]
 
-  let spell (root : Note.t) (chord : t) : Note.t list =
-    match chord with
-    | Major -> Note.transpose_notes root major_notes
-    | Minor -> Note.transpose_notes root minor_notes
-    | Dominant7 -> Note.transpose_notes root dominant7_notes
-    | Major7 -> Note.transpose_notes root major7_notes
-    | Minor7 -> Note.transpose_notes root minor7_notes
+  let of_kind (root : Note.t) (chord : kind) : chord =
+    let notes =
+      match chord with
+      | Major -> Note.transpose_notes root major_notes
+      | Minor -> Note.transpose_notes root minor_notes
+      | Dominant7 -> Note.transpose_notes root dominant7_notes
+      | Major7 -> Note.transpose_notes root major7_notes
+      | Minor7 -> Note.transpose_notes root minor7_notes
+    in
+    { root; notes }
+
+  let of_interval_kind (root : Note.t) (interval : int) (chord : kind) : chord =
+    let new_root = Note.transpose root interval in
+    of_kind new_root chord
 end
 
 module Scale = struct
