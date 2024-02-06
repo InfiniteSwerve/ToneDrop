@@ -212,6 +212,27 @@ module Scale = struct
 
   let mem (scale : scale) (interval : int) : bool =
     List.mem interval scale.intervals
+
+  let add (scale : scale) (interval : int) : scale =
+    let rec walk l r : int list =
+      match r with
+      | hd :: tl -> (
+          if hd == interval then scale.intervals
+          else
+            match hd < interval with
+            | true -> walk (hd :: l) tl
+            | false -> List.rev (interval :: l) @ r)
+      | [] -> List.rev (interval :: l)
+    in
+    of_note scale.root (walk [] scale.intervals)
+
+  let remove (scale : scale) (interval : int) : scale =
+    of_note scale.root (List.filter (fun n -> n != interval) scale.intervals)
+
+  let swap (scale : scale) (interval : int) : scale =
+    match mem scale interval with
+    | true -> remove scale interval
+    | false -> add scale interval
 end
 
 module GuessableNotes = struct

@@ -45,6 +45,7 @@ module App = {
     let (path, setPath) = React.useState(() => None);
     let (scale, setScale) =
       React.useState(() => Scale.of_note(Note.c4, Scale.major_intervals));
+    Js.log(Scale.to_string(scale));
     let (guessNote, setGuessNote) = React.useState(() => None);
     let (guessableNotes, setGuessableNotes) =
       React.useState(() =>
@@ -120,7 +121,8 @@ module App = {
       };
     };
 
-    let handleNoteButtonClick = button_value =>
+    let handleNoteButtonClick = button_value => {
+      Printf.printf("handlenotebuttonclick");
       switch (state) {
       | Play =>
         if (guessableNotes[button_value]) {
@@ -147,16 +149,12 @@ module App = {
         Js.log(guessableNotes);
         controlToggleButton(Int.to_string(button_value));
       | ChangeScale =>
-        setScale(oldScale => {
-          controlToggleButton(Int.to_string(button_value));
-          Scale.of_note(
-            oldScale.root,
-            List.filter(nv => {nv != button_value}, oldScale.intervals),
-          );
-        })
-
+        setScale(oldScale => Scale.swap(oldScale, button_value));
+        //Js.log(Scale.to_string(scale));
+        controlToggleButton(Int.to_string(button_value));
       | _ => ()
       };
+    };
 
     let isButtonDisabled = noteValue =>
       switch (state) {
@@ -188,7 +186,6 @@ module App = {
         ++ (accidental ? "sharp-flat " : "")
         ++ (disabled ? "disabled " : "");
 
-      /* Combine the state-dependent class */
       let stateClassName =
         switch (state) {
         | Play => "play-mode"

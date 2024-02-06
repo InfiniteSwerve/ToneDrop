@@ -78,12 +78,34 @@ let test_path () =
     [ 2 + off; 4 + off; 6 + off; 7 + off ]
     d_g
 
+let test_scale_swap () =
+  let dumb_scale = Scale.of_note Note.c4 [ 0 ] in
+  let swapped_scale = Scale.swap dumb_scale 2 in
+  Alcotest.(check (list int)) "0 -> 0 2" [ 0; 2 ] swapped_scale.intervals;
+
+  let swapped_scale = Scale.swap swapped_scale 2 in
+  Alcotest.(check (list int)) "0 2 -> 0" [ 0 ] swapped_scale.intervals;
+
+  let scale = Scale.of_note Note.c4 [ 0; 11 ] in
+  let swapped_scale = Scale.swap scale 8 in
+  Alcotest.(check (list int))
+    "0 11 -> 0 8 11" [ 0; 8; 11 ] swapped_scale.intervals;
+
+  let scale = Scale.of_note Note.c4 [ 0; 2; 4; 5; 7; 9; 11 ] in
+  let swapped_scale = Scale.swap scale 0 in
+  Alcotest.(check (list int))
+    "2 - 11 major" [ 2; 4; 5; 7; 9; 11 ] swapped_scale.intervals;
+  let swapped_scale = Scale.swap swapped_scale 0 in
+  Alcotest.(check (list int))
+    "0 - 11 major" [ 0; 2; 4; 5; 7; 9; 11 ] swapped_scale.intervals
+
 let test_suite =
   [
     ("dist", `Quick, test_dist);
     ("transpose", `Quick, test_transpose);
     ("make_big_scale", `Quick, test_make_big_scale);
     ("get_path", `Quick, test_path);
+    ("swap", `Quick, test_scale_swap);
   ]
 
 let () =
