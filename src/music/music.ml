@@ -244,7 +244,10 @@ module Scale = struct
 
   let random_scale scale =
     Random.self_init ();
-    of_string Note.notes.(Random.int 12) scale.intervals
+    let new_scale = of_string Note.notes.(Random.int 12) scale.intervals in
+    Printf.printf "randomizing scale from %s\nto\n%s\n" (to_string scale)
+      (to_string new_scale);
+    new_scale
 end
 
 module GuessableNotes = struct

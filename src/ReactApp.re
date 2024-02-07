@@ -23,10 +23,10 @@ module App = {
   // TODO: Global time value for speeding up/slowing down
   // TODO: Some way to save things
   // TODO: Something that learns how good you're getting at guessing and targets stuff you're bad at
-  // TODO: Make note button light up if it's the correct note
   // TODO: Flash button during path playing
-  // TODO: Play Cadence
   // TODO: Prevent audio from playing again if it's already playing
+  // TODO: Add progressions
+  // TODO: Add progression editor
   let make = () => {
     let (state, setState) = React.useState(() => Play);
     let (synth, setSynth) = React.useState(() => None);
@@ -55,11 +55,14 @@ module App = {
         |]
       );
     let (toggledButton, setToggledButton) = React.useState(() => None);
+    let (scaleChangeRequested, setScaleChangeRequested) =
+      React.useState(() => false);
+    let (noteHighlight, setNoteHighlight) =
+      React.useState(() => Array.make(13, `None));
 
     let handleSideBarButtonClick = (newState: state) => {
       state == newState ? setState(_ => Play) : setState(_ => newState);
     };
-
     let controlToggleButton = buttonId => {
       Some(buttonId) == toggledButton
         ? setToggledButton(_prevButtonId => None)
@@ -83,6 +86,7 @@ module App = {
     };
 
     let playNoteGetPath = synth => {
+      Js.log(("scale in play note", Scale.to_string(scale)));
       let note = GuessableNotes.get_random_note(scale, guessableNotes);
       let path = Scale.get_path(scale, note, scale.root);
       setGuessNote(_ => Some(note));
@@ -94,6 +98,7 @@ module App = {
       Play.chords_with_callback(synth, scale.root, [two, five, one], 800, () =>
         Play.note(synth, note)
       );
+      setNoteHighlight(_ => Array.make(13, `None));
       //ignore(Js.Global.setTimeout(() => {Play.note(synth, note)}, 800));
     };
 
@@ -116,11 +121,48 @@ module App = {
     };
 
     let handleNoteButtonClick = button_value => {
-      Printf.printf("handlenotebuttonclick");
+      Printf.printf(
+        "handleNoteButtonClick called with button_value: %d\n",
+        button_value,
+      );
+      Printf.printf(
+        "Size of noteHighlight array: %d\n",
+        Array.length(noteHighlight),
+      );
       switch (state) {
       | Play =>
         if (guessableNotes[button_value]) {
           let local_note = Note.transpose(scale.root, button_value);
+          setNoteHighlight(prevHighlights => {
+            Array.mapi(
+              (index, _) =>
+                if (index == button_value) {
+                  if (Option.equal(Note.eq, Some(local_note), guessNote)) {
+                    `Correct;
+                  } else {
+                    `Incorrect;
+                  };
+                } else {
+                  prevHighlights[index];
+                },
+              prevHighlights,
+            )
+          });
+          // Turn off highlighting after an instant
+          ignore(
+            Js.Global.setTimeout(
+              () => {
+                setNoteHighlight(prevHighlights =>
+                  Array.mapi(
+                    (index, _) =>
+                      index == button_value ? `None : prevHighlights[index],
+                    prevHighlights,
+                  )
+                )
+              },
+              200,
+            ),
+          );
           withSynth(synth, _synth => Play.note(_synth, local_note));
           let local_note = Some(local_note);
           let _ =
@@ -175,10 +217,17 @@ module App = {
         | _ => (2, 8) /* C - Do (octave) */
         };
       let disabled = isButtonDisabled(noteValue);
+      let highlightClass =
+        switch (noteHighlight[noteValue]) {
+        | `None => ""
+        | `Correct => "correct-note"
+        | `Incorrect => "incorrect-note"
+        };
       let className =
         "note-button "
         ++ (accidental ? "sharp-flat " : "")
-        ++ (disabled ? "disabled " : "");
+        ++ (disabled ? "disabled " : "")
+        ++ highlightClass;
 
       let stateClassName =
         switch (state) {
@@ -204,6 +253,15 @@ module App = {
         label->React.string
       </button>;
     };
+
+    React.useEffect(() => {
+      if (scaleChangeRequested) {
+        withSynth(synth, playNoteGetPath);
+        setScaleChangeRequested(_ => false);
+      };
+
+      None; // Return None for no cleanup, or Some(() => ...) for cleanup
+    });
 
     <div className="app-container">
       <div className="sidebar">
@@ -327,11 +385,11 @@ module App = {
               className="function-button"
               id="new-question-new-key"
               onClick={_event => {
+                setScaleChangeRequested(_ => true);
                 setScale(_ => Scale.random_scale(scale));
-                withSynth(synth, playNoteGetPath);
               }}>
-              "New Question Random Key"->React.string
-            </button>
+              //withSynth(synth, playNoteGetPath);
+               "New Question Random Key"->React.string </button>
           </div>
         </div>
       </div>

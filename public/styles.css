@@ -52,9 +52,9 @@ body {
   transform: translateX(50%);
 }
 
-.note-button:hover {
-  background-color: #e6e6e6; /* Slightly lighter/darker on hover */
-}
+/* .note-button:hover { */
+/*   background-color: #e6e6e6; /* Slightly lighter/darker on hover */ */
+/* } */
 
 
 .note-button:active {
@@ -65,6 +65,18 @@ body {
   background-color: #d3d3d3; /* Grayed out */
   color: #a9a9a9;
   cursor: not-allowed;
+}
+
+.correct-note {
+    background-color: green; /* Green background for correct notes */
+    color: white; /* White text to ensure readability */
+    /* Add other styling as needed */
+}
+
+.incorrect-note {
+    background-color: red; /* Red background for incorrect notes */
+    color: white; /* White text to ensure readability */
+    /* Add other styling as needed */
 }
 
 .play-mode {
