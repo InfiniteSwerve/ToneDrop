@@ -199,7 +199,6 @@ module Scale = struct
       match direction with Down -> List.rev result | Up -> result
 
   let random_note (scale : scale) =
-    Random.self_init ();
     List.nth scale.notes (Random.int (List.length scale.intervals))
 
   let get_note_and_path (scale : scale) =
@@ -243,7 +242,9 @@ module Scale = struct
     | false -> add scale interval
 
   let random_scale scale =
-    Random.self_init ();
+    let time = int_of_float (Sys.time ()) in
+    let pid = Sys.command "echo $$" in
+    Random.init (time lxor pid);
     let new_scale = of_string Note.notes.(Random.int 12) scale.intervals in
     Printf.printf "randomizing scale from %s\nto\n%s\n" (to_string scale)
       (to_string new_scale);

@@ -26,7 +26,10 @@ module App = {
   // TODO: Prevent audio from playing again if it's already playing
   // TODO: Add progressions
   // TODO: Add progression editor
+  // TODO: Maybe we should wrap all music state into one package in music.ml with a single interface?
+  // TODO: Global audio instance so we can keep only one instance playing at a time
   let make = () => {
+    Random.init(int_of_float(Js.Date.now()));
     let (state, setState) = React.useState(() => Play);
     let (synth, setSynth) = React.useState(() => None);
     let (_, setAudioContextStarted) = React.useState(() => false);
@@ -102,6 +105,7 @@ module App = {
     };
 
     let playResolutionPath = synth => {
+      // TODO: Need to allow highlighting here somehow
       switch (path) {
       | Some(actualPath) => Play.path(synth, actualPath, 300)
       | None => Js.log("Ain't no path to resolve")
@@ -259,7 +263,7 @@ module App = {
         setScaleChangeRequested(_ => false);
       };
 
-      None; // Return None for no cleanup, or Some(() => ...) for cleanup
+      None;
     });
 
     <div className="app-container">
@@ -378,11 +382,13 @@ module App = {
               className="function-button"
               id="repeat-note"
               onClick={_event =>
-                // How to avoid option here?
+                // TODO: bad pattern, how to avoid?
 
-                  withSynth(synth, _synth =>
-                    Play.note(_synth, Option.get(guessNote))
-                  )
+                  switch (guessNote) {
+                  | Some(note) =>
+                    withSynth(synth, _synth => Play.note(_synth, note))
+                  | None => ()
+                  }
                 }>
               "Repeat Note"->React.string
             </button>

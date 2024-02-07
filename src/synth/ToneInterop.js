@@ -24,3 +24,7 @@ export function playNotes(notes, synth) {
   const noteStrings = notes.map(note => note.toString());
   synth.triggerAttackRelease(noteStrings, "8n");
 };
+
+export function releaseAll(synth) {
+  synth.releaseAll();
+}
