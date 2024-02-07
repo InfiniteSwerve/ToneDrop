@@ -19,16 +19,18 @@ external triggerListAttackRelease : synth -> string array -> string -> unit
 external releaseAll : synth -> unit = "releaseAll" [@@mel.send]
 
 let play_note (synth : synth) (note : Note.t) : unit =
-  Printf.printf "releasing all notes";
+  Printf.printf "releasing all notes\n";
   releaseAll synth;
   let note_str = Note.to_string note in
-  Printf.printf "Playing note";
+  Printf.printf "Playing note\n";
   triggerAttackRelease synth note_str "8n"
 
 (* I guess js lists are the same as ocaml arrays in memory? *)
 let play_notes (synth : synth) (chord : Chord.t) : unit =
+  Printf.printf "releasing all notes\n";
   releaseAll synth;
   let notes = chord.notes in
+  Printf.printf "Playing notes\n";
   let note_strings =
     List.map (fun note -> Note.to_string note) notes |> Array.of_list
   in
