@@ -16,7 +16,6 @@ type state =
 module App = {
   [@react.component]
   // Do as little shit as possible in this file. Do pretty much all the heavy lifting in music.ml.
-  // TODO: Play progression
   // TODO: Visualization of chord relative to key via p5.js
   // TODO: Do the functional ear trainer thing
   // TODO: ToneDrop logo in the top left
@@ -373,7 +372,19 @@ module App = {
               className="function-button"
               id="repeat-question"
               onClick={_event => withSynth(synth, playNoteGetPath)}>
-              "Repeat the Question"->React.string
+              "New Question"->React.string
+            </button>
+            <button
+              className="function-button"
+              id="repeat-note"
+              onClick={_event =>
+                // How to avoid option here?
+
+                  withSynth(synth, _synth =>
+                    Play.note(_synth, Option.get(guessNote))
+                  )
+                }>
+              "Repeat Note"->React.string
             </button>
             <button
               className="function-button"
