@@ -107,7 +107,14 @@ module App = {
     let playResolutionPath = (highlight, synth) => {
       switch (path) {
       | Some(actualPath) =>
-        Play.path(synth, setNoteHighlight, actualPath, highlight, 300)
+        Play.path(
+          synth,
+          setNoteHighlight,
+          actualPath,
+          highlight,
+          scale.root,
+          300,
+        )
       | None => Js.log("Ain't no path to resolve")
       };
     };
@@ -136,19 +143,15 @@ module App = {
       | Play when guessableNotes[button_value] =>
         withSynth(synth, Synth.drop_audio);
         let local_note = Note.transpose(scale.root, button_value);
+        Printf.printf("Playing %s\n", Note.to_string(local_note));
         Js.log(Note.to_string(local_note));
         let local_note = Some(local_note);
         let highlight =
           Option.equal(Note.eq, local_note, guessNote)
             ? `Correct : `Incorrect;
-        let path =
-          Scale.get_path(
-            scale,
-            Note.of_number(button_value mod 12, button_value < 12 ? 4 : 5),
-            scale.root,
-          );
+        let path = Scale.get_path(scale, Option.get(local_note), scale.root);
         withSynth(synth, _synth =>
-          Play.path(_synth, setNoteHighlight, path, highlight, 0)
+          Play.path(_synth, setNoteHighlight, path, highlight, scale.root, 0)
         );
       | ChangeGuessableNotes =>
         setGuessableNotes(notes => {

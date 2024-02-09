@@ -50,19 +50,21 @@ let drop_audio synth =
 
 let highlight_note
     (set_highlight_notes : (([> `None ] as 'a) array -> 'a array) -> unit)
-    (note : Note.t) start (duration : float) highlight =
+    (note : Note.t) start (duration : float) highlight (root : Note.t) =
   schedule
     (fun () ->
       set_highlight_notes (fun highlight_notes ->
           let new_highlights = Array.copy highlight_notes in
-          new_highlights.(note.pitch + (note.octave / 5 * 12)) <- highlight;
+          new_highlights.(note.pitch - root.pitch + (note.octave / 5 * 12)) <-
+            highlight;
           new_highlights))
     (Printf.sprintf "+%f" start);
   schedule
     (fun () ->
       set_highlight_notes (fun highlight_notes ->
           let new_highlights = Array.copy highlight_notes in
-          new_highlights.(note.pitch + (note.octave / 5 * 12)) <- `None;
+          new_highlights.(note.pitch - root.pitch + (note.octave / 5 * 12)) <-
+            `None;
           new_highlights))
     (Printf.sprintf "+%f" (start +. duration))
 
@@ -71,14 +73,14 @@ module Play = struct
   let chord (synth : synth) (chord : Chord.t) : unit = play_notes synth chord
 
   let path (synth : synth) set_highlight_notes (notes : Note.t list) highlight
-      (_delay : int) =
+      root (_delay : int) =
     drop_audio synth;
     set_highlight_notes (fun _ -> Array.make 13 `None);
     List.iteri
       (fun i (n : Note.t) ->
         highlight_note set_highlight_notes n
           (float_of_int i *. 0.75)
-          0.75 highlight;
+          0.75 highlight root;
 
         schedule
           (fun () -> note synth n)
