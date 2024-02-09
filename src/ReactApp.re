@@ -23,13 +23,16 @@ module App = {
   // TODO: Some way to save things
   // TODO: Something that learns how good you're getting at guessing and targets stuff you're bad at
   // TODO: Flash button during path playing
-  // TODO: Prevent audio from playing again if it's already playing
   // TODO: Add progressions
   // TODO: Add progression editor
   // TODO: Maybe we should wrap all music state into one package in music.ml with a single interface?
   // TODO: Global audio instance so we can keep only one instance playing at a time
+  // BUG: Audio doesn't cancel even with drop_audio. There's an echo that can ring out
   let make = () => {
     Random.init(int_of_float(Js.Date.now()));
+    Synth.testScheduling();
+    Synth.startTransport();
+    Js.log("transport started");
     let (state, setState) = React.useState(() => Play);
     let (synth, setSynth) = React.useState(() => None);
     let (_, setAudioContextStarted) = React.useState(() => false);
@@ -97,7 +100,7 @@ module App = {
       let two = Chord.(of_interval_kind(scale.root, 2, Minor));
       let five = Chord.(of_interval_kind(scale.root, 7, Major));
       let one = Chord.(of_interval_kind(scale.root, 0, Major));
-      Play.chords_with_callback(synth, scale.root, [two, five, one], 800, () =>
+      Play.chords_with_callback(synth, scale.root, [two, five, one], () =>
         Play.note(synth, note)
       );
       setNoteHighlight(_ => Array.make(13, `None));
@@ -107,7 +110,10 @@ module App = {
     let playResolutionPath = synth => {
       // TODO: Need to allow highlighting here somehow
       switch (path) {
-      | Some(actualPath) => Play.path(synth, actualPath, 300)
+      | Some(actualPath) =>
+        Js.log("calling path\n");
+        Printf.printf("path");
+        Play.path(synth, actualPath, 300);
       | None => Js.log("Ain't no path to resolve")
       };
     };
@@ -135,6 +141,7 @@ module App = {
       switch (state) {
       | Play =>
         if (guessableNotes[button_value]) {
+          withSynth(synth, Synth.drop_audio);
           let local_note = Note.transpose(scale.root, button_value);
           setNoteHighlight(prevHighlights => {
             Array.mapi(

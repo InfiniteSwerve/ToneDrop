@@ -25,6 +25,31 @@ export function playNotes(notes, synth) {
   synth.triggerAttackRelease(noteStrings, "8n");
 };
 
+export function schedule(event, time) {
+  Tone.Transport.schedule(event, time)
+}
+
+export function startTransport() {
+  Tone.Transport.start()
+}
+
+export function stopTransport() {
+  Tone.Transport.stop()
+}
+
+// Do I need to stop before canceling?
+// No
+export function clearTransport() {
+  Tone.Transport.cancel()
+}
+
 export function releaseAll(synth) {
   synth.releaseAll();
+}
+export function testScheduling() {
+  Tone.Transport.schedule((time) => {
+    console.log("Event triggered at Tone.js time:", time);
+  }, "+0.5");
+
+  Tone.Transport.start();
 }
