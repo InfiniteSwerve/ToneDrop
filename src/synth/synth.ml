@@ -32,9 +32,6 @@ external clearTransport : unit -> unit = "clearTransport"
 external releaseAll : synth -> unit = "releaseAll"
 [@@mel.module "./ToneInterop.js"]
 
-external testScheduling : unit -> unit = "testScheduling"
-[@@mel.module "./ToneInterop.js"]
-
 let play_note (synth : synth) (note : Note.t) : unit =
   let note_str = Note.to_string note in
   triggerAttackRelease synth note_str "8n"
@@ -67,17 +64,6 @@ module Play = struct
       (List.tl notes);
     startTransport ()
 
-  let _chords (synth : synth) (_root : Note.t) (chords : Chord.t list)
-      (delay : int) : unit =
-    let rec walk chords =
-      match chords with
-      | chord :: rest ->
-          play_notes synth chord;
-          ignore (Js.Global.setTimeout (fun () -> walk rest) delay)
-      | [] -> ()
-    in
-    walk chords
-
   let chords (synth : synth) (_root : Note.t) (chords : Chord.t list) =
     drop_audio synth;
     List.iteri
@@ -87,17 +73,6 @@ module Play = struct
           (Printf.sprintf "+%f" (float_of_int i *. 0.75)))
       chords;
     startTransport ()
-
-  let _chords_with_callback (synth : synth) (_root : Note.t)
-      (chords : Chord.t list) delay callback : unit =
-    let rec walk chords =
-      match chords with
-      | chord :: rest ->
-          play_notes synth chord;
-          ignore (Js.Global.setTimeout (fun () -> walk rest) delay)
-      | [] -> callback ()
-    in
-    walk chords
 
   let chords_with_callback (synth : synth) (_root : Note.t)
       (chords : Chord.t list) callback : unit =

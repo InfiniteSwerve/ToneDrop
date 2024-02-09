@@ -30,9 +30,6 @@ module App = {
   // BUG: Audio doesn't cancel even with drop_audio. There's an echo that can ring out
   let make = () => {
     Random.init(int_of_float(Js.Date.now()));
-    Synth.testScheduling();
-    Synth.startTransport();
-    Js.log("transport started");
     let (state, setState) = React.useState(() => Play);
     let (synth, setSynth) = React.useState(() => None);
     let (_, setAudioContextStarted) = React.useState(() => false);

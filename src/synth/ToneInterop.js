@@ -46,10 +46,3 @@ export function clearTransport() {
 export function releaseAll(synth) {
   synth.releaseAll();
 }
-export function testScheduling() {
-  Tone.Transport.schedule((time) => {
-    console.log("Event triggered at Tone.js time:", time);
-  }, "+0.5");
-
-  Tone.Transport.start();
-}
