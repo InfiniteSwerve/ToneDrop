@@ -25,8 +25,8 @@ module App = {
   // TODO: Add progressions
   // TODO: Add progression editor
   // TODO: Maybe we should wrap all music state into one package in music.ml with a single interface?
-  // TODO: Top note isn't reachable
   // BUG: Audio doesn't cancel even with drop_audio. There's an echo that can ring out
+  // TODO: Start with a guessed note and path and synth so we don't need to mess with options, just disable the other buttons until we click the new question button
   let make = () => {
     Random.init(int_of_float(Js.Date.now()));
     let (state, setState) = React.useState(() => Play);
@@ -80,6 +80,7 @@ module App = {
       | None =>
         let newSynth = Synth.createPolySynth();
         setSynth(_ => Some(newSynth));
+
         setAudioContextStarted(_ => true);
         Js.log("Audio Started");
         callback(newSynth);
@@ -96,15 +97,14 @@ module App = {
       let two = Chord.(of_interval_kind(scale.root, 2, Minor));
       let five = Chord.(of_interval_kind(scale.root, 7, Major));
       let one = Chord.(of_interval_kind(scale.root, 0, Major));
-      Play.chords_with_callback(synth, scale.root, [two, five, one], () =>
+      Play.chords_with_callback(
+        synth, setNoteHighlight, scale.root, [two, five, one], () =>
         Play.note(synth, note)
       );
       setNoteHighlight(_ => Array.make(13, `None));
-      //ignore(Js.Global.setTimeout(() => {Play.note(synth, note)}, 800));
     };
 
     let playResolutionPath = (highlight, synth) => {
-      // TODO: Need to allow highlighting here somehow
       switch (path) {
       | Some(actualPath) =>
         Play.path(synth, setNoteHighlight, actualPath, highlight, 300)
@@ -133,28 +133,23 @@ module App = {
         Array.length(noteHighlight),
       );
       switch (state) {
-      | Play =>
-        if (guessableNotes[button_value]) {
-          withSynth(synth, Synth.drop_audio);
-          let local_note = Note.transpose(scale.root, button_value);
-          Js.log(Note.to_string(local_note));
-          withSynth(synth, _synth => Play.note(_synth, local_note));
-          let local_note = Some(local_note);
-          let highlight =
-            Option.equal(Note.eq, local_note, guessNote)
-              ? `Correct : `Incorrect;
-          let path =
-            Scale.get_path(
-              scale,
-              Note.of_number(button_value mod 12, 4),
-              scale.root,
-            );
-          withSynth(synth, _synth =>
-            Play.path(_synth, setNoteHighlight, path, highlight, 0)
+      | Play when guessableNotes[button_value] =>
+        withSynth(synth, Synth.drop_audio);
+        let local_note = Note.transpose(scale.root, button_value);
+        Js.log(Note.to_string(local_note));
+        let local_note = Some(local_note);
+        let highlight =
+          Option.equal(Note.eq, local_note, guessNote)
+            ? `Correct : `Incorrect;
+        let path =
+          Scale.get_path(
+            scale,
+            Note.of_number(button_value mod 12, button_value < 12 ? 4 : 5),
+            scale.root,
           );
-        } else {
-          ();
-        }
+        withSynth(synth, _synth =>
+          Play.path(_synth, setNoteHighlight, path, highlight, 0)
+        );
       | ChangeGuessableNotes =>
         setGuessableNotes(notes => {
           GuessableNotes.swap(notes, button_value);

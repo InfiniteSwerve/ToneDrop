@@ -49,20 +49,20 @@ let drop_audio synth =
   clearTransport ()
 
 let highlight_note
-    (set_highlight_notes : (([> `None ] as 'a) array -> 'a array) -> unit) note
-    start (duration : float) highlight =
+    (set_highlight_notes : (([> `None ] as 'a) array -> 'a array) -> unit)
+    (note : Note.t) start (duration : float) highlight =
   schedule
     (fun () ->
       set_highlight_notes (fun highlight_notes ->
           let new_highlights = Array.copy highlight_notes in
-          new_highlights.(note) <- highlight;
+          new_highlights.(note.pitch + (note.octave / 5 * 12)) <- highlight;
           new_highlights))
     (Printf.sprintf "+%f" start);
   schedule
     (fun () ->
       set_highlight_notes (fun highlight_notes ->
           let new_highlights = Array.copy highlight_notes in
-          new_highlights.(note) <- `None;
+          new_highlights.(note.pitch + (note.octave / 5 * 12)) <- `None;
           new_highlights))
     (Printf.sprintf "+%f" (start +. duration))
 
@@ -73,9 +73,10 @@ module Play = struct
   let path (synth : synth) set_highlight_notes (notes : Note.t list) highlight
       (_delay : int) =
     drop_audio synth;
+    set_highlight_notes (fun _ -> Array.make 13 `None);
     List.iteri
       (fun i (n : Note.t) ->
-        highlight_note set_highlight_notes n.pitch
+        highlight_note set_highlight_notes n
           (float_of_int i *. 0.75)
           0.75 highlight;
 
@@ -85,8 +86,10 @@ module Play = struct
       notes;
     startTransport ()
 
-  let chords (synth : synth) (_root : Note.t) (chords : Chord.t list) =
+  let chords (synth : synth) set_highlight_notes (_root : Note.t)
+      (chords : Chord.t list) =
     drop_audio synth;
+    set_highlight_notes (fun _ -> Array.make 13 `None);
     List.iteri
       (fun i n ->
         schedule
@@ -95,9 +98,10 @@ module Play = struct
       chords;
     startTransport ()
 
-  let chords_with_callback (synth : synth) (_root : Note.t)
+  let chords_with_callback (synth : synth) set_highlight_notes (_root : Note.t)
       (chords : Chord.t list) callback : unit =
     drop_audio synth;
+    set_highlight_notes (fun _ -> Array.make 13 `None);
     List.iteri
       (fun i n ->
         schedule
