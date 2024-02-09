@@ -48,20 +48,41 @@ let drop_audio synth =
   releaseAll synth;
   clearTransport ()
 
+let highlight_note
+    (set_highlight_notes : (([> `None ] as 'a) array -> 'a array) -> unit) note
+    start (duration : float) highlight =
+  schedule
+    (fun () ->
+      set_highlight_notes (fun highlight_notes ->
+          let new_highlights = Array.copy highlight_notes in
+          new_highlights.(note) <- highlight;
+          new_highlights))
+    (Printf.sprintf "+%f" start);
+  schedule
+    (fun () ->
+      set_highlight_notes (fun highlight_notes ->
+          let new_highlights = Array.copy highlight_notes in
+          new_highlights.(note) <- `None;
+          new_highlights))
+    (Printf.sprintf "+%f" (start +. duration))
+
 module Play = struct
   let note (synth : synth) (note : Note.t) : unit = play_note synth note
   let chord (synth : synth) (chord : Chord.t) : unit = play_notes synth chord
 
-  (* TODO: We want a function that'll change the note color for a brief period of time, and then change it back *)
-
-  let path (synth : synth) (notes : Note.t list) (_delay : int) =
+  let path (synth : synth) set_highlight_notes (notes : Note.t list) highlight
+      (_delay : int) =
     drop_audio synth;
     List.iteri
-      (fun i n ->
+      (fun i (n : Note.t) ->
+        highlight_note set_highlight_notes n.pitch
+          (float_of_int i *. 0.75)
+          0.75 highlight;
+
         schedule
           (fun () -> note synth n)
           (Printf.sprintf "+%f" (float_of_int i *. 0.75)))
-      (List.tl notes);
+      notes;
     startTransport ()
 
   let chords (synth : synth) (_root : Note.t) (chords : Chord.t list) =

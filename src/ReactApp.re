@@ -22,11 +22,10 @@ module App = {
   // TODO: Global time value for speeding up/slowing down
   // TODO: Some way to save things
   // TODO: Something that learns how good you're getting at guessing and targets stuff you're bad at
-  // TODO: Flash button during path playing
   // TODO: Add progressions
   // TODO: Add progression editor
   // TODO: Maybe we should wrap all music state into one package in music.ml with a single interface?
-  // TODO: Global audio instance so we can keep only one instance playing at a time
+  // TODO: Top note isn't reachable
   // BUG: Audio doesn't cancel even with drop_audio. There's an echo that can ring out
   let make = () => {
     Random.init(int_of_float(Js.Date.now()));
@@ -104,13 +103,11 @@ module App = {
       //ignore(Js.Global.setTimeout(() => {Play.note(synth, note)}, 800));
     };
 
-    let playResolutionPath = synth => {
+    let playResolutionPath = (highlight, synth) => {
       // TODO: Need to allow highlighting here somehow
       switch (path) {
       | Some(actualPath) =>
-        Js.log("calling path\n");
-        Printf.printf("path");
-        Play.path(synth, actualPath, 300);
+        Play.path(synth, setNoteHighlight, actualPath, highlight, 300)
       | None => Js.log("Ain't no path to resolve")
       };
     };
@@ -140,47 +137,21 @@ module App = {
         if (guessableNotes[button_value]) {
           withSynth(synth, Synth.drop_audio);
           let local_note = Note.transpose(scale.root, button_value);
-          setNoteHighlight(prevHighlights => {
-            Array.mapi(
-              (index, _) =>
-                if (index == button_value) {
-                  if (Option.equal(Note.eq, Some(local_note), guessNote)) {
-                    `Correct;
-                  } else {
-                    `Incorrect;
-                  };
-                } else {
-                  prevHighlights[index];
-                },
-              prevHighlights,
-            )
-          });
-          // Turn off highlighting after an instant
-          ignore(
-            Js.Global.setTimeout(
-              () => {
-                setNoteHighlight(prevHighlights =>
-                  Array.mapi(
-                    (index, _) =>
-                      index == button_value ? `None : prevHighlights[index],
-                    prevHighlights,
-                  )
-                )
-              },
-              200,
-            ),
-          );
+          Js.log(Note.to_string(local_note));
           withSynth(synth, _synth => Play.note(_synth, local_note));
           let local_note = Some(local_note);
-          let _ =
-            Js.Global.setTimeout(
-              () =>
-                if (Option.equal(Note.eq, local_note, guessNote)) {
-                  withSynth(synth, playResolutionPath);
-                },
-              300,
+          let highlight =
+            Option.equal(Note.eq, local_note, guessNote)
+              ? `Correct : `Incorrect;
+          let path =
+            Scale.get_path(
+              scale,
+              Note.of_number(button_value mod 12, 4),
+              scale.root,
             );
-          ();
+          withSynth(synth, _synth =>
+            Play.path(_synth, setNoteHighlight, path, highlight, 0)
+          );
         } else {
           ();
         }
@@ -399,7 +370,9 @@ module App = {
             <button
               className="function-button"
               id="play-answer"
-              onClick={_event => withSynth(synth, playResolutionPath)}>
+              onClick={_event =>
+                withSynth(synth, playResolutionPath(`Correct))
+              }>
               "Play the Correct Answer"->React.string
             </button>
             <button
