@@ -241,14 +241,7 @@ module Scale = struct
     | true -> remove scale interval
     | false -> add scale interval
 
-  let random_scale scale =
-    let time = int_of_float (Sys.time ()) in
-    let pid = Sys.command "echo $$" in
-    Random.init (time lxor pid);
-    let new_scale = of_string Note.notes.(Random.int 12) scale.intervals in
-    Printf.printf "randomizing scale from %s\nto\n%s\n" (to_string scale)
-      (to_string new_scale);
-    new_scale
+  let random_scale scale = of_string Note.notes.(Random.int 12) scale.intervals
 end
 
 module GuessableNotes = struct
