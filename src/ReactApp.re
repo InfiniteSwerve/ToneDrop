@@ -22,7 +22,6 @@ module App = {
   //    - Create a single interface for the audio/music to mess with. Call things from only one place and have an API call for each thing
   // TODO: Visualization of chord relative to key via p5.js
   // TODO: ToneDrop logo in the top left
-  // TODO: Global time value for speeding up/slowing down
   // TODO: Some way to save things
   // TODO: Something that learns how good you're getting at guessing and targets stuff you're bad at
   // TODO: Add progressions
@@ -35,6 +34,7 @@ module App = {
   // TODO: Make a guide on how to use + basic rules
   // TODO: Save user stats?
   // TODO: Add some default scales
+  // TODO: Better sounding instruments
   // TODO: Get outside review
   let make = () => {
     Random.init(int_of_float(Js.Date.now()));
