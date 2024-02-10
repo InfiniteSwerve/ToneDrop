@@ -1,9 +1,6 @@
-# melange-opam-template
+# Tone Drop
 
-A simple project template using [Melange](https://github.com/melange-re/melange)
-with [opam](https://opam.ocaml.org/).
-
-If you are looking for a template with esy, check [melange-esy-template](https://github.com/melange-re/melange-esy-template).
+A small 
 
 ## Quick Start
 

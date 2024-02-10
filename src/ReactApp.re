@@ -21,7 +21,6 @@ module App = {
   //    - Break app up into multiple react components
   //    - Create a single interface for the audio/music to mess with. Call things from only one place and have an API call for each thing
   // TODO: Visualization of chord relative to key via p5.js
-  // TODO: Do the functional ear trainer thing
   // TODO: ToneDrop logo in the top left
   // TODO: Global time value for speeding up/slowing down
   // TODO: Some way to save things
@@ -32,7 +31,11 @@ module App = {
   // BUG: Audio doesn't cancel even with drop_audio. There's an echo that can ring out
   // TODO: Start with a guessed note and path and synth so we don't need to mess with options, just disable the other buttons until we click the new question button
   // TODO: Add disableable logging for easier on-demand debugging
-  // TODO: Tune timings so it feels better to use
+  // TODO: separate sliders for cadence speed + note speed
+  // TODO: Make a guide on how to use + basic rules
+  // TODO: Save user stats?
+  // TODO: Add some default scales
+  // TODO: Get outside review
   let make = () => {
     Random.init(int_of_float(Js.Date.now()));
     let (state, setState) = React.useState(() => Play);
@@ -97,6 +100,16 @@ module App = {
         Js.log("Audio Started");
         callback(newSynth);
       };
+    };
+
+    let playCadence = synth => {
+      let two = Chord.(of_interval_kind(scale.root, 2, Minor));
+      let five = Chord.(of_interval_kind(scale.root, 7, Major));
+      let one = Chord.(of_interval_kind(scale.root, 0, Major));
+      Play.chords_with_callback(
+        synth, setNoteHighlight, scale.root, [two, five, one], globalBPM, () =>
+        Play.note(synth, Option.get(guessNote))
+      );
     };
 
     let playNoteGetPath = synth => {
@@ -399,6 +412,12 @@ module App = {
               id="repeat-question"
               onClick={_event => withSynth(synth, playNoteGetPath)}>
               "New Question"->React.string
+            </button>
+            <button
+              className="function-button"
+              id="repeat-question"
+              onClick={_event => withSynth(synth, playCadence)}>
+              "Repeat Question"->React.string
             </button>
             <button
               className="function-button"
