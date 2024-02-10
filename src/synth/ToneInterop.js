@@ -46,3 +46,7 @@ export function clearTransport() {
 export function releaseAll(synth) {
   synth.releaseAll();
 }
+
+export function changeBPM(bpm) {
+  Tone.Transport.bpm.value = bpm;
+}

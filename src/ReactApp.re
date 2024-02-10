@@ -16,6 +16,10 @@ type state =
 module App = {
   [@react.component]
   // Do as little shit as possible in this file. Do pretty much all the heavy lifting in music.ml.
+  // NOTE: It feels like I'm having to add lots of extra code to just handle poor earlier decisions that I made, and like there should be ways to refactor/split up this code that improves the quality, the managability, is more idiomatic and shorter. I'm just not sure what exactly.
+  // some ideas:
+  //    - Break app up into multiple react components
+  //    - Create a single interface for the audio/music to mess with. Call things from only one place and have an API call for each thing
   // TODO: Visualization of chord relative to key via p5.js
   // TODO: Do the functional ear trainer thing
   // TODO: ToneDrop logo in the top left
@@ -27,6 +31,8 @@ module App = {
   // TODO: Maybe we should wrap all music state into one package in music.ml with a single interface?
   // BUG: Audio doesn't cancel even with drop_audio. There's an echo that can ring out
   // TODO: Start with a guessed note and path and synth so we don't need to mess with options, just disable the other buttons until we click the new question button
+  // TODO: Add disableable logging for easier on-demand debugging
+  // TODO: Tune timings so it feels better to use
   let make = () => {
     Random.init(int_of_float(Js.Date.now()));
     let (state, setState) = React.useState(() => Play);
@@ -60,6 +66,12 @@ module App = {
       React.useState(() => false);
     let (noteHighlight, setNoteHighlight) =
       React.useState(() => Array.make(13, `None));
+    let (globalBPM, setGlobalBPM) =
+      React.useState(() => {
+        Synth.changeBPM(60);
+        Synth.startTransport();
+        60;
+      });
 
     let handleSideBarButtonClick = (newState: state) => {
       state == newState ? setState(_ => Play) : setState(_ => newState);
@@ -98,7 +110,7 @@ module App = {
       let five = Chord.(of_interval_kind(scale.root, 7, Major));
       let one = Chord.(of_interval_kind(scale.root, 0, Major));
       Play.chords_with_callback(
-        synth, setNoteHighlight, scale.root, [two, five, one], () =>
+        synth, setNoteHighlight, scale.root, [two, five, one], globalBPM, () =>
         Play.note(synth, note)
       );
       setNoteHighlight(_ => Array.make(13, `None));
@@ -113,7 +125,7 @@ module App = {
           actualPath,
           highlight,
           scale.root,
-          300,
+          globalBPM,
         )
       | None => Js.log("Ain't no path to resolve")
       };
@@ -151,7 +163,14 @@ module App = {
             ? `Correct : `Incorrect;
         let path = Scale.get_path(scale, Option.get(local_note), scale.root);
         withSynth(synth, _synth =>
-          Play.path(_synth, setNoteHighlight, path, highlight, scale.root, 0)
+          Play.path(
+            _synth,
+            setNoteHighlight,
+            path,
+            highlight,
+            scale.root,
+            globalBPM,
+          )
         );
       | ChangeGuessableNotes =>
         setGuessableNotes(notes => {
@@ -228,6 +247,19 @@ module App = {
         style=gridStyle>
         label->React.string
       </button>;
+    };
+    let handleBPMChange = event => {
+      let newValue =
+        React.Event.Form.target(event)##value |> int_of_string_opt;
+      switch (newValue) {
+      | Some(v) when v >= 60 && v <= 300 =>
+        setGlobalBPM(_ => {
+          Synth.changeBPM(v);
+          Synth.startTransport();
+          v;
+        })
+      | _ => Synth.startTransport()
+      };
     };
 
     React.useEffect(() => {
@@ -334,6 +366,23 @@ module App = {
            </div>
          | _ => React.null
          }}
+        <div className="bpm-control">
+          <div className="bpm-label"> "Global BPM"->React.string </div>
+          <input
+            type_="text"
+            className="sidebar-input bpm-input"
+            value={string_of_int(globalBPM)}
+            onChange=handleBPMChange
+          />
+          <input
+            type_="range"
+            className="sidebar-slider bpm-slider"
+            min="60"
+            max="300"
+            value={string_of_int(globalBPM)}
+            onChange=handleBPMChange
+          />
+        </div>
       </div>
       <div className="main-content">
         <div className="button-container">
@@ -380,8 +429,8 @@ module App = {
                 setScaleChangeRequested(_ => true);
                 setScale(_ => Scale.random_scale(scale));
               }}>
-              //withSynth(synth, playNoteGetPath);
-               "New Question Random Key"->React.string </button>
+              "New Question Random Key"->React.string
+            </button>
           </div>
         </div>
       </div>

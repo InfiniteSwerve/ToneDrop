@@ -21,6 +21,10 @@ body {
   cursor: pointer;
 }
 
+.function-button:hover {
+  background-color: #45a049; /* Slightly darker green on hover */
+}
+
 #repeat-question {
   background-color: #008CBA; /* Blue */
 }
@@ -141,6 +145,70 @@ body {
 .sidebar-button-toggled {
   background-color: #367c39; /* Different color for toggled state */
   color: #fff;
+}
+/* Additional styles for the sidebar input and slider */
+.sidebar-input {
+  background-color: #4CAF50; /* Match button color */
+  border: 1px solid #367c39; /* Slightly darker border */
+  color: white;
+  padding: 10px;
+  margin: 5px;
+  width: calc(100% - 20px); /* Adjust width as needed */
+  box-sizing: border-box; /* Include padding in width */
+  font-size: 16px;
+}
+
+.sidebar-input:hover {
+  background-color: #45a049; /* Slightly darker green on hover */
+}
+
+.sidebar-slider {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  width: 100%;
+  height: 15px; /* Slider thickness */
+  background: #4CAF50;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s; /* Transition for smoother slider movement */
+  transition: opacity .2s;
+  margin: 5px 0;
+}
+
+.sidebar-slider:hover {
+  opacity: 1; /* Full opacity on hover */
+}
+
+.sidebar-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  width: 25px; /* Slider handle width */
+  height: 25px; /* Slider handle height */
+  background: #fff;
+  cursor: pointer;
+  border: 3px solid #367c39; /* Border color similar to button toggled state */
+}
+
+.sidebar-slider::-moz-range-thumb {
+  width: 25px; /* Slider handle width */
+  height: 25px; /* Slider handle height */
+  background: #fff;
+  cursor: pointer;
+  border: 3px solid #367c39; /* Border color similar to button toggled state */
+}
+
+.bpm-control {
+  background-color: #f3f3f3; /* Light background for the container */
+  border: 1px solid #ddd; /* Border for the container */
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px; /* Optional: rounded corners */
+}
+
+.bpm-label {
+  font-size: 16px;
+  margin-bottom: 5px;
+  color: #333; /* Darker text color for the label */
 }
 
 .main-content {

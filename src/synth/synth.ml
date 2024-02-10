@@ -32,6 +32,8 @@ external clearTransport : unit -> unit = "clearTransport"
 external releaseAll : synth -> unit = "releaseAll"
 [@@mel.module "./ToneInterop.js"]
 
+external changeBPM : int -> unit = "changeBPM" [@@mel.module "./ToneInterop.js"]
+
 let play_note (synth : synth) (note : Note.t) : unit =
   let note_str = Note.to_string note in
   triggerAttackRelease synth note_str "8n"
@@ -46,6 +48,7 @@ let play_notes (synth : synth) (chord : Chord.t) : unit =
 
 let drop_audio synth =
   releaseAll synth;
+  stopTransport ();
   clearTransport ()
 
 let highlight_note
@@ -73,45 +76,48 @@ module Play = struct
   let chord (synth : synth) (chord : Chord.t) : unit = play_notes synth chord
 
   let path (synth : synth) set_highlight_notes (notes : Note.t list) highlight
-      root (_delay : int) =
+      root (bpm : int) =
     drop_audio synth;
     set_highlight_notes (fun _ -> Array.make 13 `None);
+    let duration = 0.75 /. float_of_int (bpm / 60) in
     List.iteri
       (fun i (n : Note.t) ->
         highlight_note set_highlight_notes n
-          (float_of_int i *. 0.75)
-          0.75 highlight root;
+          (float_of_int i *. duration)
+          duration highlight root;
 
         schedule
           (fun () -> note synth n)
-          (Printf.sprintf "+%f" (float_of_int i *. 0.75)))
+          (Printf.sprintf "+%f" (float_of_int i *. duration)))
       notes;
     startTransport ()
 
   let chords (synth : synth) set_highlight_notes (_root : Note.t)
-      (chords : Chord.t list) =
+      (chords : Chord.t list) bpm =
     drop_audio synth;
     set_highlight_notes (fun _ -> Array.make 13 `None);
+    let duration = 0.75 /. float_of_int (bpm / 60) in
     List.iteri
       (fun i n ->
         schedule
           (fun () -> chord synth n)
-          (Printf.sprintf "+%f" (float_of_int i *. 0.75)))
+          (Printf.sprintf "+%f" (float_of_int i *. duration)))
       chords;
     startTransport ()
 
   let chords_with_callback (synth : synth) set_highlight_notes (_root : Note.t)
-      (chords : Chord.t list) callback : unit =
+      (chords : Chord.t list) bpm callback : unit =
     drop_audio synth;
     set_highlight_notes (fun _ -> Array.make 13 `None);
+    let duration = 0.75 /. float_of_int (bpm / 60) in
     List.iteri
       (fun i n ->
         schedule
           (fun () -> chord synth n)
-          (Printf.sprintf "+%f" (float_of_int i *. 0.75)))
+          (Printf.sprintf "+%f" (float_of_int i *. duration)))
       chords;
     schedule callback
       (Printf.sprintf "+%f"
-         (List.length chords |> float_of_int |> fun x -> x *. 0.85));
+         (List.length chords |> float_of_int |> fun x -> x *. 1.15 *. duration));
     startTransport ()
 end
