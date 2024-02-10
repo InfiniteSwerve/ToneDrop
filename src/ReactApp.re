@@ -68,9 +68,9 @@ module App = {
       React.useState(() => Array.make(13, `None));
     let (globalBPM, setGlobalBPM) =
       React.useState(() => {
-        Synth.changeBPM(60);
+        Synth.changeBPM(80);
         Synth.startTransport();
-        60;
+        80;
       });
 
     let handleSideBarButtonClick = (newState: state) => {

@@ -79,16 +79,22 @@ module Play = struct
       root (bpm : int) =
     drop_audio synth;
     set_highlight_notes (fun _ -> Array.make 13 `None);
-    let duration = 0.75 /. float_of_int (bpm / 60) in
+
+    let beatDuration = 60. /. float_of_int bpm in
+    let otherNoteDuration = beatDuration *. 0.5 in
+
     List.iteri
       (fun i (n : Note.t) ->
-        highlight_note set_highlight_notes n
-          (float_of_int i *. duration)
-          duration highlight root;
+        let noteDuration = if i == 0 then beatDuration else otherNoteDuration in
+        let startTime =
+          if i == 0 then 0.
+          else (float_of_int (i - 1) *. otherNoteDuration) +. beatDuration
+        in
 
-        schedule
-          (fun () -> note synth n)
-          (Printf.sprintf "+%f" (float_of_int i *. duration)))
+        highlight_note set_highlight_notes n startTime noteDuration highlight
+          root;
+
+        schedule (fun () -> note synth n) (Printf.sprintf "+%f" startTime))
       notes;
     startTransport ()
 
