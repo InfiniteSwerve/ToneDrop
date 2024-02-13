@@ -114,6 +114,11 @@ module Scale = struct
   let major_intervals = [ 0; 2; 4; 5; 7; 9; 11 ]
   let minor_intervals = [ 0; 2; 3; 5; 7; 8; 10 ]
   let chromatic_intervals = [ 0; 1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11 ]
+  let dorian_intervals = [ 0; 2; 3; 5; 7; 9; 10 ]
+  let phrygian_intervals = [ 0; 1; 3; 5; 7; 8; 10 ]
+  let lydian_intervals = [ 0; 2; 4; 6; 7; 9; 11 ]
+  let mixolydian_intervals = [ 0; 2; 4; 5; 7; 9; 10 ]
+  let locrian_intervals = [ 0; 1; 3; 5; 6; 8; 10 ]
 
   let get_intervals kind =
     match kind with

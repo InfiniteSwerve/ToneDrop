@@ -33,19 +33,19 @@ module App = {
   // TODO: separate sliders for cadence speed + note speed
   // TODO: Make a guide on how to use + basic rules
   // TODO: Save user stats?
-  // TODO: Add some default scales
   // TODO: Better sounding instruments
   // TODO: Get outside review
+  // TODO: For fitting scales to chords, add ability to choose more angular scales or try to keep the note similar
   let make = () => {
     Random.init(int_of_float(Js.Date.now()));
     let (state, setState) = React.useState(() => Play);
-    let (synth, setSynth) = React.useState(() => None);
-    let (_, setAudioContextStarted) = React.useState(() => false);
-    let (path, setPath) = React.useState(() => None);
+    let (synth, _setSynth) = React.useState(() => Synth.createPolySynth());
+    let (_, _setAudioContextStarted) = React.useState(() => false);
+    let (path, setPath) = React.useState(() => [Note.c4]);
     let (scale, setScale) =
       React.useState(() => Scale.of_note(Note.c4, Scale.major_intervals));
     Js.log(Scale.to_string(scale));
-    let (guessNote, setGuessNote) = React.useState(() => None);
+    let (guessNote, setGuessNote) = React.useState(() => Note.c4);
     let (guessableNotes, setGuessableNotes) =
       React.useState(() =>
         [|
@@ -89,26 +89,13 @@ module App = {
       state == buttonState
         ? "sidebar-button sidebar-button-toggled" : "sidebar-button";
 
-    let withSynth = (synth, callback: synthCallback) => {
-      switch (synth) {
-      | Some(actualSynth) => callback(actualSynth)
-      | None =>
-        let newSynth = Synth.createPolySynth();
-        setSynth(_ => Some(newSynth));
-
-        setAudioContextStarted(_ => true);
-        Js.log("Audio Started");
-        callback(newSynth);
-      };
-    };
-
     let playCadence = synth => {
       let two = Chord.(of_interval_kind(scale.root, 2, Minor));
       let five = Chord.(of_interval_kind(scale.root, 7, Major));
       let one = Chord.(of_interval_kind(scale.root, 0, Major));
       Play.chords_with_callback(
         synth, setNoteHighlight, scale.root, [two, five, one], globalBPM, () =>
-        Play.note(synth, Option.get(guessNote))
+        Play.note(synth, guessNote)
       );
     };
 
@@ -116,8 +103,8 @@ module App = {
       Js.log(("scale in play note", Scale.to_string(scale)));
       let note = GuessableNotes.get_random_note(scale, guessableNotes);
       let path = Scale.get_path(scale, note, scale.root);
-      setGuessNote(_ => Some(note));
-      setPath(_ => Some(path));
+      setGuessNote(_ => note);
+      setPath(_ => path);
 
       let two = Chord.(of_interval_kind(scale.root, 2, Minor));
       let five = Chord.(of_interval_kind(scale.root, 7, Major));
@@ -130,18 +117,14 @@ module App = {
     };
 
     let playResolutionPath = (highlight, synth) => {
-      switch (path) {
-      | Some(actualPath) =>
-        Play.path(
-          synth,
-          setNoteHighlight,
-          actualPath,
-          highlight,
-          scale.root,
-          globalBPM,
-        )
-      | None => Js.log("Ain't no path to resolve")
-      };
+      Play.path(
+        synth,
+        setNoteHighlight,
+        path,
+        highlight,
+        scale.root,
+        globalBPM,
+      );
     };
 
     let noteButtonLabel = (noteValue: int) => {
@@ -166,24 +149,20 @@ module App = {
       );
       switch (state) {
       | Play when guessableNotes[button_value] =>
-        withSynth(synth, Synth.drop_audio);
+        Synth.drop_audio(synth);
         let local_note = Note.transpose(scale.root, button_value);
         Printf.printf("Playing %s\n", Note.to_string(local_note));
         Js.log(Note.to_string(local_note));
-        let local_note = Some(local_note);
         let highlight =
-          Option.equal(Note.eq, local_note, guessNote)
-            ? `Correct : `Incorrect;
-        let path = Scale.get_path(scale, Option.get(local_note), scale.root);
-        withSynth(synth, _synth =>
-          Play.path(
-            _synth,
-            setNoteHighlight,
-            path,
-            highlight,
-            scale.root,
-            globalBPM,
-          )
+          Note.eq(local_note, guessNote) ? `Correct : `Incorrect;
+        let path = Scale.get_path(scale, local_note, scale.root);
+        Play.path(
+          synth,
+          setNoteHighlight,
+          path,
+          highlight,
+          scale.root,
+          globalBPM,
         );
       | ChangeGuessableNotes =>
         setGuessableNotes(notes => {
@@ -277,7 +256,7 @@ module App = {
 
     React.useEffect(() => {
       if (scaleChangeRequested) {
-        withSynth(synth, playNoteGetPath);
+        playNoteGetPath(synth);
         setScaleChangeRequested(_ => false);
       };
 
@@ -379,6 +358,81 @@ module App = {
            </div>
          | _ => React.null
          }}
+        <button
+          className={sidebarButtonClass(ChangeScale)}
+          onClick={_event => {handleSideBarButtonClick(ChangeScale)}}>
+          {Printf.sprintf("Change Scale")->React.string}
+        </button>
+        {switch (state) {
+         | ChangeScale =>
+           <div className="dropdown-content">
+             <div
+               onClick={_event =>
+                 setScale(_ =>
+                   Scale.of_note(scale.root, Scale.major_intervals)
+                 )
+               }>
+               "Major"->React.string
+             </div>
+             <div
+               onClick={_event =>
+                 setScale(_ =>
+                   Scale.of_note(scale.root, Scale.minor_intervals)
+                 )
+               }>
+               "Minor"->React.string
+             </div>
+             <div
+               onClick={_event =>
+                 setScale(_ =>
+                   Scale.of_note(scale.root, Scale.chromatic_intervals)
+                 )
+               }>
+               "Chromatic"->React.string
+             </div>
+             <div
+               onClick={_event =>
+                 setScale(_ =>
+                   Scale.of_note(scale.root, Scale.dorian_intervals)
+                 )
+               }>
+               "Dorian"->React.string
+             </div>
+             <div
+               onClick={_event =>
+                 setScale(_ =>
+                   Scale.of_note(scale.root, Scale.phrygian_intervals)
+                 )
+               }>
+               "Phrygian"->React.string
+             </div>
+             <div
+               onClick={_event =>
+                 setScale(_ =>
+                   Scale.of_note(scale.root, Scale.lydian_intervals)
+                 )
+               }>
+               "Lydian"->React.string
+             </div>
+             <div
+               onClick={_event =>
+                 setScale(_ =>
+                   Scale.of_note(scale.root, Scale.mixolydian_intervals)
+                 )
+               }>
+               "Mixolydian"->React.string
+             </div>
+             <div
+               onClick={_event =>
+                 setScale(_ =>
+                   Scale.of_note(scale.root, Scale.locrian_intervals)
+                 )
+               }>
+               "Locrian"->React.string
+             </div>
+           </div>
+         | _ => <div />
+         }}
         <div className="bpm-control">
           <div className="bpm-label"> "Global BPM"->React.string </div>
           <input
@@ -410,35 +464,25 @@ module App = {
             <button
               className="function-button"
               id="repeat-question"
-              onClick={_event => withSynth(synth, playNoteGetPath)}>
+              onClick={_event => playNoteGetPath(synth)}>
               "New Question"->React.string
             </button>
             <button
               className="function-button"
               id="repeat-question"
-              onClick={_event => withSynth(synth, playCadence)}>
+              onClick={_event => playCadence(synth)}>
               "Repeat Question"->React.string
             </button>
             <button
               className="function-button"
               id="repeat-note"
-              onClick={_event =>
-                // TODO: bad pattern, how to avoid?
-
-                  switch (guessNote) {
-                  | Some(note) =>
-                    withSynth(synth, _synth => Play.note(_synth, note))
-                  | None => ()
-                  }
-                }>
+              onClick={_event => Play.note(synth, guessNote)}>
               "Repeat Note"->React.string
             </button>
             <button
               className="function-button"
               id="play-answer"
-              onClick={_event =>
-                withSynth(synth, playResolutionPath(`Correct))
-              }>
+              onClick={_event => playResolutionPath(`Correct, synth)}>
               "Play the Correct Answer"->React.string
             </button>
             <button
