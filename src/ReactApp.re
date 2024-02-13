@@ -36,6 +36,7 @@ module App = {
   // TODO: Better sounding instruments
   // TODO: Get outside review
   // TODO: For fitting scales to chords, add ability to choose more angular scales or try to keep the note similar
+  // TODO: How does FET handle chord voicing?
   let make = () => {
     Random.init(int_of_float(Js.Date.now()));
     let (state, setState) = React.useState(() => Play);
@@ -253,6 +254,24 @@ module App = {
       | _ => Synth.startTransport()
       };
     };
+    let makeScaleChange = (name, intervals) => {
+      <div
+        onClick={_event => {
+          setScale(_ => Scale.of_note(scale.root, intervals));
+          setGuessableNotes(_ => GuessableNotes.of_scale(scale));
+        }}>
+        name->React.string
+      </div>;
+    };
+
+    let makeKeyChange = (root, visual) => {
+      <div
+        onClick={_event =>
+          setScale(_ => Scale.of_string(root, scale.intervals))
+        }>
+        visual->React.string
+      </div>;
+    };
 
     React.useEffect(() => {
       if (scaleChangeRequested) {
@@ -283,78 +302,18 @@ module App = {
         {switch (state) {
          | ChangeKey =>
            <div className="dropdown-content">
-             <div
-               onClick={_event =>
-                 setScale(_ => Scale.of_string("C", scale.intervals))
-               }>
-               "C"->React.string
-             </div>
-             <div
-               onClick={_event =>
-                 setScale(_ => Scale.of_string("C#", scale.intervals))
-               }>
-               "C#/Db"->React.string
-             </div>
-             <div
-               onClick={_event =>
-                 setScale(_ => Scale.of_string("D", scale.intervals))
-               }>
-               "D"->React.string
-             </div>
-             <div
-               onClick={_event =>
-                 setScale(_ => Scale.of_string("D#", scale.intervals))
-               }>
-               "D#/Eb"->React.string
-             </div>
-             <div
-               onClick={_event =>
-                 setScale(_ => Scale.of_string("E", scale.intervals))
-               }>
-               "E"->React.string
-             </div>
-             <div
-               onClick={_event =>
-                 setScale(_ => Scale.of_string("F", scale.intervals))
-               }>
-               "F"->React.string
-             </div>
-             <div
-               onClick={_event =>
-                 setScale(_ => Scale.of_string("F#", scale.intervals))
-               }>
-               "F#/Gb"->React.string
-             </div>
-             <div
-               onClick={_event =>
-                 setScale(_ => Scale.of_string("G", scale.intervals))
-               }>
-               "G"->React.string
-             </div>
-             <div
-               onClick={_event =>
-                 setScale(_ => Scale.of_string("G#", scale.intervals))
-               }>
-               "G#/Ab"->React.string
-             </div>
-             <div
-               onClick={_event =>
-                 setScale(_ => Scale.of_string("A", scale.intervals))
-               }>
-               "A"->React.string
-             </div>
-             <div
-               onClick={_event =>
-                 setScale(_ => Scale.of_string("A#", scale.intervals))
-               }>
-               "A#/Bb"->React.string
-             </div>
-             <div
-               onClick={_event =>
-                 setScale(_ => Scale.of_string("B", scale.intervals))
-               }>
-               "B"->React.string
-             </div>
+             {makeKeyChange("C", "C")}
+             {makeKeyChange("C#", "C#/Db")}
+             {makeKeyChange("D", "D")}
+             {makeKeyChange("D#", "D#/Eb")}
+             {makeKeyChange("E", "E")}
+             {makeKeyChange("F", "F")}
+             {makeKeyChange("F#", "F#/Gb")}
+             {makeKeyChange("G", "G")}
+             {makeKeyChange("G#", "G#/Ab")}
+             {makeKeyChange("A", "A")}
+             {makeKeyChange("A#", "A#/Bb")}
+             {makeKeyChange("B", "B")}
            </div>
          | _ => React.null
          }}
@@ -366,70 +325,14 @@ module App = {
         {switch (state) {
          | ChangeScale =>
            <div className="dropdown-content">
-             <div
-               onClick={_event =>
-                 setScale(_ =>
-                   Scale.of_note(scale.root, Scale.major_intervals)
-                 )
-               }>
-               "Major"->React.string
-             </div>
-             <div
-               onClick={_event =>
-                 setScale(_ =>
-                   Scale.of_note(scale.root, Scale.minor_intervals)
-                 )
-               }>
-               "Minor"->React.string
-             </div>
-             <div
-               onClick={_event =>
-                 setScale(_ =>
-                   Scale.of_note(scale.root, Scale.chromatic_intervals)
-                 )
-               }>
-               "Chromatic"->React.string
-             </div>
-             <div
-               onClick={_event =>
-                 setScale(_ =>
-                   Scale.of_note(scale.root, Scale.dorian_intervals)
-                 )
-               }>
-               "Dorian"->React.string
-             </div>
-             <div
-               onClick={_event =>
-                 setScale(_ =>
-                   Scale.of_note(scale.root, Scale.phrygian_intervals)
-                 )
-               }>
-               "Phrygian"->React.string
-             </div>
-             <div
-               onClick={_event =>
-                 setScale(_ =>
-                   Scale.of_note(scale.root, Scale.lydian_intervals)
-                 )
-               }>
-               "Lydian"->React.string
-             </div>
-             <div
-               onClick={_event =>
-                 setScale(_ =>
-                   Scale.of_note(scale.root, Scale.mixolydian_intervals)
-                 )
-               }>
-               "Mixolydian"->React.string
-             </div>
-             <div
-               onClick={_event =>
-                 setScale(_ =>
-                   Scale.of_note(scale.root, Scale.locrian_intervals)
-                 )
-               }>
-               "Locrian"->React.string
-             </div>
+             {makeScaleChange("Major", Scale.major_intervals)}
+             {makeScaleChange("Minor", Scale.minor_intervals)}
+             {makeScaleChange("Chromatic", Scale.chromatic_intervals)}
+             {makeScaleChange("Dorian", Scale.dorian_intervals)}
+             {makeScaleChange("Phrygian", Scale.phrygian_intervals)}
+             {makeScaleChange("Lydian", Scale.lydian_intervals)}
+             {makeScaleChange("Mixolydian", Scale.mixolydian_intervals)}
+             {makeScaleChange("Locrian", Scale.locrian_intervals)}
            </div>
          | _ => <div />
          }}
