@@ -37,6 +37,9 @@ module App = {
   // TODO: Get outside review
   // TODO: For fitting scales to chords, add ability to choose more angular scales or try to keep the note similar
   // TODO: How does FET handle chord voicing?
+  // TODO: Play cadence, play other chord, play
+  // TODO: Play scale button
+  // TODO: Sample random progression in key
   let make = () => {
     Random.init(int_of_float(Js.Date.now()));
     let (state, setState) = React.useState(() => Play);
@@ -48,23 +51,7 @@ module App = {
     Js.log(Scale.to_string(scale));
     let (guessNote, setGuessNote) = React.useState(() => Note.c4);
     let (guessableNotes, setGuessableNotes) =
-      React.useState(() =>
-        [|
-          true,
-          false,
-          true,
-          false,
-          true,
-          true,
-          false,
-          true,
-          false,
-          true,
-          false,
-          true,
-          true,
-        |]
-      );
+      React.useState(() => GuessableNotes.of_scale(scale));
     let (toggledButton, setToggledButton) = React.useState(() => None);
     let (scaleChangeRequested, setScaleChangeRequested) =
       React.useState(() => false);
@@ -241,6 +228,7 @@ module App = {
         label->React.string
       </button>;
     };
+
     let handleBPMChange = event => {
       let newValue =
         React.Event.Form.target(event)##value |> int_of_string_opt;
@@ -266,9 +254,10 @@ module App = {
 
     let makeKeyChange = (root, visual) => {
       <div
-        onClick={_event =>
-          setScale(_ => Scale.of_string(root, scale.intervals))
-        }>
+        onClick={_event => {
+          setScaleChangeRequested(_ => true);
+          setScale(_ => Scale.of_string(root, scale.intervals));
+        }}>
         visual->React.string
       </div>;
     };
@@ -396,6 +385,23 @@ module App = {
                 setScale(_ => Scale.random_scale(scale));
               }}>
               "New Question Random Key"->React.string
+            </button>
+            <button
+              className="function-button"
+              id="Play Scale"
+              onClick={_event => {
+                Play.path(
+                  synth,
+                  setNoteHighlight,
+                  scale.notes
+                  @ [Note.transpose(scale.root, 12)]
+                  @ List.rev(scale.notes),
+                  `Correct,
+                  scale.root,
+                  globalBPM,
+                )
+              }}>
+              "Play Scale"->React.string
             </button>
           </div>
         </div>
