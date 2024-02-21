@@ -39,6 +39,27 @@ module Note = struct
                 note))
 
   let to_string note = Printf.sprintf "%s%d" notes.(note.pitch) note.octave
+  let of_string note =
+    let note_length = String.length note in
+    let rec find_note_index i =
+      if i >= Array.length notes then
+        None
+      else if String.sub note 0 (note_length - 1) = notes.(i) then
+        Some i
+      else
+        find_note_index (i + 1)
+    in
+    match find_note_index 0 with
+    | None -> None
+    | Some pitch ->
+      let octave = int_of_string (String.sub note (note_length - 1) 1) in
+      Some { pitch; octave; scale_position = None }
+  let of_string_exn note = 
+    match of_string note with
+        | Some note -> note
+        | None -> raise (failwith "String is not a well formed note")
+
+
   let to_name note = notes.(note.pitch)
 
   let transpose ?(scale_position : int option = None)
@@ -83,6 +104,17 @@ module Chord = struct
   let dominant7_notes = [ 0; 4; 7; 10 ]
   let major7_notes = [ 0; 4; 7; 11 ]
   let minor7_notes = [ 0; 3; 7; 10 ]
+
+  let kinds= [Major ; Minor ; Dominant7 ; Major7 ; Minor7]
+  let string_kinds= ["Major" ; "Minor" ; "Dominant7" ; "Major7" ; "Minor7"]
+
+  let kind_to_string kind = 
+      match kind with
+      | Major -> "Major"
+      | Minor -> "Minor"
+      | Dominant7 -> "Dominant7"
+      | Major7 -> "Major7"
+      | Minor7 -> "Minor7"
 
   let of_kind (root : Note.t) (chord : kind) : chord =
     let notes =

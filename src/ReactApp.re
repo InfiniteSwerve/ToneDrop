@@ -16,42 +16,68 @@ type state =
 
 module Dropdown = {
   [@react.component]
-  let make = (~items, ~isVisible) => {
+  let make = (~items, ~isVisible, ~onSelect, ~toggleDropdown) => {
+    // Function to handle click event on dropdown items
+    let handleClick = (item, toggleDropdown) => {
+      // Call the onSelect function passed from parent with the clicked item
+      onSelect(item);
+      toggleDropdown();
+
+    };
+
     <div className={isVisible ? "dropdown-visible" : "dropdown-hidden"}>
       {items
-       |> List.map(item => <div key=item> item->React.string </div>)
+       |> List.map(item => 
+            // Add an onClick handler to each item
+            <div key=item onClick={_event => handleClick(item, toggleDropdown)}>
+              item->React.string
+            </div>
+          )
        |> Array.of_list
        |> React.array}
     </div>;
   };
 };
-
 module Box = {
   [@react.component]
   let make = (~id) => {
     let _ = id;
-    let (dropdown1Visible, setDropdown1Visible) = React.useState(() => false);
-    let (dropdown2Visible, setDropdown2Visible) = React.useState(() => false);
 
-    let toggleDropdown1 = () => setDropdown1Visible(prev => !prev);
-    let toggleDropdown2 = () => setDropdown2Visible(prev => !prev);
+    // Convert root and kind to state variables
+    let (root, setRoot) = React.useState(() => "C");
+    let (kind, setKind) = React.useState(() => "Major");
 
-    let toyData1 = ["Option 1", "Option 2", "Option 3"];
-    let toyData2 = ["Choice A", "Choice B", "Choice C"];
+    let (rootDropdownVisible, setRootDropdownVisible) = React.useState(() => false);
+    let (chordKindDropdownVisible, setChordKindDropdownVisible) = React.useState(() => false);
+
+    let toggleRootChange = () => setRootDropdownVisible(prev => !prev);
+    let toggleKindChange = () => setChordKindDropdownVisible(prev => !prev);
+
+    let rootChoices = Note.notes |> Array.to_list; 
+    let kindChoices = Chord.string_kinds;
+
+    let handleRootSelect = (selectedRoot) => {
+      setRoot(_ => selectedRoot);
+      setRootDropdownVisible(prev => !prev);
+    };
+
+    let handleKindSelect = (selectedKind) => {
+      setKind(_ => selectedKind);
+      setChordKindDropdownVisible(prev => !prev);
+    };
 
     <div className="progression-grid-item chord-info-box">
-      <div className="box-section" onClick={_event => toggleDropdown1()}>
-        "Section 1"->React.string
-        <Dropdown items=toyData1 isVisible=dropdown1Visible />
+      <div className="box-section" onClick={_event => toggleRootChange()}>
+        {React.string(root)}
+        <Dropdown items=rootChoices isVisible=rootDropdownVisible onSelect=handleRootSelect toggleDropdown=toggleRootChange />
       </div>
-      <div className="box-section" onClick={_event => toggleDropdown2()}>
-        "Section 2"->React.string
-        <Dropdown items=toyData2 isVisible=dropdown2Visible />
+      <div className="box-section" onClick={_event => toggleKindChange()}>
+        {React.string(kind)}
+        <Dropdown items=kindChoices isVisible=chordKindDropdownVisible onSelect=handleKindSelect toggleDropdown=toggleKindChange />
       </div>
     </div>;
   };
 };
-
 module ProgressionSection = {
   [@react.component]
   let make = () => {
@@ -101,8 +127,7 @@ module App = {
   // TODO: For fitting scales to chords, add ability to choose more angular scales or try to keep the note similar
   // TODO: How does FET handle chord voicing?
   // TODO: Sample random progression in key
-  // TODO: build chords from scales
-  // TODO:
+  // TODO: 
   let make = () => {
     Random.init(int_of_float(Js.Date.now()));
     let (state, setState) = React.useState(() => Play);
