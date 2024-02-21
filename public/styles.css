@@ -276,6 +276,7 @@ dropdown-content div {
   padding: 10px;
   border: 1px solid #ddd;
   text-align: center;
+  position: relative
 }
 .box-section {
   cursor: pointer;
@@ -291,11 +292,10 @@ dropdown-content div {
   display: none;
 }
 
-/* Optional: Add responsiveness to the layout */
-/* @media (max-width: 600px) { */
-/*   .function-button, .note-button { */
-/*     padding: 12px 24px; */
-/*     font-size: 14px; */
-/*   } */
-/* } */
-
+.dropdown-x {
+  position: absolute;
+  top: 0;
+  left: 2px;
+  font-size: 20px; /* Adjust size as needed */
+  cursor: pointer; /* Changes cursor on hover */
+}

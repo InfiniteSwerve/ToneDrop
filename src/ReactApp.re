@@ -26,6 +26,7 @@ module Dropdown = {
     };
 
     <div className={isVisible ? "dropdown-visible" : "dropdown-hidden"}>
+      <div className="dropdown-x" onClick={_event => {toggleDropdown()}}></div>
       {items
        |> List.map(item => 
             // Add an onClick handler to each item
@@ -40,8 +41,11 @@ module Dropdown = {
 };
 module Box = {
   [@react.component]
-  let make = (~id) => {
+  let make = (~id, ~root, ~kind, ~onDelete) => {
     let _ = id;
+    let _ = root;
+    let _ = kind;
+
 
     // Convert root and kind to state variables
     let (root, setRoot) = React.useState(() => "C");
@@ -66,7 +70,14 @@ module Box = {
       setChordKindDropdownVisible(prev => !prev);
     };
 
-    <div className="progression-grid-item chord-info-box">
+    let handleDelete = () => {
+      onDelete(id);
+    };
+
+    <div className="progression-grid-item chord-info-box"> 
+      <div className="dropdown-x" onClick={_event => handleDelete()}>
+        {"X"->React.string}
+      </div>
       <div className="box-section" onClick={_event => toggleRootChange()}>
         {React.string(root)}
         <Dropdown items=rootChoices isVisible=rootDropdownVisible onSelect=handleRootSelect toggleDropdown=toggleRootChange />
@@ -81,17 +92,24 @@ module Box = {
 module ProgressionSection = {
   [@react.component]
   let make = () => {
-    let (boxCount, setBoxCount) = React.useState(() => 11);
+    let (boxState, setBoxState) = React.useState(() => [("C", "Major")]);
 
     let addBox = () => {
-      setBoxCount(prevCount => prevCount + 1);
+      setBoxState(prev => prev @ [("C", "Major")]);
     };
+
+    let deleteBox = (id) => {
+      setBoxState(prevState =>
+        List.filteri((index, _) => index != id, prevState)
+      );
+    };
+
     <div className="progression-container">
       <div className="progression-grid-container">
-        {Array.init(boxCount, index =>
-           <Box key={string_of_int(index)} id=index />
-         )
-         |> React.array}
+        {List.mapi(((index, (root,kind)) => <Box key=string_of_int(index) id=index root=root kind=kind onDelete=deleteBox/>),boxState)
+        |> Array.of_list
+        |> React.array
+        }
         <div
           className="progression-grid-item add-chord-box"
           onClick={_event => addBox()}>
