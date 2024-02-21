@@ -9,6 +9,7 @@ type synthCallback = Synth.t => unit;
 
 type state =
   | Play
+  | PlayProgression
   | ChangeKey
   | ChangeScale
   | ChangeGuessableNotes;
@@ -44,7 +45,7 @@ module App = {
     Random.init(int_of_float(Js.Date.now()));
     let (state, setState) = React.useState(() => Play);
     let (synth, _setSynth) = React.useState(() => Synth.createPolySynth());
-    let (_, _setAudioContextStarted) = React.useState(() => false);
+    let (_, _setAudioContextStarted) = React.useState(() => true);
     let (path, setPath) = React.useState(() => [Note.c4]);
     let (scale, setScale) =
       React.useState(() => Scale.of_note(Note.c4, Scale.major_intervals));
@@ -63,6 +64,8 @@ module App = {
         Synth.startTransport();
         80;
       });
+    let (progressionNote, setProgressionNote) = React.useState(() => Note.c4);
+    let (progressionRoot, setProgressionRoot) = React.useState(() => Note.c4);
 
     let handleSideBarButtonClick = (newState: state) => {
       state == newState ? setState(_ => Play) : setState(_ => newState);
@@ -152,6 +155,24 @@ module App = {
           scale.root,
           globalBPM,
         );
+      | PlayProgression when guessableNotes[button_value] =>
+        Synth.drop_audio(synth);
+        let local_note = Note.transpose(scale.root, button_value);
+        Printf.printf("Playing %s\n", Note.to_string(local_note));
+        Printf.printf("Playing playProgression\n");
+        Js.log(Note.to_string(local_note));
+        let highlight =
+          Note.eq(local_note, guessNote) ? `Correct : `Incorrect;
+        let root_path = Scale.get_path(scale, local_note, progressionRoot);
+        let scale_path = Scale.get_path(scale, local_note, scale.root);
+        Play.path(
+          synth,
+          setNoteHighlight,
+          root_path @ scale_path,
+          highlight,
+          scale.root,
+          globalBPM,
+        );
       | ChangeGuessableNotes =>
         setGuessableNotes(notes => {
           GuessableNotes.swap(notes, button_value);
@@ -207,6 +228,7 @@ module App = {
       let stateClassName =
         switch (state) {
         | Play => "play-mode"
+        | PlayProgression => "play-progression-mode"
         | ChangeKey => "change-key-mode"
         | ChangeScale => "change-scale-mode"
         | ChangeGuessableNotes => "change-guessable-notes-mode"
@@ -356,7 +378,10 @@ module App = {
             <button
               className="function-button"
               id="repeat-question"
-              onClick={_event => playNoteGetPath(synth)}>
+              onClick={_event => {
+                playNoteGetPath(synth);
+                setState(_ => Play);
+              }}>
               "New Question"->React.string
             </button>
             <button
@@ -388,7 +413,7 @@ module App = {
             </button>
             <button
               className="function-button"
-              id="Play Scale"
+              id="play-scale"
               onClick={_event => {
                 Play.path(
                   synth,
@@ -402,6 +427,56 @@ module App = {
                 )
               }}>
               "Play Scale"->React.string
+            </button>
+            <button
+              className="function-button"
+              id="play-chord-note"
+              onClick={_event => {
+                Synth.drop_audio(synth);
+                setState(_ => PlayProgression);
+
+                // TODO: Get chord from scale
+                let duration = 0.75 /. float_of_int(globalBPM / 60);
+                setProgressionNote(_ => Scale.random_note(scale));
+                setProgressionRoot(_ => Scale.random_note(scale));
+                setGuessNote(_ => progressionNote);
+                let root_path =
+                  Scale.get_path(scale, progressionNote, progressionRoot);
+                let scale_path =
+                  Scale.get_path(scale, progressionNote, scale.root);
+                // TODO: This shouldn't be minor the whole time
+                Play.chord(synth, Chord.of_kind(progressionRoot, Minor));
+                setPath(_ => root_path @ scale_path);
+                //Js.log(Scale.list_to_string(Note.to_string, scale_path));
+                Js.log(List.length(scale_path));
+                Synth.schedule(
+                  () => Play.note(synth, progressionNote),
+                  Printf.sprintf("+%f", duration),
+                );
+
+                Synth.startTransport();
+              }}>
+              "new progression question"->React.string
+            </button>
+            <button
+              className="function-button"
+              id="play-progression-resolution-mode"
+              onClick={_event => {
+                let _duration = 0.75 /. float_of_int(globalBPM / 60);
+                Synth.schedule(
+                  () =>
+                    Play.path(
+                      synth,
+                      setNoteHighlight,
+                      path,
+                      `Correct,
+                      scale.root,
+                      globalBPM,
+                    ),
+                  Printf.sprintf("+%f", 0.),
+                );
+              }}>
+              "Resolve Progression Note"->React.string
             </button>
           </div>
         </div>
