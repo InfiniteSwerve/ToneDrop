@@ -14,6 +14,68 @@ type state =
   | ChangeScale
   | ChangeGuessableNotes;
 
+module Dropdown = {
+  [@react.component]
+  let make = (~items, ~isVisible) => {
+    <div className={isVisible ? "dropdown-visible" : "dropdown-hidden"}>
+      {items
+       |> List.map(item => <div key=item> item->React.string </div>)
+       |> Array.of_list
+       |> React.array}
+    </div>;
+  };
+};
+
+module Box = {
+  [@react.component]
+  let make = (~id) => {
+    let _ = id;
+    let (dropdown1Visible, setDropdown1Visible) = React.useState(() => false);
+    let (dropdown2Visible, setDropdown2Visible) = React.useState(() => false);
+
+    let toggleDropdown1 = () => setDropdown1Visible(prev => !prev);
+    let toggleDropdown2 = () => setDropdown2Visible(prev => !prev);
+
+    let toyData1 = ["Option 1", "Option 2", "Option 3"];
+    let toyData2 = ["Choice A", "Choice B", "Choice C"];
+
+    <div className="progression-grid-item chord-info-box">
+      <div className="box-section" onClick={_event => toggleDropdown1()}>
+        "Section 1"->React.string
+        <Dropdown items=toyData1 isVisible=dropdown1Visible />
+      </div>
+      <div className="box-section" onClick={_event => toggleDropdown2()}>
+        "Section 2"->React.string
+        <Dropdown items=toyData2 isVisible=dropdown2Visible />
+      </div>
+    </div>;
+  };
+};
+
+module ProgressionSection = {
+  [@react.component]
+  let make = () => {
+    let (boxCount, setBoxCount) = React.useState(() => 11);
+
+    let addBox = () => {
+      setBoxCount(prevCount => prevCount + 1);
+    };
+    <div className="progression-container">
+      <div className="progression-grid-container">
+        {Array.init(boxCount, index =>
+           <Box key={string_of_int(index)} id=index />
+         )
+         |> React.array}
+        <div
+          className="progression-grid-item add-chord-box"
+          onClick={_event => addBox()}>
+          "+"->React.string
+        </div>
+      </div>
+    </div>;
+  };
+};
+
 module App = {
   [@react.component]
   // Do as little shit as possible in this file. Do pretty much all the heavy lifting in music.ml.
@@ -38,9 +100,8 @@ module App = {
   // TODO: Get outside review
   // TODO: For fitting scales to chords, add ability to choose more angular scales or try to keep the note similar
   // TODO: How does FET handle chord voicing?
-  // TODO: Play cadence, play other chord, play
-  // TODO: Play scale button
   // TODO: Sample random progression in key
+  // TODO: build chords from scales
   let make = () => {
     Random.init(int_of_float(Js.Date.now()));
     let (state, setState) = React.useState(() => Play);
@@ -480,6 +541,7 @@ module App = {
             </button>
           </div>
         </div>
+        <ProgressionSection />
       </div>
     </div>;
   };

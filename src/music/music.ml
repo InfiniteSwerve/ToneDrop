@@ -95,6 +95,8 @@ module Chord = struct
   let of_interval_kind (root : Note.t) (interval : int) (chord : kind) : chord =
     let new_root = Note.transpose root interval in
     of_kind new_root chord
+
+  let of_notes root notes = { root; notes }
 end
 
 module Scale = struct
@@ -247,6 +249,20 @@ module Scale = struct
     | false -> add scale interval
 
   let random_scale scale = of_string Note.notes.(Random.int 12) scale.intervals
+
+  let to_chord (scale : scale) (interval : int) (chord_size : int) =
+    let root = Note.transpose scale.root interval in
+    let big_scale =
+      make_big_scale scale scale.root.octave (scale.root.octave + 2)
+      |> List.filter (fun note -> Note.(note >= to_pos root))
+    in
+
+    let rec walk scale size acc =
+      match scale with
+      | hd :: tl when size < chord_size -> walk tl (size + 1) (hd :: acc)
+      | _ -> List.rev acc
+    in
+    walk big_scale chord_size []
 end
 
 module GuessableNotes = struct
