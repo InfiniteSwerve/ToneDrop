@@ -1,3 +1,6 @@
+let list_to_string (f : 'a -> string) (l : 'a list) : string =
+  "[" ^ String.concat "; " (List.map f l) ^ "]"
+
 module Note = struct
   type name = C | CS | D | DS | E | F | FS | G | GS | A | AS | B
   type note = { pitch : int; octave : int; scale_position : int option }
@@ -97,6 +100,11 @@ module Chord = struct
     of_kind new_root chord
 
   let of_notes root notes = { root; notes }
+
+  let to_string chord =
+    "{ root = " ^ Note.to_string chord.root ^ "\n" ^ "; notes = "
+    ^ list_to_string Note.to_string chord.notes
+    ^ "\n}"
 end
 
 module Scale = struct
@@ -137,9 +145,6 @@ module Scale = struct
         intervals
     in
     { key; root; intervals; notes }
-
-  let list_to_string (f : 'a -> string) (l : 'a list) : string =
-    "[" ^ String.concat "; " (List.map f l) ^ "]"
 
   let to_string (s : scale) : string =
     "{ root = " ^ Note.to_string s.root ^ "\n" ^ "; notes = "
@@ -256,13 +261,17 @@ module Scale = struct
       make_big_scale scale scale.root.octave (scale.root.octave + 2)
       |> List.filter (fun note -> Note.(note >= to_pos root))
     in
-
     let rec walk scale size acc =
       match scale with
-      | hd :: tl when size < chord_size -> walk tl (size + 1) (hd :: acc)
+      | _hd :: note :: tl when size < chord_size ->
+          walk tl (size + 1) (note :: acc)
       | _ -> List.rev acc
     in
-    walk big_scale chord_size []
+    let root_pos = Note.to_pos root in
+    let notes = walk big_scale 0 [] |> List.map (fun note -> note - root_pos) in
+
+    Printf.printf "%s\n" (list_to_string string_of_int notes);
+    Chord.{ root; notes = Note.transpose_notes root notes }
 end
 
 module GuessableNotes = struct

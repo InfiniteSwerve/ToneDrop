@@ -102,6 +102,7 @@ module App = {
   // TODO: How does FET handle chord voicing?
   // TODO: Sample random progression in key
   // TODO: build chords from scales
+  // TODO:
   let make = () => {
     Random.init(int_of_float(Js.Date.now()));
     let (state, setState) = React.useState(() => Play);
@@ -496,7 +497,6 @@ module App = {
                 Synth.drop_audio(synth);
                 setState(_ => PlayProgression);
 
-                // TODO: Get chord from scale
                 let duration = 0.75 /. float_of_int(globalBPM / 60);
                 setProgressionNote(_ => Scale.random_note(scale));
                 setProgressionRoot(_ => Scale.random_note(scale));
@@ -505,8 +505,14 @@ module App = {
                   Scale.get_path(scale, progressionNote, progressionRoot);
                 let scale_path =
                   Scale.get_path(scale, progressionNote, scale.root);
-                // TODO: This shouldn't be minor the whole time
-                Play.chord(synth, Chord.of_kind(progressionRoot, Minor));
+                let chord =
+                  Scale.to_chord(
+                    scale,
+                    Note.dist(scale.root, progressionRoot),
+                    3,
+                  );
+                Js.log(Chord.to_string(chord));
+                Play.chord(synth, chord);
                 setPath(_ => root_path @ scale_path);
                 //Js.log(Scale.list_to_string(Note.to_string, scale_path));
                 Js.log(List.length(scale_path));
