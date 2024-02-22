@@ -278,6 +278,11 @@ dropdown-content div {
   text-align: center;
   position: relative
 }
+
+.current-chord {
+  background-color: darkgreen; /* Replace 'lightgreen' with the specific shade of green you prefer */
+}
+
 .box-section {
   cursor: pointer;
   padding: 10px;

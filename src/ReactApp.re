@@ -18,7 +18,6 @@ type state =
 module Dropdown = {
   [@react.component]
   let make = (~items, ~isVisible, ~onSelect, ~toggleDropdown) => {
-    // Function to handle click event on dropdown items
     let handleClick = (item, toggleDropdown) => {
       onSelect(item);
       toggleDropdown();
@@ -28,7 +27,6 @@ module Dropdown = {
       <div className="dropdown-x" onClick={_event => {toggleDropdown()}}></div>
       {items
        |> List.map(item => 
-            // Add an onClick handler to each item
             <div key=item onClick={_event => handleClick(item, toggleDropdown)}>
               item->React.string
             </div>
@@ -40,7 +38,7 @@ module Dropdown = {
 };
 module Box = {
   [@react.component]
-  let make = (~id, ~chord: Chord.t, ~setBoxState, ~onDelete) => {
+  let make = (~id, ~progressionIndex, ~chord: Chord.t, ~setProgressionState, ~onDelete) => {
 
     let (root, setRoot) = React.useState(() => chord.root);
     let (kind, setKind) = React.useState(() => chord.kind);
@@ -58,7 +56,7 @@ module Box = {
       let selectedRoot = Note.of_name(selectedRootString, 4);
       setRoot(_ => selectedRoot);
       setRootDropdownVisible(prev => !prev);
-      setBoxState(state => 
+      setProgressionState(state => 
                   Progression.swap(state, id, Chord.of_kind(root, kind)));
     };
 
@@ -66,7 +64,7 @@ module Box = {
       let selectedKind = Chord.kind_of_string(selectedKindString);
       setKind(_ => selectedKind);
       setChordKindDropdownVisible(prev => !prev);
-      setBoxState(state => 
+      setProgressionState(state => 
                   Progression.swap(state, id, Chord.of_kind(root, kind)));
     };
 
@@ -74,7 +72,9 @@ module Box = {
       onDelete(id);
     };
 
-    <div className="progression-grid-item chord-info-box"> 
+    let progressionIndexStyling = progressionIndex == id ? " current-chord" : "";
+
+    <div className=String.cat("progression-grid-item chord-info-box", progressionIndexStyling)> 
       <div className="dropdown-x" onClick={_event => handleDelete()}>
         {"X"->React.string}
       </div>
@@ -91,22 +91,22 @@ module Box = {
 };
 module ProgressionSection = {
   [@react.component]
-  let make = (~boxState,~setBoxState) => {
+  let make = (~progressionState,~setProgressionState, ~progressionIndex) => {
 
 
     let addBox = () => {
-      setBoxState(prevState => Progression.add(prevState, Chord.of_kind(Note.c4, Major)));
+      setProgressionState(prevState => Progression.add(prevState, Chord.of_kind(Note.c4, Major)));
     };
 
     let deleteBox = (id) => {
-      setBoxState(prevState =>
+      setProgressionState(prevState =>
                   Progression.remove(prevState, id)
       );
     };
 
     <div className="progression-container">
       <div className="progression-grid-container">
-        {Array.mapi(((index, chord) => <Box key=string_of_int(index) id=index chord=chord setBoxState=setBoxState onDelete=deleteBox/>),boxState)
+        {Array.mapi(((index, chord) => <Box key=string_of_int(index) id=index progressionIndex=progressionIndex chord=chord setProgressionState=setProgressionState onDelete=deleteBox/>),progressionState)
         |> React.array
         }
         <div
@@ -130,8 +130,6 @@ module App = {
   // TODO: ToneDrop logo in the top left
   // TODO: Some way to save things
   // TODO: Something that learns how good you're getting at guessing and targets stuff you're bad at
-  // TODO: Add progressions
-  // TODO: Add progression editor
   // TODO: Maybe we should wrap all music state into one package in music.ml with a single interface?
   // BUG: Audio doesn't cancel even with drop_audio. There's an echo that can ring out
   // TODO: Start with a guessed note and path and synth so we don't need to mess with options, just disable the other buttons until we click the new question button
@@ -144,7 +142,7 @@ module App = {
   // TODO: For fitting scales to chords, add ability to choose more angular scales or try to keep the note similar
   // TODO: How does FET handle chord voicing?
   // TODO: Sample random progression in key
-  // TODO: 
+  // TODO: utilize effects to make sure everything is changed when it's supposed to be, instead of needing to click twice
   let make = () => {
     Random.init(int_of_float(Js.Date.now()));
     let (state, setState) = React.useState(() => Play);
@@ -170,7 +168,8 @@ module App = {
       });
     let (progressionNote, setProgressionNote) = React.useState(() => Note.c4);
     let (progressionRoot, setProgressionRoot) = React.useState(() => Note.c4);
-    let (boxState, setBoxState) = React.useState(() => Progression.make());
+    let (progressionIndex, _setProgressionIndex) = React.useState(() => 0);
+    let (progressionState, setProgressionState) = React.useState(() => Progression.make());
 
     let handleSideBarButtonClick = (newState: state) => {
       state == newState ? setState(_ => Play) : setState(_ => newState);
@@ -588,9 +587,23 @@ module App = {
               }}>
               "Resolve Progression Note"->React.string
             </button>
+            <button
+              className="function-button"
+              id="play-progression"
+              onClick={_event => {
+                let _duration = 0.75 /. float_of_int(globalBPM / 60);
+                Play.chords(
+                  synth,
+                  setNoteHighlight,
+                  Array.to_list(progressionState),
+                  globalBPM,
+                );
+              }}>
+              "Play Progression"->React.string
+            </button>
           </div>
         </div>
-        <ProgressionSection boxState=boxState setBoxState=setBoxState />
+        <ProgressionSection progressionState=progressionState setProgressionState=setProgressionState progressionIndex=progressionIndex/>
       </div>
     </div>;
   };
