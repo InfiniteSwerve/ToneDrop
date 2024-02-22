@@ -98,14 +98,16 @@ module Play = struct
       notes;
     startTransport ()
 
-  let chords (synth : synth) set_highlight_notes (chords : Chord.t list) bpm =
+  let chords (synth : synth) (setProgressionIndex) set_highlight_notes (chords : Chord.t list) bpm =
     drop_audio synth;
     set_highlight_notes (fun _ -> Array.make 13 `None);
     let duration = 0.75 /. float_of_int (bpm / 60) in
     List.iteri
       (fun i n ->
         schedule
-          (fun () -> chord synth n)
+          (fun () ->
+            (setProgressionIndex (fun _ -> i));
+            chord synth n)
           (Printf.sprintf "+%f" (float_of_int i *. duration)))
       chords;
     startTransport ()

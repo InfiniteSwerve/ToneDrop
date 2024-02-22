@@ -37,35 +37,48 @@ module Dropdown = {
   };
 };
 module Box = {
+  type state = {
+    root: Note.t,
+    kind: Chord.kind,
+    rootDropdownVisible: bool,
+    chordKindDropdownVisible: bool
+  };
+
   [@react.component]
   let make = (~id, ~progressionIndex, ~chord: Chord.t, ~setProgressionState, ~onDelete) => {
+    let (state, setState) = React.useState(() => {
+      root: chord.root,
+      kind: chord.kind,
+      rootDropdownVisible: false,
+      chordKindDropdownVisible: false
+    });
 
-    let (root, setRoot) = React.useState(() => chord.root);
-    let (kind, setKind) = React.useState(() => chord.kind);
-
-    let (rootDropdownVisible, setRootDropdownVisible) = React.useState(() => false);
-    let (chordKindDropdownVisible, setChordKindDropdownVisible) = React.useState(() => false);
-
-    let toggleRootChange = () => setRootDropdownVisible(prev => !prev);
-    let toggleKindChange = () => setChordKindDropdownVisible(prev => !prev);
+    let toggleRootChange = () => setState(prevState => {...prevState, rootDropdownVisible: !prevState.rootDropdownVisible});
+    let toggleKindChange = () => setState(prevState => {...prevState, chordKindDropdownVisible: !prevState.chordKindDropdownVisible});
 
     let rootChoices = Note.notes |> Array.to_list; 
     let kindChoices = Chord.string_kinds;
 
     let handleRootSelect = (selectedRootString) => {
       let selectedRoot = Note.of_name(selectedRootString, 4);
-      setRoot(_ => selectedRoot);
-      setRootDropdownVisible(prev => !prev);
-      setProgressionState(state => 
-                  Progression.swap(state, id, Chord.of_kind(root, kind)));
+      let newChord = Chord.of_kind(selectedRoot, state.kind);
+      setProgressionState(prevProgression => {
+        Progression.swap(prevProgression, id, newChord);
+      });
+      setState(prevState =>
+        {...prevState, root: selectedRoot, rootDropdownVisible: !state.rootDropdownVisible }
+      );
     };
 
     let handleKindSelect = (selectedKindString) => {
       let selectedKind = Chord.kind_of_string(selectedKindString);
-      setKind(_ => selectedKind);
-      setChordKindDropdownVisible(prev => !prev);
-      setProgressionState(state => 
-                  Progression.swap(state, id, Chord.of_kind(root, kind)));
+      let newChord = Chord.of_kind(state.root, selectedKind);
+      setProgressionState(prevProgression => {
+        Progression.swap(prevProgression, id, newChord);
+      });
+      setState(prevState =>
+        {...prevState, kind: selectedKind, chordKindDropdownVisible: !state.chordKindDropdownVisible }
+      );
     };
 
     let handleDelete = () => {
@@ -79,12 +92,12 @@ module Box = {
         {"X"->React.string}
       </div>
       <div className="box-section" onClick={_event => toggleRootChange()}>
-        {React.string(Note.to_name(root))}
-        <Dropdown items=rootChoices isVisible=rootDropdownVisible onSelect=handleRootSelect toggleDropdown=toggleRootChange />
+        {React.string(Note.to_name(state.root))}
+        <Dropdown items=rootChoices isVisible=state.rootDropdownVisible onSelect=handleRootSelect toggleDropdown=toggleRootChange />
       </div>
       <div className="box-section" onClick={_event => toggleKindChange()}>
-        {React.string(Chord.kind_to_string(kind))}
-        <Dropdown items=kindChoices isVisible=chordKindDropdownVisible onSelect=handleKindSelect toggleDropdown=toggleKindChange />
+        {React.string(Chord.kind_to_string(state.kind))}
+        <Dropdown items=kindChoices isVisible=state.chordKindDropdownVisible onSelect=handleKindSelect toggleDropdown=toggleKindChange />
       </div>
     </div>;
   };
@@ -168,7 +181,7 @@ module App = {
       });
     let (progressionNote, setProgressionNote) = React.useState(() => Note.c4);
     let (progressionRoot, setProgressionRoot) = React.useState(() => Note.c4);
-    let (progressionIndex, _setProgressionIndex) = React.useState(() => 0);
+    let (progressionIndex, setProgressionIndex) = React.useState(() => 0);
     let (progressionState, setProgressionState) = React.useState(() => Progression.make());
 
     let handleSideBarButtonClick = (newState: state) => {
@@ -591,9 +604,9 @@ module App = {
               className="function-button"
               id="play-progression"
               onClick={_event => {
-                let _duration = 0.75 /. float_of_int(globalBPM / 60);
                 Play.chords(
                   synth,
+                  setProgressionIndex,
                   setNoteHighlight,
                   Array.to_list(progressionState),
                   globalBPM,
