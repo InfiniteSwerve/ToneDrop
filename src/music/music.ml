@@ -95,8 +95,8 @@ module Note = struct
 end
 
 module Chord = struct
-  type kind = Major | Minor | Dominant7 | Major7 | Minor7
-  type chord = { root : Note.t; notes : Note.t list }
+  type kind = Major | Minor | Dominant7 | Major7 | Minor7 | Complicated
+  type chord = { root : Note.t; kind: kind; notes : Note.t list }
   type t = chord
 
   let major_notes = [ 0; 4; 7 ]
@@ -115,6 +115,16 @@ module Chord = struct
       | Dominant7 -> "Dominant7"
       | Major7 -> "Major7"
       | Minor7 -> "Minor7"
+      | Complicated -> "Complicated"
+
+  let kind_of_string string = 
+      match string with
+      | "Major" -> Major
+      | "Minor" -> Minor
+      | "Dominant7" -> Dominant7
+      | "Major7" -> Major7
+      | "Minor7" -> Minor7
+      |_ -> raise (failwith "Unvalid chord kind")
 
   let of_kind (root : Note.t) (chord : kind) : chord =
     let notes =
@@ -124,14 +134,15 @@ module Chord = struct
       | Dominant7 -> Note.transpose_notes root dominant7_notes
       | Major7 -> Note.transpose_notes root major7_notes
       | Minor7 -> Note.transpose_notes root minor7_notes
+      | Complicated -> raise (failwith "Complicated is not a valid kind to construct a chord from")
     in
-    { root; notes }
+    { root; notes; kind=chord}
 
   let of_interval_kind (root : Note.t) (interval : int) (chord : kind) : chord =
     let new_root = Note.transpose root interval in
     of_kind new_root chord
 
-  let of_notes root notes = { root; notes }
+  let of_notes root notes = { root; notes; kind=Complicated }
 
   let to_string chord =
     "{ root = " ^ Note.to_string chord.root ^ "\n" ^ "; notes = "
@@ -303,7 +314,7 @@ module Scale = struct
     let notes = walk big_scale 0 [] |> List.map (fun note -> note - root_pos) in
 
     Printf.printf "%s\n" (list_to_string string_of_int notes);
-    Chord.{ root; notes = Note.transpose_notes root notes }
+    Chord.{ root; notes = Note.transpose_notes root notes; kind=Complicated }
 end
 
 module GuessableNotes = struct
@@ -341,6 +352,24 @@ module GuessableNotes = struct
       List.nth guessable_notes (Random.int (List.length guessable_notes))
     in
     Note.transpose scale.root interval
+end
+
+module Progression = struct
+  type progression = Chord.t Array.t
+  type t = progression
+  let make () = 
+    Array.make 1 (Chord.of_kind Note.c4 Chord.Major)
+
+  let add progression chord = 
+    Array.append progression [|chord|]
+
+  let remove progression index =
+    Array.of_list (List.filteri (fun i _ -> i == index) (Array.to_list progression))
+
+  let swap progression index new_chord = 
+    progression.(index) <- new_chord;
+    progression
+
 end
 
 module MusicState = struct
