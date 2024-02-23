@@ -156,6 +156,8 @@ module App = {
   // TODO: Sample random progression in key
   // TODO: "start from here" on the chord progressions
   // TODO: Psuedorandomness on the note selection so you don't get like 5 in a row
+  // TODO: Custom scales for each chord
+  // TODO: Make disabled notes light up when played
   let make = () => {
     Random.init(int_of_float(Js.Date.now()));
     let (state, setState) = React.useState(() => Play);
@@ -164,7 +166,6 @@ module App = {
     let (path, setPath) = React.useState(() => [Note.c4]);
     let (scale, setScale) =
       React.useState(() => Scale.of_note(Note.c4, Scale.major_intervals));
-    Js.log(Scale.to_string(scale));
     let (guessNote, setGuessNote) = React.useState(() => Note.c4);
     let (guessableNotes, setGuessableNotes) =
       React.useState(() => GuessableNotes.of_scale(scale));
@@ -584,7 +585,6 @@ module App = {
               className="function-button"
               id="play-progression-resolution-mode"
               onClick={_event => {
-                let _duration = 0.75 /. float_of_int(globalBPM / 60);
                 let root_path =
                   Scale.get_path(scale, progressionNote, progressionRoot);
                 let scale_path =
