@@ -145,7 +145,6 @@ module App = {
   // TODO: Something that learns how good you're getting at guessing and targets stuff you're bad at
   // TODO: Maybe we should wrap all music state into one package in music.ml with a single interface?
   // BUG: Audio doesn't cancel even with drop_audio. There's an echo that can ring out
-  // TODO: Start with a guessed note and path and synth so we don't need to mess with options, just disable the other buttons until we click the new question button
   // TODO: Add disableable logging for easier on-demand debugging
   // TODO: separate sliders for cadence speed + note speed
   // TODO: Make a guide on how to use + basic rules
@@ -155,7 +154,8 @@ module App = {
   // TODO: For fitting scales to chords, add ability to choose more angular scales or try to keep the note similar
   // TODO: How does FET handle chord voicing?
   // TODO: Sample random progression in key
-  // TODO: utilize effects to make sure everything is changed when it's supposed to be, instead of needing to click twice
+  // TODO: "start from here" on the chord progressions
+  // TODO: Psuedorandomness on the note selection so you don't get like 5 in a row
   let make = () => {
     Random.init(int_of_float(Js.Date.now()));
     let (state, setState) = React.useState(() => Play);
@@ -585,12 +585,18 @@ module App = {
               id="play-progression-resolution-mode"
               onClick={_event => {
                 let _duration = 0.75 /. float_of_int(globalBPM / 60);
+                let root_path =
+                  Scale.get_path(scale, progressionNote, progressionRoot);
+                let scale_path =
+                  Scale.get_path(scale, progressionNote, scale.root);
+                let new_path = root_path @ scale_path;
+                setPath(_ => new_path);
                 Synth.schedule(
                   () =>
                     Play.path(
                       synth,
                       setNoteHighlight,
-                      path,
+                      new_path,
                       `Correct,
                       scale.root,
                       globalBPM,
@@ -604,6 +610,7 @@ module App = {
               className="function-button"
               id="play-progression"
               onClick={_event => {
+                let oldProgressionIndex = progressionIndex;
                 Play.chords(
                   synth,
                   setProgressionIndex,
@@ -611,8 +618,68 @@ module App = {
                   Array.to_list(progressionState),
                   globalBPM,
                 );
+                setProgressionIndex(_ => oldProgressionIndex);
               }}>
               "Play Progression"->React.string
+            </button>
+            <button
+              className="function-button"
+              id="repeat-progression-question"
+              onClick={_event => {
+                let duration = 0.75 /. float_of_int(globalBPM / 60);
+                Play.chord(
+                  synth, progressionState[progressionIndex]
+                );
+                Synth.schedule(
+                  () => Play.note(synth, progressionNote),
+                  Printf.sprintf("+%f", duration),
+                );
+              }}>
+              "Repeat Progression Question"->React.string
+            </button>
+            <button
+              className="function-button"
+              id="next-progression-question"
+              onClick={_event => {
+                let nextProgressionIndex = Int.equal(Progression.length(progressionState), (progressionIndex + 1)) ? progressionIndex : progressionIndex+ 1;
+                setProgressionIndex(_ => nextProgressionIndex);
+                let duration = 0.75 /. float_of_int(globalBPM / 60);
+                let chord = progressionState[nextProgressionIndex];
+                let newProgressionNote = Chord.get_random_note(chord);
+                setProgressionRoot(_ => chord.root);
+                setProgressionNote(_ => newProgressionNote);
+                Play.chord(
+                  synth, chord
+                );
+
+                Synth.schedule(
+                  () => Play.note(synth, newProgressionNote),
+                  Printf.sprintf("+%f", duration),
+                );
+              }}>
+              "Next Progression Question"->React.string
+            </button>
+            <button
+              className="function-button"
+              id="previous-progression-question"
+              onClick={_event => {
+                let nextProgressionIndex = Int.equal(0, progressionIndex) ? progressionIndex : progressionIndex - 1;
+                setProgressionIndex(_ => nextProgressionIndex);
+                let duration = 0.75 /. float_of_int(globalBPM / 60);
+                let chord = progressionState[nextProgressionIndex];
+                let newProgressionNote = Chord.get_random_note(chord);
+                setProgressionRoot(_ => chord.root);
+                setProgressionNote(_ => newProgressionNote);
+                Play.chord(
+                  synth, chord
+                );
+
+                Synth.schedule(
+                  () => Play.note(synth, newProgressionNote),
+                  Printf.sprintf("+%f", duration),
+                );
+              }}>
+              "Previous Progression Question"->React.string
             </button>
           </div>
         </div>

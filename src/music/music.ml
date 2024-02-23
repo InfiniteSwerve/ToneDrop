@@ -148,6 +148,9 @@ module Chord = struct
     "{ root = " ^ Note.to_string chord.root ^ "\n" ^ "; notes = "
     ^ list_to_string Note.to_string chord.notes
     ^ "\n}"
+
+  let get_random_note (chord: chord) : Note.t = List.nth chord.notes (Random.int (List.length chord.notes))
+
 end
 
 module Scale = struct
@@ -369,6 +372,9 @@ module Progression = struct
   let swap progression index new_chord = 
     progression.(index) <- new_chord;
     progression
+    
+  let length progression = 
+    Array.length progression
 
 end
 
