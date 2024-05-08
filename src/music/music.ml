@@ -61,6 +61,7 @@ module Note = struct
 
 
   let to_name note = notes.(note.pitch)
+  let to_solfege note = solfege.(note.pitch)
 
   let transpose ?(scale_position : int option = None)
       { pitch = old_pitch; octave; _ } (operator : int) : note =
