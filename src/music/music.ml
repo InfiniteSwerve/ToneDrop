@@ -389,6 +389,7 @@ module MusicState = struct
     guessNote : Note.t option;
     guessableNotes : GuessableNotes.t;
   }
+  type t = state
 
   let init ?(mode = Play) ?(scale = Scale.of_note Note.c4 Scale.major_intervals)
       ?(path = None) ?(guessNote = None)
