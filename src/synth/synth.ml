@@ -51,25 +51,26 @@ let drop_audio synth =
   stopTransport ();
   clearTransport ()
 
+type highlight = Correct | Incorrect | Blank
+
 let highlight_note
-    (set_highlight_notes : (([> `None ] as 'a) array -> 'a array) -> unit)
-    (note : Note.t) start (duration : float) highlight (root : Note.t) =
-  let highlight_position = (note.pitch - root.pitch ) mod 13 in 
+    (set_highlight_notes : (highlight array -> highlight array) -> unit)
+    (note : Note.t) start (duration : float) (highlight : highlight)
+    (root : Note.t) =
+  let highlight_position = (((note.pitch - root.pitch) mod 13) + 12) mod 13 in
+  Printf.printf "highlight position: %d\n%!" highlight_position;
   schedule
     (fun () ->
       set_highlight_notes (fun highlight_notes ->
           let new_highlights = Array.copy highlight_notes in
-          new_highlights.(highlight_position) <-
-            highlight;
-          new_highlights);
-    )
+          new_highlights.(highlight_position) <- highlight;
+          new_highlights))
     (Printf.sprintf "+%f" start);
   schedule
     (fun () ->
       set_highlight_notes (fun highlight_notes ->
           let new_highlights = Array.copy highlight_notes in
-          new_highlights.(highlight_position) <-
-            `None;
+          new_highlights.(highlight_position) <- Blank;
           new_highlights))
     (Printf.sprintf "+%f" (start +. duration))
 
@@ -77,15 +78,16 @@ module Play = struct
   let note (synth : synth) (note : Note.t) : unit = play_note synth note
   let chord (synth : synth) (chord : Chord.t) : unit = play_notes synth chord
 
-  let path (synth : synth) set_highlight_notes (notes : Note.t list) highlight
-      root (bpm : int) =
+  let path (synth : synth)
+      (set_highlight_notes : (highlight array -> highlight array) -> unit)
+      (notes : Note.t list) (highlight : highlight) (root : Note.t) (bpm : int)
+      =
     drop_audio synth;
-    set_highlight_notes (fun _ -> Array.make 13 `None);
+    set_highlight_notes (fun _ -> Array.make 13 Blank);
 
     let beatDuration = 60. /. float_of_int bpm in
     let otherNoteDuration = beatDuration *. 0.5 in
 
-    Printf.printf "in play path!\n%!";
     List.iteri
       (fun i (n : Note.t) ->
         let noteDuration = if i == 0 then beatDuration else otherNoteDuration in
@@ -94,24 +96,24 @@ module Play = struct
           else (float_of_int (i - 1) *. otherNoteDuration) +. beatDuration
         in
 
-        Printf.printf "at %d\n%!" i;
         highlight_note set_highlight_notes n startTime noteDuration highlight
           root;
 
         schedule (fun () -> note synth n) (Printf.sprintf "+%f" startTime))
       notes;
-    
     startTransport ()
 
-  let chords (synth : synth) (setProgressionIndex) set_highlight_notes (chords : Chord.t list) bpm =
+  let chords (synth : synth) setProgressionIndex
+      (set_highlight_notes : (highlight array -> highlight array) -> unit)
+      (chords : Chord.t list) bpm =
     drop_audio synth;
-    set_highlight_notes (fun _ -> Array.make 13 `None);
+    set_highlight_notes (fun _ -> Array.make 13 Blank);
     let duration = 0.75 /. float_of_int (bpm / 60) in
     List.iteri
       (fun i n ->
         schedule
           (fun () ->
-            (setProgressionIndex (fun _ -> i));
+            setProgressionIndex (fun _ -> i);
             chord synth n)
           (Printf.sprintf "+%f" (float_of_int i *. duration)))
       chords;
@@ -119,8 +121,8 @@ module Play = struct
 
   let chords_with_callback (synth : synth) set_highlight_notes (_root : Note.t)
       (chords : Chord.t list) bpm callback : unit =
-    drop_audio synth;
-    set_highlight_notes (fun _ -> Array.make 13 `None);
+    (* drop_audio synth; *)
+    set_highlight_notes (fun _ -> Array.make 13 Blank);
     let duration = 0.75 /. float_of_int (bpm / 60) in
     List.iteri
       (fun i n ->

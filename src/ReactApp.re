@@ -8,12 +8,7 @@ module InitialState = MusicState.InitialState;
 
 type synthCallback = Synth.t => unit;
 
-type state =
-  | Play
-  | PlayProgression
-  | ChangeKey
-  | ChangeScale
-  | ChangeGuessableNotes;
+type mode = InitialState.mode
 
 module Dropdown = {
   [@react.component]
@@ -37,154 +32,6 @@ module Dropdown = {
     </div>;
   };
 };
-module Box = {
-  type state = {
-    root: Note.t,
-    kind: Chord.kind,
-    rootDropdownVisible: bool,
-    chordKindDropdownVisible: bool,
-  };
-
-  [@react.component]
-  let make =
-      (
-        ~id,
-        ~progressionIndex,
-        ~chord: Chord.t,
-        ~setProgressionState,
-        ~onDelete,
-      ) => {
-    let (state, setState) =
-      React.useState(() =>
-        {
-          root: chord.root,
-          kind: chord.kind,
-          rootDropdownVisible: false,
-          chordKindDropdownVisible: false,
-        }
-      );
-
-    let toggleRootChange = () =>
-      setState(prevState =>
-        {...prevState, rootDropdownVisible: !prevState.rootDropdownVisible}
-      );
-    let toggleKindChange = () =>
-      setState(prevState =>
-        {
-          ...prevState,
-          chordKindDropdownVisible: !prevState.chordKindDropdownVisible,
-        }
-      );
-
-    let rootChoices = Note.notes |> Array.to_list;
-    let kindChoices = Chord.string_kinds;
-
-    let handleRootSelect = selectedRootString => {
-      let selectedRoot = Note.of_name(selectedRootString, 4);
-      let newChord = Chord.of_kind(selectedRoot, state.kind);
-      setProgressionState(prevProgression => {
-        Progression.swap(prevProgression, id, newChord)
-      });
-      setState(prevState =>
-        {
-          ...prevState,
-          root: selectedRoot,
-          rootDropdownVisible: !state.rootDropdownVisible,
-        }
-      );
-    };
-
-    let handleKindSelect = selectedKindString => {
-      let selectedKind = Chord.kind_of_string(selectedKindString);
-      let newChord = Chord.of_kind(state.root, selectedKind);
-      setProgressionState(prevProgression => {
-        Progression.swap(prevProgression, id, newChord)
-      });
-      setState(prevState =>
-        {
-          ...prevState,
-          kind: selectedKind,
-          chordKindDropdownVisible: !state.chordKindDropdownVisible,
-        }
-      );
-    };
-
-    let handleDelete = () => {
-      onDelete(id);
-    };
-
-    let progressionIndexStyling =
-      progressionIndex == id ? " current-chord" : "";
-
-    <div
-      className={String.cat(
-        "progression-grid-item chord-info-box",
-        progressionIndexStyling,
-      )}>
-      <div className="dropdown-x" onClick={_event => handleDelete()}>
-        "X"->React.string
-      </div>
-      <div className="box-section" onClick={_event => toggleRootChange()}>
-        {React.string(Note.to_name(state.root))}
-        <Dropdown
-          items=rootChoices
-          isVisible={state.rootDropdownVisible}
-          onSelect=handleRootSelect
-          toggleDropdown=toggleRootChange
-        />
-      </div>
-      <div className="box-section" onClick={_event => toggleKindChange()}>
-        {React.string(Chord.kind_to_string(state.kind))}
-        <Dropdown
-          items=kindChoices
-          isVisible={state.chordKindDropdownVisible}
-          onSelect=handleKindSelect
-          toggleDropdown=toggleKindChange
-        />
-      </div>
-    </div>;
-  };
-};
-module ProgressionSection = {
-  [@react.component]
-  let make = (~progressionState, ~setProgressionState, ~progressionIndex) => {
-    let addBox = () => {
-      setProgressionState(prevState =>
-        Progression.add(prevState, Chord.of_kind(Note.c4, Major))
-      );
-    };
-
-    let deleteBox = id => {
-      setProgressionState(prevState => Progression.remove(prevState, id));
-    };
-
-    <div className="main-content-area">
-      <div className="progression-container">
-        <div className="progression-grid-container">
-          {Array.mapi(
-             (index, chord) =>
-               <Box
-                 key={string_of_int(index)}
-                 id=index
-                 progressionIndex
-                 chord
-                 setProgressionState
-                 onDelete=deleteBox
-               />,
-             progressionState,
-           )
-           |> React.array}
-          <div
-            className="progression-grid-item add-chord-box"
-            onClick={_event => addBox()}>
-            "+"->React.string
-          </div>
-        </div>
-      </div>
-    </div>;
-  };
-};
-
 module App = {
   [@react.component]
   // Do as little shit as possible in this file. Do pretty much all the heavy lifting in music.ml.
@@ -212,42 +59,20 @@ module App = {
   // TODO: Custom scales for each chord
   // TODO: Make disabled notes light up when played
   let make = () => {
-    Random.init(int_of_float(Js.Date.now()));
-    let (musicState, setMusicState) =
-      React.useState(() => InitialState.make());
+    //Random.init(int_of_float(Js.Date.now()));
+    let (musicState, setMusicState) = React.useState(() => InitialState.make());
+    let (noteHighlights, setNoteHighlight) = React.useState(() => Array.make(13, Synth.Blank));
     module State =
       MusicState.State({
         let state = musicState;
         let setState = setMusicState;
+        let noteHighlights = noteHighlights;
+        let setNoteHighlight = setNoteHighlight;
       });
-    let (state, setState) = React.useState(() => Play);
-    let (synth, _setSynth) = React.useState(() => Synth.createPolySynth());
-    let (_, _setAudioContextStarted) = React.useState(() => true);
-    let (path, setPath) = React.useState(() => [Note.c4]);
-    let (scale, setScale) =
-      React.useState(() => Scale.of_note(Note.c4, Scale.major_intervals));
-    let (guessNote, setGuessNote) = React.useState(() => Note.c4);
-    let (guessableNotes, setGuessableNotes) =
-      React.useState(() => GuessableNotes.of_scale(scale));
     let (toggledButton, setToggledButton) = React.useState(() => None);
-    let (scaleChangeRequested, setScaleChangeRequested) =
-      React.useState(() => false);
-    let (noteHighlight, setNoteHighlight) =
-      React.useState(() => Array.make(13, `None));
-    let (globalBPM, setGlobalBPM) =
-      React.useState(() => {
-        Synth.changeBPM(80);
-        Synth.startTransport();
-        80;
-      });
-    let (progressionNote, setProgressionNote) = React.useState(() => Note.c4);
-    let (progressionRoot, setProgressionRoot) = React.useState(() => Note.c4);
-    let (progressionIndex, setProgressionIndex) = React.useState(() => 0);
-    let (progressionState, setProgressionState) =
-      React.useState(() => Progression.make());
 
-    let handleSideBarButtonClick = (newState: state) => {
-      state == newState ? setState(_ => Play) : setState(_ => newState);
+    let handleSideBarButtonClick = (newMode: mode) => {
+      musicState.mode == newMode ? State.changeMode(InitialState.Play) : State.changeMode(newMode) ;
     };
     let controlToggleButton = buttonId => {
       Some(buttonId) == toggledButton
@@ -255,122 +80,62 @@ module App = {
         : setToggledButton(_prevButtonId => Some(buttonId));
     };
 
-    let sidebarButtonClass = (buttonState: state) =>
-      state == buttonState
+    let sidebarButtonClass = (buttonMode : mode) =>
+      musicState.mode == buttonMode
         ? "sidebar-button sidebar-button-toggled" : "sidebar-button";
 
-    let playCadence = synth => {
-      let two = Chord.(of_interval_kind(scale.root, 2, Minor));
-      let five = Chord.(of_interval_kind(scale.root, 7, Major));
-      let one = Chord.(of_interval_kind(scale.root, 0, Major));
+    let playCadence = () => {
+      let two = Chord.(of_interval_kind(musicState.scale.root, 2, Minor));
+      let five = Chord.(of_interval_kind(musicState.scale.root, 7, Major));
+      let one = Chord.(of_interval_kind(musicState.scale.root, 0, Major));
       Play.chords_with_callback(
-        synth, setNoteHighlight, scale.root, [two, five, one], globalBPM, () =>
-        Play.note(synth, guessNote)
+        musicState.synth, State.setNoteHighlight, musicState.scale.root, [two, five, one], musicState.bpm, () =>
+        State.playNote(musicState.guessNote)
       );
     };
 
-    let playNoteGetPath = synth => {
-      Js.log(("scale in play note", Scale.to_string(scale)));
-      let note = GuessableNotes.get_random_note(scale, guessableNotes);
-      let path = Scale.get_path(scale, note, scale.root);
-      setGuessNote(_ => note);
-      setPath(_ => path);
-
-      let two = Chord.(of_interval_kind(scale.root, 2, Minor));
-      let five = Chord.(of_interval_kind(scale.root, 7, Major));
-      let one = Chord.(of_interval_kind(scale.root, 0, Major));
-      Play.chords_with_callback(
-        synth, setNoteHighlight, scale.root, [two, five, one], globalBPM, () =>
-        Play.note(synth, note)
-      );
-      setNoteHighlight(_ => Array.make(13, `None));
-    };
-
-    let playResolutionPath = (highlight, synth) => {
-      Play.path(
-        synth,
-        setNoteHighlight,
-        path,
-        highlight,
-        scale.root,
-        globalBPM,
-      );
+    let playResolutionPath = () => {
+      State.playPath(musicState.path, Correct)
     };
 
     let noteButtonLabel = (noteValue: int) => {
-      switch (state) {
+      switch (musicState.mode) {
       | ChangeKey =>
         Printf.sprintf(
           "%s",
-          Note.notes[(noteValue + scale.root.pitch) mod 12],
+          Note.notes[(noteValue + musicState.scale.root.pitch) mod 12],
         )
       | _ => Printf.sprintf("%s", Note.solfege[noteValue mod 12])
       };
     };
 
     let handleNoteButtonClick = button_value => {
-      Printf.printf(
-        "handleNoteButtonClick called with button_value: %d\n",
-        button_value,
-      );
-      Printf.printf(
-        "Size of noteHighlight array: %d\n",
-        Array.length(noteHighlight),
-      );
-      switch (state) {
-      | Play when guessableNotes[button_value] =>
-        Synth.drop_audio(synth);
-        let local_note = Note.transpose(scale.root, button_value);
-        Printf.printf("Playing %s\n", Note.to_string(local_note));
-        Js.log(Note.to_string(local_note));
+      switch (musicState.mode) {
+      | Play when musicState.guessableNotes[button_value] =>
+        State.stopAudio();
+        let local_note = Note.transpose(musicState.scale.root, button_value);
         let highlight =
-          Note.eq(local_note, guessNote) ? `Correct : `Incorrect;
-        let path = Scale.get_path(scale, local_note, scale.root);
-        Play.path(
-          synth,
-          setNoteHighlight,
-          path,
-          highlight,
-          scale.root,
-          globalBPM,
-        );
-      | PlayProgression when guessableNotes[button_value] =>
-        Synth.drop_audio(synth);
-        let local_note = Note.transpose(scale.root, button_value);
-        Printf.printf("Playing %s\n", Note.to_string(local_note));
-        Printf.printf("Playing playProgression\n");
-        Js.log(Note.to_string(local_note));
-        let highlight =
-          Note.eq(local_note, guessNote) ? `Correct : `Incorrect;
-        let root_path = Scale.get_path(scale, local_note, progressionRoot);
-        let scale_path = Scale.get_path(scale, local_note, scale.root);
-        Play.path(
-          synth,
-          setNoteHighlight,
-          root_path @ scale_path,
-          highlight,
-          scale.root,
-          globalBPM,
-        );
+          Note.eq(local_note, musicState.guessNote) ? Synth.Correct : Synth.Incorrect;
+        let path = Scale.get_path(musicState.scale, local_note, musicState.scale.root);
+        List.iter(n => {Printf.printf("%s\n%!",Note.to_string(n))}, path);
+        State.playPath(path, highlight)
+      | PlayProgression when musicState.guessableNotes[button_value] =>
+        State.stopAudio()
       | ChangeGuessableNotes =>
-        setGuessableNotes(notes => {
-          GuessableNotes.swap(notes, button_value);
-          notes;
-        });
-        Js.log(guessableNotes);
+        State.changeGuessableNotes(button_value);
         controlToggleButton(Int.to_string(button_value));
       | ChangeScale =>
-        setScale(oldScale => Scale.swap(oldScale, button_value));
-        //Js.log(Scale.to_string(scale));
+        State.changeScale(Scale.swap(musicState.scale, button_value));
         controlToggleButton(Int.to_string(button_value));
       | _ => ()
       };
     };
 
     let isButtonDisabled = noteValue =>
-      switch (state) {
-      | ChangeScale => !Scale.mem(scale, noteValue)
-      | _ => !guessableNotes[noteValue]
+      switch (musicState.mode) {
+      | ChangeScale => !Scale.mem(musicState.scale, noteValue)
+      | _ => {
+      !musicState.guessableNotes[noteValue]}
       };
 
     let makeNoteButton = (~noteValue) => {
@@ -393,10 +158,10 @@ module App = {
         };
       let disabled = isButtonDisabled(noteValue);
       let highlightClass =
-        switch (noteHighlight[noteValue]) {
-        | `None => ""
-        | `Correct => "correct-note"
-        | `Incorrect => "incorrect-note"
+        switch (State.noteHighlights[noteValue]) {
+        | Blank => ""
+        | Correct => "correct-note"
+        | Incorrect => "incorrect-note"
         };
       let className =
         "note-button "
@@ -405,7 +170,7 @@ module App = {
         ++ highlightClass;
 
       let stateClassName =
-        switch (state) {
+        switch (musicState.mode) {
         | Play => "play-mode"
         | PlayProgression => "play-progression-mode"
         | ChangeKey => "change-key-mode"
@@ -435,10 +200,10 @@ module App = {
         React.Event.Form.target(event)##value |> int_of_string_opt;
       switch (newValue) {
       | Some(v) when v >= 60 && v <= 300 =>
-        setGlobalBPM(_ => {
+        setMusicState(s => {
           Synth.changeBPM(v);
           Synth.startTransport();
-          v;
+          {...s, bpm:v};
         })
       | _ => Synth.startTransport()
       };
@@ -446,8 +211,8 @@ module App = {
     let makeScaleChange = (name, intervals) => {
       <div
         onClick={_event => {
-          setScale(_ => Scale.of_note(scale.root, intervals));
-          setGuessableNotes(_ => GuessableNotes.of_scale(scale));
+          State.changeScale(Scale.of_note(musicState.scale.root, intervals))
+          setMusicState(s => {...s, guessableNotes: GuessableNotes.of_scale(musicState.scale)});
         }}>
         name->React.string
       </div>;
@@ -456,21 +221,12 @@ module App = {
     let makeKeyChange = (root, visual) => {
       <div
         onClick={_event => {
-          setScaleChangeRequested(_ => true);
-          setScale(_ => Scale.of_string(root, scale.intervals));
+          setMusicState(s => {...s, scale: Scale.of_string(root, musicState.scale.intervals)});
         }}>
         visual->React.string
       </div>;
     };
 
-    React.useEffect(() => {
-      if (scaleChangeRequested) {
-        playNoteGetPath(synth);
-        setScaleChangeRequested(_ => false);
-      };
-
-      None;
-    });
 
     <div className="app-container">
       <div className="sidebar">
@@ -487,9 +243,8 @@ module App = {
         <button
           className={sidebarButtonClass(ChangeKey)}
           onClick={_event => {handleSideBarButtonClick(ChangeKey)}}>
-          {Printf.sprintf("Key: %s", scale.key)->React.string}
         </button>
-        {switch (state) {
+        {switch (musicState.mode) {
          | ChangeKey =>
            <div className="dropdown-content">
              {makeKeyChange("C", "C")}
@@ -512,7 +267,7 @@ module App = {
           onClick={_event => {handleSideBarButtonClick(ChangeScale)}}>
           {Printf.sprintf("Change Scale")->React.string}
         </button>
-        {switch (state) {
+        {switch (musicState.mode) {
          | ChangeScale =>
            <div className="dropdown-content">
              {makeScaleChange("Major", Scale.major_intervals)}
@@ -531,7 +286,7 @@ module App = {
           <input
             type_="text"
             className="sidebar-input bpm-input"
-            value={string_of_int(globalBPM)}
+            value={string_of_int(musicState.bpm)}
             onChange=handleBPMChange
           />
           <input
@@ -539,7 +294,7 @@ module App = {
             className="sidebar-slider bpm-slider"
             min="60"
             max="300"
-            value={string_of_int(globalBPM)}
+            value={string_of_int(musicState.bpm)}
             onChange=handleBPMChange
           />
         </div>
@@ -551,7 +306,7 @@ module App = {
               <div className="note-grid">
                 {Array.mapi(
                    (noteValue, _) => makeNoteButton(~noteValue),
-                   guessableNotes,
+                   musicState.guessableNotes,
                  )
                  |> React.array}
               </div>
@@ -562,35 +317,34 @@ module App = {
                   className="function-button"
                   id="repeat-question"
                   onClick={_event => {
-                    playNoteGetPath(synth);
-                    setState(_ => Play);
+                    State.playNoteGetPath();
+                    State.changeMode(Play);
                   }}>
                   "New Question"->React.string
                 </button>
                 <button
                   className="function-button"
                   id="repeat-question"
-                  onClick={_event => playCadence(synth)}>
+                  onClick={_event => playCadence()}>
                   "Repeat Question"->React.string
                 </button>
                 <button
                   className="function-button"
                   id="repeat-note"
-                  onClick={_event => Play.note(synth, guessNote)}>
+                  onClick={_event => Play.note(musicState.synth, musicState.guessNote)}>
                   "Repeat Note"->React.string
                 </button>
                 <button
                   className="function-button"
                   id="play-answer"
-                  onClick={_event => playResolutionPath(`Correct, synth)}>
+                  onClick={_event => playResolutionPath()}>
                   "Play the Correct Answer"->React.string
                 </button>
                 <button
                   className="function-button"
                   id="new-question-new-key"
                   onClick={_event => {
-                    setScaleChangeRequested(_ => true);
-                    setScale(_ => Scale.random_scale(scale));
+                    State.changeScale(Scale.random_scale(musicState.scale));
                   }}>
                   "New Question Random Key"->React.string
                 </button>
@@ -598,164 +352,17 @@ module App = {
                   className="function-button"
                   id="play-scale"
                   onClick={_event => {
-                    Play.path(
-                      synth,
-                      setNoteHighlight,
-                      scale.notes
-                      @ [Note.transpose(scale.root, 12)]
-                      @ List.rev(scale.notes),
-                      `Correct,
-                      scale.root,
-                      globalBPM,
-                    )
+                    State.playPath(
+                      musicState.scale.notes
+                      @ [Note.transpose(musicState.scale.root, 12)]
+                      @ List.rev(musicState.scale.notes), Correct)
                   }}>
                   "Play Scale"->React.string
-                </button>
-                <button
-                  className="function-button"
-                  id="play-chord-note"
-                  onClick={_event => {
-                    Synth.drop_audio(synth);
-                    setState(_ => PlayProgression);
-
-                    let duration = 0.75 /. float_of_int(globalBPM / 60);
-                    setProgressionNote(_ => Scale.random_note(scale));
-                    setProgressionRoot(_ => Scale.random_note(scale));
-                    setGuessNote(_ => progressionNote);
-                    let root_path =
-                      Scale.get_path(scale, progressionNote, progressionRoot);
-                    let scale_path =
-                      Scale.get_path(scale, progressionNote, scale.root);
-                    let chord =
-                      Scale.to_chord(
-                        scale,
-                        Note.dist(scale.root, progressionRoot),
-                        3,
-                      );
-                    Js.log(Chord.to_string(chord));
-                    Play.chord(synth, chord);
-                    setPath(_ => root_path @ scale_path);
-                    //Js.log(Scale.list_to_string(Note.to_string, scale_path));
-                    Js.log(List.length(scale_path));
-                    Synth.schedule(
-                      () => Play.note(synth, progressionNote),
-                      Printf.sprintf("+%f", duration),
-                    );
-
-                    Synth.startTransport();
-                  }}>
-                  "new progression question"->React.string
-                </button>
-                <button
-                  className="function-button"
-                  id="play-progression-resolution-mode"
-                  onClick={_event => {
-                    let root_path =
-                      Scale.get_path(scale, progressionNote, progressionRoot);
-                    let scale_path =
-                      Scale.get_path(scale, progressionNote, scale.root);
-                    let new_path = root_path @ scale_path;
-                    setPath(_ => new_path);
-                    Synth.schedule(
-                      () =>
-                        Play.path(
-                          synth,
-                          setNoteHighlight,
-                          new_path,
-                          `Correct,
-                          scale.root,
-                          globalBPM,
-                        ),
-                      Printf.sprintf("+%f", 0.),
-                    );
-                  }}>
-                  "Resolve Progression Note"->React.string
-                </button>
-                <button
-                  className="function-button"
-                  id="play-progression"
-                  onClick={_event => {
-                    let oldProgressionIndex = progressionIndex;
-                    Play.chords(
-                      synth,
-                      setProgressionIndex,
-                      setNoteHighlight,
-                      Array.to_list(progressionState),
-                      globalBPM,
-                    );
-                    setProgressionIndex(_ => oldProgressionIndex);
-                  }}>
-                  "Play Progression"->React.string
-                </button>
-                <button
-                  className="function-button"
-                  id="repeat-progression-question"
-                  onClick={_event => {
-                    let duration = 0.75 /. float_of_int(globalBPM / 60);
-                    Play.chord(synth, progressionState[progressionIndex]);
-                    Synth.schedule(
-                      () => Play.note(synth, progressionNote),
-                      Printf.sprintf("+%f", duration),
-                    );
-                  }}>
-                  "Repeat Progression Question"->React.string
-                </button>
-                <button
-                  className="function-button"
-                  id="next-progression-question"
-                  onClick={_event => {
-                    let nextProgressionIndex =
-                      Int.equal(
-                        Progression.length(progressionState),
-                        progressionIndex + 1,
-                      )
-                        ? progressionIndex : progressionIndex + 1;
-                    setProgressionIndex(_ => nextProgressionIndex);
-                    let duration = 0.75 /. float_of_int(globalBPM / 60);
-                    let chord = progressionState[nextProgressionIndex];
-                    let newProgressionNote = Chord.get_random_note(chord);
-                    setProgressionRoot(_ => chord.root);
-                    setProgressionNote(_ => newProgressionNote);
-                    Play.chord(synth, chord);
-
-                    Synth.schedule(
-                      () => Play.note(synth, newProgressionNote),
-                      Printf.sprintf("+%f", duration),
-                    );
-                  }}>
-                  "Next Progression Question"->React.string
-                </button>
-                <button
-                  className="function-button"
-                  id="previous-progression-question"
-                  onClick={_event => {
-                    let nextProgressionIndex =
-                      Int.equal(0, progressionIndex)
-                        ? progressionIndex : progressionIndex - 1;
-                    setProgressionIndex(_ => nextProgressionIndex);
-                    let duration = 0.75 /. float_of_int(globalBPM / 60);
-                    let chord = progressionState[nextProgressionIndex];
-                    let newProgressionNote = Chord.get_random_note(chord);
-                    setProgressionRoot(_ => chord.root);
-                    setProgressionNote(_ => newProgressionNote);
-                    Play.chord(synth, chord);
-
-                    Synth.schedule(
-                      () => Play.note(synth, newProgressionNote),
-                      Printf.sprintf("+%f", duration),
-                    );
-                  }}>
-                  "Previous Progression Question"->React.string
                 </button>
               </div>
             </div>
           </div>
         </div>
-        <ProgressionSection
-          progressionState
-          setProgressionState
-          progressionIndex
-        />
       </div>
     </div>;
   };

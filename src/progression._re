@@ -1,0 +1,279 @@
+module Box = {
+  type state = {
+    root: Note.t,
+    kind: Chord.kind,
+    rootDropdownVisible: bool,
+    chordKindDropdownVisible: bool,
+  };
+
+  [@react.component]
+  let make =
+      (
+        ~id,
+        ~progressionIndex,
+        ~chord: Chord.t,
+        ~setProgressionState,
+        ~onDelete,
+      ) => {
+    let (state, setState) =
+      React.useState(() =>
+        {
+          root: chord.root,
+          kind: chord.kind,
+          rootDropdownVisible: false,
+          chordKindDropdownVisible: false,
+        }
+      );
+
+    let toggleRootChange = () =>
+      setState(prevState =>
+        {...prevState, rootDropdownVisible: !prevState.rootDropdownVisible}
+      );
+    let toggleKindChange = () =>
+      setState(prevState =>
+        {
+          ...prevState,
+          chordKindDropdownVisible: !prevState.chordKindDropdownVisible,
+        }
+      );
+
+    let rootChoices = Note.notes |> Array.to_list;
+    let kindChoices = Chord.string_kinds;
+
+    let handleRootSelect = selectedRootString => {
+      let selectedRoot = Note.of_name(selectedRootString, 4);
+      let newChord = Chord.of_kind(selectedRoot, state.kind);
+      setProgressionState(prevProgression => {
+        Progression.swap(prevProgression, id, newChord)
+      });
+      setState(prevState =>
+        {
+          ...prevState,
+          root: selectedRoot,
+          rootDropdownVisible: !state.rootDropdownVisible,
+        }
+      );
+    };
+
+    let handleKindSelect = selectedKindString => {
+      let selectedKind = Chord.kind_of_string(selectedKindString);
+      let newChord = Chord.of_kind(state.root, selectedKind);
+      setProgressionState(prevProgression => {
+        Progression.swap(prevProgression, id, newChord)
+      });
+      setState(prevState =>
+        {
+          ...prevState,
+          kind: selectedKind,
+          chordKindDropdownVisible: !state.chordKindDropdownVisible,
+        }
+      );
+    };
+
+    let handleDelete = () => {
+      onDelete(id);
+    };
+
+    let progressionIndexStyling =
+      progressionIndex == id ? " current-chord" : "";
+
+    <div
+      className={String.cat(
+        "progression-grid-item chord-info-box",
+        progressionIndexStyling,
+      )}>
+      <div className="dropdown-x" onClick={_event => handleDelete()}>
+        "X"->React.string
+      </div>
+      <div className="box-section" onClick={_event => toggleRootChange()}>
+        {React.string(Note.to_name(state.root))}
+        <Dropdown
+          items=rootChoices
+          isVisible={state.rootDropdownVisible}
+          onSelect=handleRootSelect
+          toggleDropdown=toggleRootChange
+        />
+      </div>
+      <div className="box-section" onClick={_event => toggleKindChange()}>
+        {React.string(Chord.kind_to_string(state.kind))}
+        <Dropdown
+          items=kindChoices
+          isVisible={state.chordKindDropdownVisible}
+          onSelect=handleKindSelect
+          toggleDropdown=toggleKindChange
+        />
+      </div>
+    </div>;
+  };
+};
+module ProgressionSection = {
+  [@react.component]
+  let make = (~progressionState, ~setProgressionState, ~progressionIndex) => {
+    let addBox = () => {
+      setProgressionState(prevState =>
+        Progression.add(prevState, Chord.of_kind(Note.c4, Major))
+      );
+    };
+
+    let deleteBox = id => {
+      setProgressionState(prevState => Progression.remove(prevState, id));
+    };
+
+    <div className="main-content-area">
+      <div className="progression-container">
+        <div className="progression-grid-container">
+          {Array.mapi(
+             (index, chord) =>
+               <Box
+                 key={string_of_int(index)}
+                 id=index
+                 progressionIndex
+                 chord
+                 setProgressionState
+                 onDelete=deleteBox
+               />,
+             progressionState,
+           )
+           |> React.array}
+          <div
+            className="progression-grid-item add-chord-box"
+            onClick={_event => addBox()}>
+            "+"->React.string
+          </div>
+        </div>
+      </div>
+    </div>;
+  };
+};
+
+
+                <button
+                  className="function-button"
+                  id="play-chord-note"
+                  onClick={_event => {
+                    State.stopAudio();
+                    State.changeMode(PlayProgression);
+
+                    let duration = 0.75 /. float_of_int(globalBPM / 60);
+                    setProgressionNote(_ => Scale.random_note(scale));
+                    setProgressionRoot(_ => Scale.random_note(scale));
+                    setGuessNote(_ => progressionNote);
+                    let root_path =
+                      Scale.get_path(scale, progressionNote, progressionRoot);
+                    let scale_path =
+                      Scale.get_path(scale, progressionNote, scale.root);
+                    let chord =
+                      Scale.to_chord(
+                        scale,
+                        Note.dist(scale.root, progressionRoot),
+                        3,
+                      );
+                    Js.log(Chord.to_string(chord));
+                    Play.chord(musicState.synth, chord);
+                    State.changePath(root_path @ scale_path);
+                    Synth.schedule(
+                      () => Play.note(musicState.synth, progressionNote),
+                      Printf.sprintf("+%f", duration),
+                    );
+
+                    Synth.startTransport();
+                  }}>
+                  "new progression question"->React.string
+                </button>
+                <button
+                  className="function-button"
+                  id="play-progression-resolution-mode"
+                  onClick={_event => {
+                    let root_path =
+                      Scale.get_path(scale, progressionNote, progressionRoot);
+                    let scale_path =
+                      Scale.get_path(scale, progressionNote, scale.root);
+                    let new_path = root_path @ scale_path;
+                    State.changePath(new_path);
+                    Synth.schedule(
+                      () =>
+                        State.playPath(
+                          new_path, 
+                          Correct
+                        ),
+                      Printf.sprintf("+%f", 0.),
+                    );
+                  }}>
+                  "Resolve Progression Note"->React.string
+                </button>
+                <button
+                  className="function-button"
+                  id="play-progression"
+                  onClick={_event => {
+                    let oldProgressionIndex = progressionIndex;
+                    Play.chords(
+                      musicState.synth,
+                      setProgressionIndex,
+                      musicState.setNoteHighlight,
+                      Array.to_list(progressionState),
+                      globalBPM,
+                    );
+                    setProgressionIndex(_ => oldProgressionIndex);
+                  }}>
+                  "Play Progression"->React.string
+                </button>
+                <button
+                  className="function-button"
+                  id="repeat-progression-question"
+                  onClick={_event => {
+                    let duration = 0.75 /. float_of_int(globalBPM / 60);
+                    State.playChord(progressionState[progressionIndex]);
+                    Synth.schedule(
+                      () => State.playNote(progressionNote),
+                      Printf.sprintf("+%f", duration),
+                    );
+                  }}>
+                  "Repeat Progression Question"->React.string
+                </button>
+                <button
+                  className="function-button"
+                  id="next-progression-question"
+                  onClick={_event => {
+                    let nextProgressionIndex =
+                      Int.equal(
+                        Progression.length(progressionState),
+                        progressionIndex + 1,
+                      )
+                        ? progressionIndex : progressionIndex + 1;
+                    setProgressionIndex(_ => nextProgressionIndex);
+                    let duration = 0.75 /. float_of_int(globalBPM / 60);
+                    let chord = progressionState[nextProgressionIndex];
+                    let newProgressionNote = Chord.get_random_note(chord);
+                    setProgressionRoot(_ => chord.root);
+                    setProgressionNote(_ => newProgressionNote);
+                    State.playChord(chord);
+
+                    Synth.schedule(
+                      () => State.playNote(newProgressionNote),
+                      Printf.sprintf("+%f", duration),
+                    );
+                  }}>
+                  "Next Progression Question"->React.string
+                </button>
+                <button
+                  className="function-button"
+                  id="previous-progression-question"
+                  onClick={_event => {
+                    let nextProgressionIndex =
+                      Int.equal(0, progressionIndex)
+                        ? progressionIndex : progressionIndex - 1;
+                    setProgressionIndex(_ => nextProgressionIndex);
+                    let duration = 0.75 /. float_of_int(globalBPM / 60);
+                    let chord = progressionState[nextProgressionIndex];
+                    let newProgressionNote = Chord.get_random_note(chord);
+                    setProgressionRoot(_ => chord.root);
+                    setProgressionNote(_ => newProgressionNote);
+                    State.playChord(chord);
+
+                    Synth.schedule(
+                      () => State.playNote(newProgressionNote),
+                      Printf.sprintf("+%f", duration),
+                    );
+                  }}>
+                  "Previous Progression Question"->React.string
+                </button>

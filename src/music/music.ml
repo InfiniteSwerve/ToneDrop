@@ -344,7 +344,8 @@ module GuessableNotes = struct
     notes
 
   let swap (notes : guessableNotes) (note : int) =
-    notes.(note) <- not notes.(note)
+    notes.(note) <- not notes.(note);
+    notes
 
   let get_random_note (scale : Scale.t) (notes : guessableNotes) : Note.t =
     let note_list_b = Array.to_list notes in
