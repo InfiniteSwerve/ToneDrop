@@ -57,8 +57,13 @@ let highlight_note
     (set_highlight_notes : (highlight array -> highlight array) -> unit)
     (note : Note.t) start (duration : float) (highlight : highlight)
     (root : Note.t) =
-  let highlight_position = (((note.pitch - root.pitch) mod 13) + 12) mod 13 in
-  Printf.printf "highlight position: %d\n%!" highlight_position;
+
+  let highlight_position = 
+    let diff = note.pitch - root.pitch + (note.octave - root.octave) * 12 in
+    if diff = 12 then 12
+    else (diff + 120) mod 12
+  in
+
   schedule
     (fun () ->
       set_highlight_notes (fun highlight_notes ->

@@ -46,16 +46,16 @@ module type State = {
   let state: InitialState.t;
   let setState: (InitialState.t => InitialState.t) => unit;
   let noteHighlights: array(Synth.highlight);
-  let setNoteHighlight: (array(Synth.highlight) => array(Synth.highlight)) => unit;
+  let setNoteHighlight:
+    (array(Synth.highlight) => array(Synth.highlight)) => unit;
 };
 
 module State = (State: State) => {
-
   type t = InitialState.t;
   let s = State.state;
   let ss = State.setState;
-  let noteHighlights = State.noteHighlights
-  let setNoteHighlight = State.setNoteHighlight
+  let noteHighlights = State.noteHighlights;
+  let setNoteHighlight = State.setNoteHighlight;
 
   let changeMode = (mode: InitialState.mode) => {
     State.setState(s => {...s, mode});
@@ -67,25 +67,35 @@ module State = (State: State) => {
     );
   };
 
-  let changePath = (path) => {
-    ss(s => {...s, path})
-  }
+  let changePath = path => {
+    ss(s => {...s, path});
+  };
 
-  let changeScale = (scale) => {
-    ss(s => {...s, scale})
-
+  let changeScale = scale => {
+    ss(s => {...s, scale});
   };
 
   let stopAudio = () => {
     Synth.drop_audio(s.synth);
   };
 
-  let playNote = (note) => {
-    Play.note(s.synth, note)
+  let playNote = note => {
+    Play.note(s.synth, note);
   };
 
-  let playChord = (chord) => {
+  let playChord = chord => {
     Play.chord(s.synth, chord);
+  };
+
+  let playPath = (path, highlight) => {
+    Play.path(
+      s.synth,
+      State.setNoteHighlight,
+      path,
+      highlight,
+      s.scale.root,
+      s.bpm,
+    );
   };
 
   let playNoteGetPath = () => {
@@ -99,20 +109,29 @@ module State = (State: State) => {
     let one = Chord.(of_interval_kind(s.scale.root, 0, Major));
 
     Play.chords_with_callback(
-      s.synth, State.setNoteHighlight, s.scale.root, [two, five, one], s.bpm, () =>
+      s.synth,
+      State.setNoteHighlight,
+      s.scale.root,
+      [two, five, one],
+      s.bpm,
+      () =>
       Play.note(s.synth, guessNote)
     );
     State.setNoteHighlight(_ => Array.make(13, Synth.Blank));
   };
 
-  let playPath = (path, highlight) => {
-    Play.path(
+  let playCadence = () => {
+    let two = Chord.(of_interval_kind(s.scale.root, 2, Minor));
+    let five = Chord.(of_interval_kind(s.scale.root, 7, Major));
+    let one = Chord.(of_interval_kind(s.scale.root, 0, Major));
+    Play.chords_with_callback(
       s.synth,
       State.setNoteHighlight,
-      path,
-      highlight,
       s.scale.root,
+      [two, five, one],
       s.bpm,
+      () =>
+      playNote(s.guessNote)
     );
   };
 };

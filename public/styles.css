@@ -129,6 +129,7 @@ body {
 }
 
 .main-content {
+  margin-left: 10vw;
   min-height: 200px;
 }
 
@@ -137,34 +138,36 @@ body {
   padding: 20px;
   margin-left: 10vw; /* Should match the sidebar width */
   gap: 20px;
-  overflow-y: auto;
 }
 
 .sidebar {
-  display: grid;
-  grid-template-columns: 1fr; 
-  grid-template-rows: 3vh; 
-  width: 8vw; 
-  height: 80vh;
-  background-color: var(--primary-color); 
-  position:absolute;
-  top: 2vh;
-  padding:1vh;
-}
-
-
-.sidebar-button{
   display: flex;
-  background-color: var(--button-color); 
-  color: black;
-  border-radius: 6q;
-  display: inline-block;
-  font-size: 16px;
-  height: 2vh;
-  width: 8vh;
-  cursor: pointer;
+  flex-direction: column;
+  gap: 1vh;
+  width: 8vw;
+  height: 80vh;
+  background-color: var(--primary-color);
+  position: absolute;
+  top: 2vh;
+  padding: 1vh;
 }
 
+.sidebar-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--button-color);
+  color: black;
+  border-radius: 6px;
+  font-size: 14px;
+  padding: 0.5em;
+  cursor: pointer;
+  text-align: center;
+  word-wrap: break-word;
+  hyphens: auto;
+  min-height: 4vh;
+  width: 100%;
+}
 .sidebar-button:hover {
   background-color: #e6e6e6; /* Slightly lighter/darker on hover */
 }
@@ -246,10 +249,39 @@ body {
 
 
 .dropdown {
+  width: 100%;
   position: relative;
-  display: inline-block;
 }
 
+.dropdown-toggle {
+  width: 100%;
+  text-align: left;
+}
+
+.dropdown-menu {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  background-color: var(--primary-color);
+  border: 1px solid var(--button-color);
+  z-index: 1000;
+}
+
+.dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 0.5vh 1vh;
+  text-align: left;
+  background-color: var(--button-color);
+  color: black;
+  border: none;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background-color: var(--primary-color);
+  color: var(--button-color);
+}
 .dropdown-content {
   display: block;
   position: absolute;

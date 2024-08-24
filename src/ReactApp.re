@@ -8,37 +8,46 @@ module InitialState = MusicState.InitialState;
 
 type synthCallback = Synth.t => unit;
 
-type mode = InitialState.mode
+type mode = InitialState.mode;
 
 module Dropdown = {
-  [@react.component]
-  let make = (~items, ~isVisible, ~onSelect, ~toggleDropdown) => {
-    let handleClick = (item, toggleDropdown) => {
-      onSelect(item);
-      toggleDropdown();
-    };
+  type item('a) = {
+    label: string,
+    value: 'a,
+  };
 
-    <div className={isVisible ? "dropdown-visible" : "dropdown-hidden"}>
-      <div className="dropdown-x" onClick={_event => {toggleDropdown()}} />
-      {items
-       |> List.map(item =>
-            <div
-              key=item onClick={_event => handleClick(item, toggleDropdown)}>
-              item->React.string
-            </div>
-          )
-       |> Array.of_list
-       |> React.array}
+  [@react.component]
+  let make = (~label, ~items: list(item('a)), ~onSelect) => {
+    let (isOpen, setIsOpen) = React.useState(() => false);
+
+    <div className="dropdown">
+      <button
+        className="sidebar-button" onClick={_ => setIsOpen(prev => !prev)}>
+        {React.string(label)}
+      </button>
+      {isOpen
+         ? <div className="dropdown-menu">
+             {items
+              |> List.map(item =>
+                   <button
+                     key={item.label}
+                     className="dropdown-item"
+                     onClick={_ => {
+                       onSelect(item.value);
+                       setIsOpen(_ => false);
+                     }}>
+                     {React.string(item.label)}
+                   </button>
+                 )
+              |> Array.of_list
+              |> React.array}
+           </div>
+         : React.null}
     </div>;
   };
 };
 module App = {
   [@react.component]
-  // Do as little shit as possible in this file. Do pretty much all the heavy lifting in music.ml.
-  // NOTE: It feels like I'm having to add lots of extra code to just handle poor earlier decisions that I made, and like there should be ways to refactor/split up this code that improves the quality, the managability, is more idiomatic and shorter. I'm just not sure what exactly.
-  // some ideas:
-  //    - Break app up into multiple react components
-  //    - Create a single interface for the audio/music to mess with. Call things from only one place and have an API call for each thing
   // TODO: Visualization of chord relative to key via p5.js
   // TODO: ToneDrop logo in the top left
   // TODO: Some way to save things
@@ -60,8 +69,10 @@ module App = {
   // TODO: Make disabled notes light up when played
   let make = () => {
     //Random.init(int_of_float(Js.Date.now()));
-    let (musicState, setMusicState) = React.useState(() => InitialState.make());
-    let (noteHighlights, setNoteHighlight) = React.useState(() => Array.make(13, Synth.Blank));
+    let (musicState, setMusicState) =
+      React.useState(() => InitialState.make());
+    let (noteHighlights, setNoteHighlight) =
+      React.useState(() => Array.make(13, Synth.Blank));
     module State =
       MusicState.State({
         let state = musicState;
@@ -72,7 +83,8 @@ module App = {
     let (toggledButton, setToggledButton) = React.useState(() => None);
 
     let handleSideBarButtonClick = (newMode: mode) => {
-      musicState.mode == newMode ? State.changeMode(InitialState.Play) : State.changeMode(newMode) ;
+      musicState.mode == newMode
+        ? State.changeMode(InitialState.Play) : State.changeMode(newMode);
     };
     let controlToggleButton = buttonId => {
       Some(buttonId) == toggledButton
@@ -80,22 +92,12 @@ module App = {
         : setToggledButton(_prevButtonId => Some(buttonId));
     };
 
-    let sidebarButtonClass = (buttonMode : mode) =>
+    let sidebarButtonClass = (buttonMode: mode) =>
       musicState.mode == buttonMode
         ? "sidebar-button sidebar-button-toggled" : "sidebar-button";
 
-    let playCadence = () => {
-      let two = Chord.(of_interval_kind(musicState.scale.root, 2, Minor));
-      let five = Chord.(of_interval_kind(musicState.scale.root, 7, Major));
-      let one = Chord.(of_interval_kind(musicState.scale.root, 0, Major));
-      Play.chords_with_callback(
-        musicState.synth, State.setNoteHighlight, musicState.scale.root, [two, five, one], musicState.bpm, () =>
-        State.playNote(musicState.guessNote)
-      );
-    };
-
     let playResolutionPath = () => {
-      State.playPath(musicState.path, Correct)
+      State.playPath(musicState.path, Correct);
     };
 
     let noteButtonLabel = (noteValue: int) => {
@@ -115,10 +117,12 @@ module App = {
         State.stopAudio();
         let local_note = Note.transpose(musicState.scale.root, button_value);
         let highlight =
-          Note.eq(local_note, musicState.guessNote) ? Synth.Correct : Synth.Incorrect;
-        let path = Scale.get_path(musicState.scale, local_note, musicState.scale.root);
-        List.iter(n => {Printf.printf("%s\n%!",Note.to_string(n))}, path);
-        State.playPath(path, highlight)
+          Note.eq(local_note, musicState.guessNote)
+            ? Synth.Correct : Synth.Incorrect;
+        let path =
+          Scale.get_path(musicState.scale, local_note, musicState.scale.root);
+        List.iter(n => {Printf.printf("%s\n%!", Note.to_string(n))}, path);
+        State.playPath(path, highlight);
       | PlayProgression when musicState.guessableNotes[button_value] =>
         State.stopAudio()
       | ChangeGuessableNotes =>
@@ -134,8 +138,7 @@ module App = {
     let isButtonDisabled = noteValue =>
       switch (musicState.mode) {
       | ChangeScale => !Scale.mem(musicState.scale, noteValue)
-      | _ => {
-      !musicState.guessableNotes[noteValue]}
+      | _ => !musicState.guessableNotes[noteValue]
       };
 
     let makeNoteButton = (~noteValue) => {
@@ -203,31 +206,54 @@ module App = {
         setMusicState(s => {
           Synth.changeBPM(v);
           Synth.startTransport();
-          {...s, bpm:v};
+          {...s, bpm: v};
         })
       | _ => Synth.startTransport()
       };
     };
-    let makeScaleChange = (name, intervals) => {
-      <div
-        onClick={_event => {
-          State.changeScale(Scale.of_note(musicState.scale.root, intervals))
-          setMusicState(s => {...s, guessableNotes: GuessableNotes.of_scale(musicState.scale)});
-        }}>
-        name->React.string
-      </div>;
+
+    let scaleOptions: list(Dropdown.item(list(int))) = [
+      {label: "Major", value: Scale.major_intervals},
+      {label: "Minor", value: Scale.minor_intervals},
+      {label: "Chromatic", value: Scale.chromatic_intervals},
+      {label: "Dorian", value: Scale.dorian_intervals},
+      {label: "Phrygian", value: Scale.phrygian_intervals},
+      {label: "Lydian", value: Scale.lydian_intervals},
+      {label: "Mixolydian", value: Scale.mixolydian_intervals},
+      {label: "Locrian", value: Scale.locrian_intervals},
+    ];
+
+    let keyOptions: list(Dropdown.item(string)) = [
+      {label: "C", value: "C"},
+      {label: "C#/Db", value: "C#"},
+      {label: "D", value: "D"},
+      {label: "D#/Eb", value: "D#"},
+      {label: "E", value: "E"},
+      {label: "F", value: "F"},
+      {label: "F#/Gb", value: "F#"},
+      {label: "G", value: "G"},
+      {label: "G#/Ab", value: "G#"},
+      {label: "A", value: "A"},
+      {label: "A#/Bb", value: "A#"},
+      {label: "B", value: "B"},
+    ];
+
+    let handleScaleChange = intervals => {
+      let newScale = Scale.of_note(musicState.scale.root, intervals);
+      let newGuessableNotes = GuessableNotes.of_scale(newScale);
+      setMusicState(s =>
+        {...s, scale: newScale, guessableNotes: newGuessableNotes}
+      );
+      State.changeScale(newScale);
     };
 
-    let makeKeyChange = (root, visual) => {
-      <div
-        onClick={_event => {
-          setMusicState(s => {...s, scale: Scale.of_string(root, musicState.scale.intervals)});
-        }}>
-        visual->React.string
-      </div>;
+    let handleKeyChange = root => {
+      let newScale = Scale.of_string(root, musicState.scale.intervals);
+      let newGuessableNotes = GuessableNotes.of_scale(newScale);
+      setMusicState(s =>
+        {...s, scale: newScale, guessableNotes: newGuessableNotes}
+      );
     };
-
-
     <div className="app-container">
       <div className="sidebar">
         <button
@@ -240,47 +266,16 @@ module App = {
           onClick={_event => {handleSideBarButtonClick(ChangeScale)}}>
           "Change Scale Notes"->React.string
         </button>
-        <button
-          className={sidebarButtonClass(ChangeKey)}
-          onClick={_event => {handleSideBarButtonClick(ChangeKey)}}>
-        </button>
-        {switch (musicState.mode) {
-         | ChangeKey =>
-           <div className="dropdown-content">
-             {makeKeyChange("C", "C")}
-             {makeKeyChange("C#", "C#/Db")}
-             {makeKeyChange("D", "D")}
-             {makeKeyChange("D#", "D#/Eb")}
-             {makeKeyChange("E", "E")}
-             {makeKeyChange("F", "F")}
-             {makeKeyChange("F#", "F#/Gb")}
-             {makeKeyChange("G", "G")}
-             {makeKeyChange("G#", "G#/Ab")}
-             {makeKeyChange("A", "A")}
-             {makeKeyChange("A#", "A#/Bb")}
-             {makeKeyChange("B", "B")}
-           </div>
-         | _ => React.null
-         }}
-        <button
-          className={sidebarButtonClass(ChangeScale)}
-          onClick={_event => {handleSideBarButtonClick(ChangeScale)}}>
-          {Printf.sprintf("Change Scale")->React.string}
-        </button>
-        {switch (musicState.mode) {
-         | ChangeScale =>
-           <div className="dropdown-content">
-             {makeScaleChange("Major", Scale.major_intervals)}
-             {makeScaleChange("Minor", Scale.minor_intervals)}
-             {makeScaleChange("Chromatic", Scale.chromatic_intervals)}
-             {makeScaleChange("Dorian", Scale.dorian_intervals)}
-             {makeScaleChange("Phrygian", Scale.phrygian_intervals)}
-             {makeScaleChange("Lydian", Scale.lydian_intervals)}
-             {makeScaleChange("Mixolydian", Scale.mixolydian_intervals)}
-             {makeScaleChange("Locrian", Scale.locrian_intervals)}
-           </div>
-         | _ => <div />
-         }}
+        <Dropdown
+          label="Change Key"
+          items=keyOptions
+          onSelect=handleKeyChange
+        />
+        <Dropdown
+          label="Change Scale"
+          items=scaleOptions
+          onSelect=handleScaleChange
+        />
         <div className="bpm-control">
           <div className="bpm-label"> "Global BPM"->React.string </div>
           <input
@@ -325,13 +320,13 @@ module App = {
                 <button
                   className="function-button"
                   id="repeat-question"
-                  onClick={_event => playCadence()}>
+                  onClick={_event => State.playCadence()}>
                   "Repeat Question"->React.string
                 </button>
                 <button
                   className="function-button"
                   id="repeat-note"
-                  onClick={_event => Play.note(musicState.synth, musicState.guessNote)}>
+                  onClick={_event => State.playNote(musicState.guessNote)}>
                   "Repeat Note"->React.string
                 </button>
                 <button
@@ -344,7 +339,9 @@ module App = {
                   className="function-button"
                   id="new-question-new-key"
                   onClick={_event => {
-                    State.changeScale(Scale.random_scale(musicState.scale));
+                    State.changeScale(Scale.random_scale(musicState.scale))
+                    State.playNoteGetPath();
+                    State.changeMode(Play);
                   }}>
                   "New Question Random Key"->React.string
                 </button>
@@ -355,7 +352,9 @@ module App = {
                     State.playPath(
                       musicState.scale.notes
                       @ [Note.transpose(musicState.scale.root, 12)]
-                      @ List.rev(musicState.scale.notes), Correct)
+                      @ List.rev(musicState.scale.notes),
+                      Correct,
+                    )
                   }}>
                   "Play Scale"->React.string
                 </button>
