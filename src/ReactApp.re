@@ -1,14 +1,14 @@
 module Note = Music.Note;
 module Chord = Music.Chord;
 module Scale = Music.Scale;
-module Play = Synth.Play;
 module GuessableNotes = Music.GuessableNotes;
 module Progression = Music.Progression;
+module Play = Synth.Play;
 module InitialState = MusicState.InitialState;
 
 type synthCallback = Synth.t => unit;
 
-type mode = InitialState.mode;
+type mode = MusicState.InitialState.mode;
 
 module Dropdown = {
   type item('a) = {
@@ -46,8 +46,101 @@ module Dropdown = {
     </div>;
   };
 };
-module App = {
+
+module Box = {
   [@react.component]
+  let make = (~id, ~state: (module MusicState.STATE)) => {
+    module State = (val state)
+    let rootChoices: list(Dropdown.item(Note.t)) =
+      Note.notes
+      |> Array.to_list
+      |> List.map((s: string) =>
+           Dropdown.{label: s, value: Note.of_name(s, 4)}
+         );
+
+    let kindChoices: list(Dropdown.item(Chord.kind)) =
+      List.map(
+        (kind: Chord.kind) =>
+          Dropdown.{label: Chord.kind_to_string(kind), value: kind},
+        Chord.kinds,
+      );
+
+    let progressionIndexStyling =
+      State.s.progressionIndex == id ? " current-chord" : "";
+
+    let removeProgressionChord = id => {
+      let progression = Progression.remove(State.s.progression, id);
+      State.changeProgression(progression);
+    };
+
+    let handleRootSelect = (note: Note.t) => {
+      let chord = Progression.get(State.s.progression, id);
+      let new_chord = Chord.of_kind(note, chord.kind);
+      Progression.swap(State.s.progression, id, new_chord)
+      |> State.changeProgression;
+    };
+
+    let handleKindSelect = (kind: Chord.kind) => {
+      let chord = Progression.get(State.s.progression, id);
+      let new_chord = Chord.of_kind(chord.root, kind);
+      Progression.swap(State.s.progression, id, new_chord)
+      |> State.changeProgression;
+    };
+
+    <div
+      className={String.cat(
+        "progression-grid-item chord-info-box",
+        progressionIndexStyling,
+      )}>
+      <div
+        className="dropdown-x" onClick={_event => removeProgressionChord(id)}>
+        "X"->React.string
+      </div>
+      <Dropdown
+        label={
+          Progression.get(State.s.progression, id).root |> Note.to_string
+        }
+        items=rootChoices
+        onSelect=handleRootSelect
+      />
+      <Dropdown
+        label="Change Root"
+        items=kindChoices
+        onSelect=handleKindSelect
+      />
+    </div>;
+  };
+};
+module ProgressionSection = {
+  [@react.component]
+  let make = (~state: (module MusicState.STATE)) => {
+    module State = (val state);
+    let addBox = () => {
+      let progression =
+        Progression.add(State.s.progression, Chord.of_kind(Note.c4, Major));
+      State.changeProgression(progression);
+    };
+
+    <div className="main-content-area">
+      <div className="progression-container">
+        <div className="progression-grid-container">
+          {Array.mapi(
+             (index, _) => <Box id=index state=state/>,
+             State.s.progression,
+           )
+           |> React.array}
+          <div
+            className="progression-grid-item add-chord-box"
+            onClick={_event => addBox()}>
+            "+"->React.string
+          </div>
+        </div>
+      </div>
+    </div>;
+  };
+};
+
+module App = {
   // TODO: Visualization of chord relative to key via p5.js
   // TODO: ToneDrop logo in the top left
   // TODO: Some way to save things
@@ -67,12 +160,15 @@ module App = {
   // TODO: Psuedorandomness on the note selection so you don't get like 5 in a row
   // TODO: Custom scales for each chord
   // TODO: Make disabled notes light up when played
+  [@react.component]
   let make = () => {
     //Random.init(int_of_float(Js.Date.now()));
     let (musicState, setMusicState) =
       React.useState(() => InitialState.make());
     let (noteHighlights, setNoteHighlight) =
       React.useState(() => Array.make(13, Synth.Blank));
+
+    // State is the master reference globally defined. Any changes to state happen to this
     module State =
       MusicState.State({
         let state = musicState;
@@ -80,6 +176,7 @@ module App = {
         let noteHighlights = noteHighlights;
         let setNoteHighlight = setNoteHighlight;
       });
+
     let (toggledButton, setToggledButton) = React.useState(() => None);
 
     let handleSideBarButtonClick = (newMode: mode) => {
@@ -296,7 +393,6 @@ module App = {
       </div>
       <div className="main-content">
         <div className="button-container">
-          <div className="main-content-area">
             <div className="grid-container">
               <div className="note-grid">
                 {Array.mapi(
@@ -339,7 +435,7 @@ module App = {
                   className="function-button"
                   id="new-question-new-key"
                   onClick={_event => {
-                    State.changeScale(Scale.random_scale(musicState.scale))
+                    State.changeScale(Scale.random_scale(musicState.scale));
                     State.playNoteGetPath();
                     State.changeMode(Play);
                   }}>
@@ -360,8 +456,8 @@ module App = {
                 </button>
               </div>
             </div>
+            <ProgressionSection state=(module State) />
           </div>
-        </div>
       </div>
     </div>;
   };

@@ -2,6 +2,7 @@ module Note = Music.Note;
 module Chord = Music.Chord;
 module Scale = Music.Scale;
 module GuessableNotes = Music.GuessableNotes;
+module Progression = Music.Progression;
 module Play = Synth.Play;
 
 type highlight = Synth.highlight;
@@ -22,6 +23,8 @@ module InitialState = {
     guessNote: Note.t,
     guessableNotes: GuessableNotes.t,
     bpm: int,
+    progression: Progression.t,
+    progressionIndex: int,
   };
 
   type t = musicState;
@@ -30,6 +33,7 @@ module InitialState = {
     let synth = Synth.createPolySynth();
     let scale = Scale.of_string("C", Scale.major_intervals);
     let guessableNotes = GuessableNotes.of_scale(scale);
+    let progression = Progression.make();
     {
       mode: Play,
       synth,
@@ -38,6 +42,8 @@ module InitialState = {
       guessNote: scale.root,
       guessableNotes,
       bpm: 80,
+      progression,
+      progressionIndex: 0,
     };
   };
 };
@@ -50,7 +56,28 @@ module type State = {
     (array(Synth.highlight) => array(Synth.highlight)) => unit;
 };
 
-module State = (State: State) => {
+module type STATE = {
+  type t = InitialState.musicState;
+  let s: InitialState.musicState;
+  let ss: (InitialState.musicState => InitialState.musicState) => unit;
+  let noteHighlights: array(highlight);
+  let setNoteHighlight: (array(highlight) => array(highlight)) => unit;
+  let changeMode: InitialState.mode => unit;
+  let changeGuessableNotes: int => unit;
+  let changePath: list(Note.note) => unit;
+  let changeScale: Scale.scale => unit;
+  let changeProgression: Progression.progression => unit;
+  let removeProgressionChord: int => unit;
+  let stopAudio: unit => unit;
+  let playNote: Note.note => unit;
+  let playChord: Chord.chord => unit;
+  let playPath: (list(Note.note), highlight) => unit;
+  let playNoteGetPath: unit => unit;
+  let playCadence: unit => unit;
+};
+// Try to keep this interface clean
+// Just realized we don't need a record type here..
+module State = (State: State): STATE => {
   type t = InitialState.t;
   let s = State.state;
   let ss = State.setState;
@@ -58,7 +85,7 @@ module State = (State: State) => {
   let setNoteHighlight = State.setNoteHighlight;
 
   let changeMode = (mode: InitialState.mode) => {
-    State.setState(s => {...s, mode});
+    ss(s => {...s, mode});
   };
 
   let changeGuessableNotes = note => {
@@ -73,6 +100,15 @@ module State = (State: State) => {
 
   let changeScale = scale => {
     ss(s => {...s, scale});
+  };
+
+  let changeProgression = progression => {
+    ss(s => {...s, progression});
+  };
+
+  let removeProgressionChord = id => {
+    let progression = Progression.remove(s.progression, id);
+    ss(s => {...s, progression});
   };
 
   let stopAudio = () => {

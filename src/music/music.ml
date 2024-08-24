@@ -378,22 +378,7 @@ module Progression = struct
   let length progression = 
     Array.length progression
 
-end
+  let get progression id = 
+    progression.(id)
 
-module MusicState = struct
-  type mode = Play | Change_notes | Change_key
-
-  type state = {
-    mode : mode;
-    scale : Scale.t;
-    path : int list option;
-    guessNote : Note.t option;
-    guessableNotes : GuessableNotes.t;
-  }
-  type t = state
-
-  let init ?(mode = Play) ?(scale = Scale.of_note Note.c4 Scale.major_intervals)
-      ?(path = None) ?(guessNote = None)
-      ?(guessableNotes = GuessableNotes.of_scale scale) () =
-    { mode; scale; path; guessNote; guessableNotes }
 end
