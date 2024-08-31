@@ -2,17 +2,15 @@
   --primary-color: #3285a8;
   --secondary-color: lightblue;
   --button-color: #f2f2f2;
+  --function-button-color: #4CAF50; /* Green */
+  --danger-color: #ff4136; /* Red color for the 'X' */
+  --chord-button-color: #2196F3; /* Blue color for chord buttons */
 }
 
 body {
   font-family: Arial, sans-serif;
 }
 
-.button-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
 
 .function-button {
   background-color: #4CAF50; /* Green */
@@ -31,9 +29,6 @@ body {
   background-color: #45a049; /* Slightly darker green on hover */
 }
 
-#repeat-question {
-  background-color: #008CBA; /* Blue */
-}
 
 .button-row {
   display: flex;
@@ -106,15 +101,11 @@ body {
 
 .grid-container{
   background-color: var(--primary-color);
+  justify-content: center;
   padding:10px;
-  margin:10px;
+  margin: 0 auto;
   border-radius:5px;
   border: 4px solid var(--secondary-color); 
-  height:10vh;
-  width:60vw;
-  position: relative;
-  left: 40%;
-  transform: translate(-50%, 10%)
 
 }
 
@@ -137,7 +128,15 @@ body {
   flex-grow: 1;
   padding: 20px;
   margin-left: 10vw; /* Should match the sidebar width */
-  gap: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Aligns children to the left */
+  gap: 30px; /* Increased vertical spacing between items */
+}
+
+.main-content-area > * {
+  width: 100%; /* Ensures all direct children take full width */
+  margin-bottom: 30px; /* Additional margin between items */
 }
 
 .sidebar {
@@ -305,7 +304,6 @@ dropdown-content div {
   background-color: #f1f1f1;
 }
 .progression-container{
-  margin: 20px;
   padding: 20px;
   position: relative;
   border: 1px solid #ccc;
@@ -319,10 +317,18 @@ dropdown-content div {
 }
 
 .progression-grid-item {
-  background: #f7f7f7;
-  padding: 10px;
+  padding: 15px;
   border: 1px solid #ddd;
   text-align: center;
+  border-radius: 10px; /* Rounded corners */
+  background-color: var(--function-button-color);
+  color: white;
+  position: relative; /* For absolute positioning of the 'X' */
+  overflow: hidden; /* Ensures content doesn't overflow rounded corners */
+  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+}
+.progression-grid-item:hover {
+  background-color: #45a049; /* Slightly darker green on hover */
 }
 .add-chord-box {
   background-color: #e9e9e9;
@@ -335,15 +341,91 @@ dropdown-content div {
 }
 
 .chord-info-box {
-  background-color: #f7f7f7;
+  background-color: var(--function-button-color);
   padding: 10px;
   border: 1px solid #ddd;
   text-align: center;
-  position: relative
+  position: relative;
+  border-radius: 10px;
+}
+
+.chord-info-box .dropdown {
+  margin-top: 10px;
+}
+
+.chord-info-box .sidebar-button {
+  background-color: var(--chord-button-color);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: auto; /* Override any previous width setting */
+  min-height: auto; /* Override any previous min-height setting */
+}
+
+.chord-info-box .sidebar-button:hover {
+  background-color: #1976D2; /* Darker blue on hover */
+}
+
+.chord-info-box .dropdown-menu {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 100%;
+  width: auto;
+  min-width: 100%;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  z-index: 1000;
+}
+
+.chord-info-box .dropdown-item {
+  background-color: white;
+  color: #333;
+  padding: 8px 12px;
+  border: none;
+  width: 100%;
+  text-align: left;
+  transition: background-color 0.3s ease;
+}
+
+.chord-info-box .dropdown-item:hover {
+  background-color: var(--secondary-color);
+}
+
+.chord-button-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+.chord-button {
+  background-color: var(--chord-button-color);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.chord-button:hover {
+  background-color: #1976D2; /* Darker blue on hover */
+}
+
+.chord-button:active {
+  background-color: #0D47A1; /* Even darker blue when active */
 }
 
 .current-chord {
-  background-color: darkgreen; /* Replace 'lightgreen' with the specific shade of green you prefer */
+  background-color: var(--primary-color);
 }
 
 .box-section {
@@ -360,10 +442,25 @@ dropdown-content div {
   display: none;
 }
 
+
 .dropdown-x {
   position: absolute;
-  top: 0;
-  left: 2px;
-  font-size: 20px; /* Adjust size as needed */
-  cursor: pointer; /* Changes cursor on hover */
+  top: 5px;
+  right: 5px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  color: var(--danger-color); /* Red color for visibility */
+  background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+  border-radius: 50%; /* Circular background */
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease; /* Smooth transition for hover effect */
+}
+.dropdown-x:hover {
+  background-color: var(--danger-color);
+  color: white;
 }

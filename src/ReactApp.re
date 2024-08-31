@@ -50,7 +50,7 @@ module Dropdown = {
 module Box = {
   [@react.component]
   let make = (~id, ~state: (module MusicState.STATE)) => {
-    module State = (val state)
+    module State = (val state);
     let rootChoices: list(Dropdown.item(Note.t)) =
       Note.notes
       |> Array.to_list
@@ -89,25 +89,30 @@ module Box = {
 
     <div
       className={String.cat(
-        "progression-grid-item chord-info-box",
+        "chord-info-box",
         progressionIndexStyling,
       )}>
       <div
         className="dropdown-x" onClick={_event => removeProgressionChord(id)}>
         "X"->React.string
       </div>
-      <Dropdown
-        label={
-          Progression.get(State.s.progression, id).root |> Note.to_string
-        }
-        items=rootChoices
-        onSelect=handleRootSelect
-      />
-      <Dropdown
-        label="Change Root"
-        items=kindChoices
-        onSelect=handleKindSelect
-      />
+      <div className="chord-button-container">
+          <Dropdown
+            label={
+              Progression.get(State.s.progression, id).root |> Note.to_string
+            }
+            items=rootChoices
+            onSelect=handleRootSelect
+          />
+          <Dropdown
+            label={
+              Progression.get(State.s.progression, id).kind
+              |> Chord.kind_to_string
+            }
+            items=kindChoices
+            onSelect=handleKindSelect
+          />
+      </div>
     </div>;
   };
 };
@@ -121,19 +126,17 @@ module ProgressionSection = {
       State.changeProgression(progression);
     };
 
-    <div className="main-content-area">
-      <div className="progression-container">
-        <div className="progression-grid-container">
-          {Array.mapi(
-             (index, _) => <Box id=index state=state/>,
-             State.s.progression,
-           )
-           |> React.array}
-          <div
-            className="progression-grid-item add-chord-box"
-            onClick={_event => addBox()}>
-            "+"->React.string
-          </div>
+    <div className="progression-container">
+      <div className="progression-grid-container">
+        {Array.mapi(
+           (index, _) => <Box id=index state />,
+           State.s.progression,
+         )
+         |> React.array}
+        <div
+          className="progression-grid-item add-chord-box"
+          onClick={_event => addBox()}>
+          "+"->React.string
         </div>
       </div>
     </div>;
@@ -392,72 +395,70 @@ module App = {
         </div>
       </div>
       <div className="main-content">
-        <div className="button-container">
-            <div className="grid-container">
-              <div className="note-grid">
-                {Array.mapi(
-                   (noteValue, _) => makeNoteButton(~noteValue),
-                   musicState.guessableNotes,
-                 )
-                 |> React.array}
-              </div>
+        <div className="main-content-area">
+          <div className="grid-container">
+            <div className="note-grid">
+              {Array.mapi(
+                 (noteValue, _) => makeNoteButton(~noteValue),
+                 musicState.guessableNotes,
+               )
+               |> React.array}
             </div>
-            <div className="main-content-area">
-              <div className="buttons-below-grid">
-                <button
-                  className="function-button"
-                  id="repeat-question"
-                  onClick={_event => {
-                    State.playNoteGetPath();
-                    State.changeMode(Play);
-                  }}>
-                  "New Question"->React.string
-                </button>
-                <button
-                  className="function-button"
-                  id="repeat-question"
-                  onClick={_event => State.playCadence()}>
-                  "Repeat Question"->React.string
-                </button>
-                <button
-                  className="function-button"
-                  id="repeat-note"
-                  onClick={_event => State.playNote(musicState.guessNote)}>
-                  "Repeat Note"->React.string
-                </button>
-                <button
-                  className="function-button"
-                  id="play-answer"
-                  onClick={_event => playResolutionPath()}>
-                  "Play the Correct Answer"->React.string
-                </button>
-                <button
-                  className="function-button"
-                  id="new-question-new-key"
-                  onClick={_event => {
-                    State.changeScale(Scale.random_scale(musicState.scale));
-                    State.playNoteGetPath();
-                    State.changeMode(Play);
-                  }}>
-                  "New Question Random Key"->React.string
-                </button>
-                <button
-                  className="function-button"
-                  id="play-scale"
-                  onClick={_event => {
-                    State.playPath(
-                      musicState.scale.notes
-                      @ [Note.transpose(musicState.scale.root, 12)]
-                      @ List.rev(musicState.scale.notes),
-                      Correct,
-                    )
-                  }}>
-                  "Play Scale"->React.string
-                </button>
-              </div>
-            </div>
-            <ProgressionSection state=(module State) />
           </div>
+          <div className="buttons-below-grid">
+            <button
+              className="function-button"
+              id="repeat-question"
+              onClick={_event => {
+                State.playNoteGetPath();
+                State.changeMode(Play);
+              }}>
+              "New Question"->React.string
+            </button>
+            <button
+              className="function-button"
+              id="repeat-question"
+              onClick={_event => State.playCadence()}>
+              "Repeat Question"->React.string
+            </button>
+            <button
+              className="function-button"
+              id="repeat-note"
+              onClick={_event => State.playNote(musicState.guessNote)}>
+              "Repeat Note"->React.string
+            </button>
+            <button
+              className="function-button"
+              id="play-answer"
+              onClick={_event => playResolutionPath()}>
+              "Play the Correct Answer"->React.string
+            </button>
+            <button
+              className="function-button"
+              id="new-question-new-key"
+              onClick={_event => {
+                State.changeScale(Scale.random_scale(musicState.scale));
+                State.playNoteGetPath();
+                State.changeMode(Play);
+              }}>
+              "New Question Random Key"->React.string
+            </button>
+            <button
+              className="function-button"
+              id="play-scale"
+              onClick={_event => {
+                State.playPath(
+                  musicState.scale.notes
+                  @ [Note.transpose(musicState.scale.root, 12)]
+                  @ List.rev(musicState.scale.notes),
+                  Correct,
+                )
+              }}>
+              "Play Scale"->React.string
+            </button>
+          </div>
+          <ProgressionSection state=(module State) />
+        </div>
       </div>
     </div>;
   };
