@@ -71,13 +71,14 @@ module type STATE = {
   let stopAudio: unit => unit;
   let playNote: Note.note => unit;
   let playChord: Chord.chord => unit;
+  let playChords: list(Chord.t) => unit;
   let playPath: (list(Note.note), highlight) => unit;
   let playNoteGetPath: unit => unit;
   let playCadence: unit => unit;
 };
 // Try to keep this interface clean
 // Just realized we don't need a record type here..
-module State = (State: State): STATE => {
+module State = (State: State) : STATE => {
   type t = InitialState.t;
   let s = State.state;
   let ss = State.setState;
@@ -94,6 +95,7 @@ module State = (State: State): STATE => {
     );
   };
 
+
   let changePath = path => {
     ss(s => {...s, path});
   };
@@ -104,6 +106,10 @@ module State = (State: State): STATE => {
 
   let changeProgression = progression => {
     ss(s => {...s, progression});
+  };
+
+  let changeProgressionIndex = progressionIndex => {
+    ss(s => {...s, progressionIndex});
   };
 
   let removeProgressionChord = id => {
@@ -122,6 +128,9 @@ module State = (State: State): STATE => {
   let playChord = chord => {
     Play.chord(s.synth, chord);
   };
+
+  let playChords = (chords) => {
+      Play.chords(s.synth, changeProgressionIndex, setNoteHighlight, chords, s.bpm)};
 
   let playPath = (path, highlight) => {
     Play.path(

@@ -118,7 +118,7 @@ module Play = struct
       (fun i n ->
         schedule
           (fun () ->
-            setProgressionIndex (fun _ -> i);
+            setProgressionIndex i;
             chord synth n)
           (Printf.sprintf "+%f" (float_of_int i *. duration)))
       chords;

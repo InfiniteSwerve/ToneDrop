@@ -20,8 +20,7 @@ module Dropdown = {
   let make = (~label, ~items: list(item('a)), ~onSelect) => {
     let (isOpen, setIsOpen) = React.useState(() => false);
 
-
-    <div className="dropdown" onBlur={_ => setIsOpen(_ => false)}>
+    <div className="dropdown">
       <button
         className="sidebar-button" onClick={_ => setIsOpen(prev => !prev)}>
         {React.string(label)}
@@ -88,31 +87,27 @@ module Box = {
       |> State.changeProgression;
     };
 
-    <div
-      className={String.cat(
-        "chord-info-box",
-        progressionIndexStyling,
-      )}>
+    <div className={String.cat("chord-info-box", progressionIndexStyling)}>
       <div
         className="dropdown-x" onClick={_event => removeProgressionChord(id)}>
         "X"->React.string
       </div>
       <div className="chord-button-container">
-          <Dropdown
-            label={
-              Progression.get(State.s.progression, id).root |> Note.to_string
-            }
-            items=rootChoices
-            onSelect=handleRootSelect
-          />
-          <Dropdown
-            label={
-              Progression.get(State.s.progression, id).kind
-              |> Chord.kind_to_string
-            }
-            items=kindChoices
-            onSelect=handleKindSelect
-          />
+        <Dropdown
+          label={
+            Progression.get(State.s.progression, id).root |> Note.to_string
+          }
+          items=rootChoices
+          onSelect=handleRootSelect
+        />
+        <Dropdown
+          label={
+            Progression.get(State.s.progression, id).kind
+            |> Chord.kind_to_string
+          }
+          items=kindChoices
+          onSelect=handleKindSelect
+        />
       </div>
     </div>;
   };
@@ -130,7 +125,7 @@ module ProgressionSection = {
     <div className="progression-container">
       <div className="progression-grid-container">
         {Array.mapi(
-           (index, _) => <Box id=index state />,
+           (index, _) => <Box key={string_of_int(index)} id=index state />,
            State.s.progression,
          )
          |> React.array}
@@ -442,7 +437,14 @@ module App = {
             </button>
           </div>
           <div className="buttons-below-grid">
-          
+            <button
+              className="function-button"
+              id="play-progression"
+              onClick={_event => {
+                State.playChords(Array.to_list(State.s.progression))
+              }}>
+              "Play Progression"->React.string
+            </button>
           </div>
           <ProgressionSection state=(module State) />
         </div>
