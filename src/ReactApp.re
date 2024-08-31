@@ -21,7 +21,7 @@ module Dropdown = {
     let (isOpen, setIsOpen) = React.useState(() => false);
 
 
-    <div className="dropdown">
+    <div className="dropdown" onBlur={_ => setIsOpen(_ => false)}>
       <button
         className="sidebar-button" onClick={_ => setIsOpen(prev => !prev)}>
         {React.string(label)}
