@@ -369,7 +369,7 @@ module Progression = struct
     Array.append progression [|chord|]
 
   let remove progression index =
-    Array.of_list (List.filteri (fun i _ -> i == index) (Array.to_list progression))
+    Array.of_list (List.filteri (fun i _ -> i != index) (Array.to_list progression))
 
   let swap progression index new_chord = 
     progression.(index) <- new_chord;

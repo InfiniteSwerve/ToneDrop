@@ -20,6 +20,7 @@ module Dropdown = {
   let make = (~label, ~items: list(item('a)), ~onSelect) => {
     let (isOpen, setIsOpen) = React.useState(() => false);
 
+
     <div className="dropdown">
       <button
         className="sidebar-button" onClick={_ => setIsOpen(prev => !prev)}>
@@ -144,25 +145,8 @@ module ProgressionSection = {
 };
 
 module App = {
-  // TODO: Visualization of chord relative to key via p5.js
-  // TODO: ToneDrop logo in the top left
-  // TODO: Some way to save things
-  // TODO: Something that learns how good you're getting at guessing and targets stuff you're bad at
-  // TODO: Maybe we should wrap all music state into one package in music.ml with a single interface?
   // BUG: Audio doesn't cancel even with drop_audio. There's an echo that can ring out
   // TODO: Add disableable logging for easier on-demand debugging
-  // TODO: separate sliders for cadence speed + note speed
-  // TODO: Make a guide on how to use + basic rules
-  // TODO: Save user stats?
-  // TODO: Better sounding instruments
-  // TODO: Get outside review
-  // TODO: For fitting scales to chords, add ability to choose more angular scales or try to keep the note similar
-  // TODO: How does FET handle chord voicing?
-  // TODO: Sample random progression in key
-  // TODO: "start from here" on the chord progressions
-  // TODO: Psuedorandomness on the note selection so you don't get like 5 in a row
-  // TODO: Custom scales for each chord
-  // TODO: Make disabled notes light up when played
   [@react.component]
   let make = () => {
     //Random.init(int_of_float(Js.Date.now()));
@@ -456,6 +440,9 @@ module App = {
               }}>
               "Play Scale"->React.string
             </button>
+          </div>
+          <div className="buttons-below-grid">
+          
           </div>
           <ProgressionSection state=(module State) />
         </div>
