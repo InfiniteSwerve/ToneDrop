@@ -20,6 +20,7 @@ module InitialState = {
     synth: Synth.t,
     scale: Scale.t,
     path: list(Note.t),
+    pathTargets: list(Note.t),
     guessNote: Note.t,
     guessableNotes: GuessableNotes.t,
     bpm: int,
@@ -39,6 +40,7 @@ module InitialState = {
       synth,
       scale,
       path: [scale.root],
+      pathTargets: [scale.root],
       guessNote: scale.root,
       guessableNotes,
       bpm: 80,
@@ -64,7 +66,9 @@ module type STATE = {
   let setNoteHighlight: (array(highlight) => array(highlight)) => unit;
   let changeMode: InitialState.mode => unit;
   let changeGuessableNotes: int => unit;
+  let changeGuessNote: Note.t => unit;
   let changePath: list(Note.note) => unit;
+  let changePathTargets: list(Note.note) => unit;
   let changeScale: Scale.scale => unit;
   let changeProgression: Progression.progression => unit;
   let removeProgressionChord: int => unit;
@@ -72,6 +76,8 @@ module type STATE = {
   let playNote: Note.note => unit;
   let playChord: Chord.chord => unit;
   let playChords: list(Chord.t) => unit;
+  let playProgression: unit => unit;
+  let playProgressionChord: int => unit;
   let playPath: (list(Note.note), highlight) => unit;
   let playNoteGetPath: unit => unit;
   let playCadence: unit => unit;
@@ -95,9 +101,16 @@ module State = (State: State) : STATE => {
     );
   };
 
+  let changeGuessNote = guessNote => {
+    ss(s => {...s, guessNote});
+  };
 
   let changePath = path => {
     ss(s => {...s, path});
+  };
+
+  let changePathTargets = pathTargets => {
+    ss(s => {...s, pathTargets});
   };
 
   let changeScale = scale => {
@@ -129,8 +142,23 @@ module State = (State: State) : STATE => {
     Play.chord(s.synth, chord);
   };
 
-  let playChords = (chords) => {
-      Play.chords(s.synth, changeProgressionIndex, setNoteHighlight, chords, s.bpm)};
+  let playChords = chords => {
+    Play.chords(
+      s.synth,
+      changeProgressionIndex,
+      setNoteHighlight,
+      chords,
+      s.bpm,
+    );
+  };
+
+  let playProgression = () => {
+    playChords(Array.to_list(s.progression));
+  };
+
+  let playProgressionChord = (index) => {
+    playChord(Array.get(s.progression, index))
+  }
 
   let playPath = (path, highlight) => {
     Play.path(

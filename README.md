@@ -15,6 +15,7 @@ A (wip!) way to train your ears to hear chord tones in chord progressions, [chec
 - [ ] Make a guide on how to use + basic rules
 - [ ] Save user stats?
 - [ ] Better sounding instruments
+- [ ] Not Trash voicings
 - [ ] Get outside review
 - [ ] For fitting scales to chords, add ability to choose more angular scales or try to keep the note similar
 - [ ] How does FET handle chord voicing?

@@ -445,6 +445,55 @@ module App = {
               }}>
               "Play Progression"->React.string
             </button>
+            <button
+              className="function-button"
+              id="play-chord-note"
+              onClick={_event => {
+                State.stopAudio();
+                State.changeMode(Play);
+                let duration = 0.75 /. float_of_int(State.s.bpm / 60);
+                let guessNote = Scale.random_note(State.s.scale);
+                let progressionTarget = Scale.random_note(State.s.scale)
+                State.changePathTargets([
+                  progressionTarget,
+                  State.s.scale.root,
+                ]);
+                State.changeGuessNote(guessNote);
+
+
+                let root_path =
+                  Scale.get_path(State.s.scale, guessNote, progressionTarget);
+                let scale_path =
+                  Scale.get_path(State.s.scale, guessNote, State.s.scale.root);
+                let chord =
+                  Scale.to_chord(
+                    State.s.scale,
+                    Note.dist(State.s.scale.root, progressionTarget),
+                    3,
+                  );
+                Js.log(Chord.to_string(chord));
+                State.playChord(chord);
+                State.changePath(root_path @ scale_path);
+                Synth.schedule(
+                  () => State.playNote(guessNote),
+                  Printf.sprintf("+%f", duration),
+                );
+                Synth.schedule(
+                  () => State.playNote(progressionTarget),
+                  Printf.sprintf("+%f", duration *. 2.),
+                );
+                Synth.startTransport();
+              }}>
+              "new progression question"->React.string
+            </button>
+            <button
+              className="function-button"
+              id="play-progression-chord"
+              onClick={_event => {
+                State.playProgressionChord(State.s.progressionIndex)
+              }}>
+              "Play Progression Chord"->React.string
+            </button>
           </div>
           <ProgressionSection state=(module State) />
         </div>
